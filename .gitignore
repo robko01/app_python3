@@ -131,6 +131,6 @@ IOTSBG2019.py
 
 ### Logs
 ### Ignore logs.
-logs/
+logs
 
 # End of https://www.gitignore.io/api/python
