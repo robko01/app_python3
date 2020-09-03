@@ -1,43 +1,65 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-'''
+"""
 
-MIT License
+Robko 01 - Python Controll Software
 
-Copyright (c) [2019] [Orlin Dimitrov]
+Copyright (C) [2020] [Orlin Dimitrov]
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 
 import time
 from struct import pack, unpack
-# https://docs.python.org/3/library/struct.html
-
 
 from controllers.base_robko01 import BaseRobko01
 from controllers.orlin369.op_code import OpCode
 from controllers.orlin369.status_code import StatusCode
 
+#region File Attributes
+
+__author__ = "Orlin Dimitrov"
+"""Author of the file."""
+
+__copyright__ = "Copyright 2020, Orlin Dimitrov"
+"""Copyrighter"""
+
+__credits__ = []
+"""Credits"""
+
+__license__ = "GPLv3"
+"""License
+@see http://www.gnu.org/licenses/"""
+
+__version__ = "1.0.0"
+"""Version of the file."""
+
+__maintainer__ = "Orlin Dimitrov"
+"""Name of the maintainer."""
+
+__email__ = "robko01@8bitclub.com"
+"""E-mail of the author."""
+
+__status__ = "Debug"
+"""File status."""
+
+#endregion
+
 class Robko01(BaseRobko01):
-    """This class is dedicated to controll robot controler made by Orlin Dimitrov."""
+    """This class is dedicated to controll robot controller made by Orlin Dimitrov."""
 
 #region Constructor
 
@@ -249,7 +271,7 @@ class Robko01(BaseRobko01):
 
         return response
 
-    def move_realtive(self, current_point):
+    def move_relative(self, current_point):
         """Move relative to next robot position.
 
         Parameters
@@ -292,7 +314,7 @@ class Robko01(BaseRobko01):
             else:
                 print("Move Relative: Invalid package.")
 
-        if self.synchronious:
+        if self.synchronous:
             self.wait_to_stop()
 
         return response
@@ -323,14 +345,14 @@ class Robko01(BaseRobko01):
                 int(current_point[8]), int(current_point[9]),\
                 int(current_point[10]), int(current_point[11]))
 
-            response = self.__communicator.request(OpCode.MoveAblolute.value, payload)
+            response = self.__communicator.request(OpCode.MoveAbsolute.value, payload)
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
-                    if response.opcode == OpCode.MoveAblolute.value:
+                    if response.opcode == OpCode.MoveAbsolute.value:
                         break
                     else:
-                        print("Move Ablolute: Invalid operation code: " +\
+                        print("Move Absolute: Invalid operation code: " +\
                             str(response.opcode))
                 elif response.status == StatusCode.Busy.value:
                     break
@@ -338,11 +360,11 @@ class Robko01(BaseRobko01):
                     print("Status: " + StatusCode.to_text(response.status) \
                       + "; OpCode: " + OpCode.to_text(response.opcode))
             else:
-                print("Move Ablolute: Invalid package.")
+                print("Move Absolute: Invalid package.")
 
             time.sleep(self._sync_interval)
 
-        if self.synchronious:
+        if self.synchronous:
             self.wait_to_stop()
 
         return response
@@ -388,7 +410,7 @@ class Robko01(BaseRobko01):
         Returns
         -------
         array
-            Robot posirions.
+            Robot positions.
         """
 
         response = None
@@ -532,14 +554,14 @@ class Robko01(BaseRobko01):
 
             time.sleep(self._sync_interval)
 
-        if self.synchronious:
+        if self.synchronous:
             self.wait_to_stop()
 
         return response
 
 
-    def move_realtive_base(self, steps, speed):
-        """Move axis in realtive mode.
+    def move_relative_base(self, steps, speed):
+        """Move axis in relative mode.
 
         Parameters
         ----------
@@ -555,10 +577,10 @@ class Robko01(BaseRobko01):
         """
 
         point = [steps, speed, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        return self.move_realtive(point)
+        return self.move_relative(point)
 
-    def move_realtive_shoulder(self, steps, speed):
-        """Move axis in realtive mode.
+    def move_relative_shoulder(self, steps, speed):
+        """Move axis in relative mode.
 
         Parameters
         ----------
@@ -574,10 +596,10 @@ class Robko01(BaseRobko01):
         """
 
         point = [0, 0, steps, speed, 0, 0, 0, 0, 0, 0, 0, 0]
-        return self.move_realtive(point)
+        return self.move_relative(point)
 
-    def move_realtive_elbow(self, steps, speed):
-        """Move axis in realtive mode.
+    def move_relative_elbow(self, steps, speed):
+        """Move axis in relative mode.
 
         Parameters
         ----------
@@ -593,10 +615,10 @@ class Robko01(BaseRobko01):
         """
 
         point = [0, 0, 0, 0, steps, speed, 0, 0, 0, 0, -steps, speed]
-        return self.move_realtive(point)
+        return self.move_relative(point)
 
-    def move_realtive_r(self, steps, speed):
-        """Move axis in realtive mode.
+    def move_relative_r(self, steps, speed):
+        """Move axis in relative mode.
 
         Parameters
         ----------
@@ -612,10 +634,10 @@ class Robko01(BaseRobko01):
         """
 
         point = [0, 0, 0, 0, 0, 0, steps, speed, steps, speed, 0, 0]
-        return self.move_realtive(point)
+        return self.move_relative(point)
 
-    def move_realtive_p(self, steps, speed):
-        """Move axis in realtive mode.
+    def move_relative_p(self, steps, speed):
+        """Move axis in relative mode.
 
         Parameters
         ----------
@@ -631,10 +653,10 @@ class Robko01(BaseRobko01):
         """
 
         point = [0, 0, 0, 0, 0, 0, steps, speed, -steps, speed, 0, 0]
-        return self.move_realtive(point)
+        return self.move_relative(point)
 
-    def move_realtive_gripper(self, steps, speed):
-        """Move axis in realtive mode.
+    def move_relative_gripper(self, steps, speed):
+        """Move axis in relative mode.
 
         Parameters
         ----------
@@ -650,7 +672,7 @@ class Robko01(BaseRobko01):
         """
 
         point = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, steps, speed]
-        return self.move_realtive(point)
+        return self.move_relative(point)
 
 
     def move_absolute_base(self, steps, speed):

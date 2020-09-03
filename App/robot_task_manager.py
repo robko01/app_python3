@@ -1,36 +1,62 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-'''
+"""
 
-MIT License
+Robko 01 - Python Controll Software
 
-Copyright (c) [2019] [Orlin Dimitrov]
+Copyright (C) [2020] [Orlin Dimitrov]
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''
+"""
 
 from enum import Enum
 
 from utils.utils import scale_speeds
 from utils.logger import get_logger
+
+from kbd import KBD
+
+#region File Attributes
+
+__author__ = "Orlin Dimitrov"
+"""Author of the file."""
+
+__copyright__ = "Copyright 2020, Orlin Dimitrov"
+"""Copyrighter"""
+
+__credits__ = []
+"""Credits"""
+
+__license__ = "GPLv3"
+"""License
+@see http://www.gnu.org/licenses/"""
+
+__version__ = "1.0.0"
+"""Version of the file."""
+
+__maintainer__ = "Orlin Dimitrov"
+"""Name of the maintainer."""
+
+__email__ = "robko01@8bitclub.com"
+"""E-mail of the author."""
+
+__status__ = "Debug"
+"""File status."""
+
+#endregion
 
 class ExecutionMode(Enum):
     """Execution mode."""
@@ -57,6 +83,11 @@ class RobotTaskManager:
 
     __execution_mode = ExecutionMode.Pause
     """Mode of execution."""
+
+    __program_name = ""
+    """Program name."""
+
+    __key_bd = None
 
 #endregion
 
@@ -112,11 +143,15 @@ class RobotTaskManager:
         # Disable motors.
         self.__controller.disable()
 
+        if self.__program_name == "kb":
+            if self.__key_bd is not None:
+                self.__key_bd.stop()
+
     def start(self):
         """Start robot controller."""
 
-        # Enter synchronious mode.
-        self.__controller.synchronious = True
+        # Enter synchronous mode.
+        self.__controller.synchronous = True
 
         # Wait for controller to respond.
         self.__controller.wait_for_controller()
@@ -133,252 +168,43 @@ class RobotTaskManager:
             Program name.
         """
 
+        self.__program_name = program
+
         self.__controller.connect()
 
-        if program == "manual":
+        if self.__program_name == "manual":
             self.__prg_manual()
 
-        elif program == "grasp1":
+        elif self.__program_name == "grasp1":
             self.__prg_robot_grasp1()
 
-        elif program == "grasp2":
+        elif self.__program_name == "grasp2":
             self.__prg_robot_grasp2()
 
-        elif program == "grasp3":
+        elif self.__program_name == "grasp3":
             self.__prg_robot_grasp3()
 
-        elif program == "inputs":
+        elif self.__program_name == "inputs":
             self.__read_inputs()
 
-        elif program == "kb":
+        elif self.__program_name == "kb":
             self.__prg_kb()
 
-        elif program == "load":
-            self.__load()
-
-        elif  program is not None:
-            self.__logger.error("No program selcted")
+        elif  self.__program_name is not None:
+            self.__logger.error("No program selected")
 
         else:
-            self.__logger.error("No program selcted")
+            self.__logger.error("No program selected")
 
         self.__controller.disconnect()
 
     def __prg_kb(self):
+
         self.__logger.info("KB")
 
-        speed = 100
-
-        # Start the robot controller.
-        self.start()
-
-        # Show position.
-        current_point = self.__controller.current_position()
-        self.__logger.info("Position:", current_point)
-
-        # It si now ready.
-        self.__logger.info("-=<Ready>=-")
-
-        # Get to top of the workpeace.
-        target_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-        # Use keyboard input.
-        from inputs import get_key
-
-        # Time to stop flag.
-        time_to_stop = False
-        action_flag = False
-
-        # Wait user input.
-        while not self.__controller.time_to_stop:
-
-            # Get keys.
-            events = get_key()
-
-            # Parse events.
-            for event in events:
-
-                # Print events.
-                self.__logger.info(event.ev_type, event.code, event.state)
-
-                # Time to stop event.
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_ESC') and \
-                    (event.state == 1)):
-                    time_to_stop = True
-                    action_flag = False
-
-                # Q - Read current position.
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_Q') and \
-                    (event.state == 1)):
-                    # Show position.
-                    current_point = self.__controller.current_position()
-                    self.__logger.info("Position:", current_point)
-
-                # W - Up wrist
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_W') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start wrist up.")
-                    target_position[7] = speed
-                    target_position[9] = -speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_W') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop wrist up.")
-                    target_position[7] = 0
-                    target_position[9] = 0
-                    action_flag = True
-
-                # S - Down wrist
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_S') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start wrist down")
-                    target_position[7] = -speed
-                    target_position[9] = speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_S') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop wrist down.")
-                    target_position[7] = 0
-                    target_position[9] = 0
-                    action_flag = True
-
-                # A - Left wrist
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_A') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Left wrist")
-                    target_position[7] = -speed
-                    target_position[9] = -speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_A') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Left wrist")
-                    target_position[7] = 0
-                    target_position[9] = 0
-                    action_flag = True
-
-                # D - Right wrist
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_D') and \
-                    (event.state == 1)):
-                    self.__logger.info("Right wrist")
-                    target_position[7] = speed
-                    target_position[9] = speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_D') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Left wrist")
-                    target_position[7] = 0
-                    target_position[9] = 0
-                    action_flag = True
-
-                # R - Elbow CCW
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_R') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Elbow CCW")
-                    target_position[5] = speed
-                    target_position[11] = speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_R') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Elbow CCW")
-                    target_position[5] = 0
-                    target_position[11] = 0
-                    action_flag = True
-
-                # F - Elbow CW
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_F') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Elbow CW")
-                    target_position[5] = -speed
-                    target_position[11] = -speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_F') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Elbow CW")
-                    target_position[5] = 0
-                    target_position[11] = 0
-                    action_flag = True
-
-                # Arrow Up - Shoulder CCW
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_UP') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Shoulder CCW")
-                    target_position[3] = speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_UP') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Shoulder CCW")
-                    target_position[3] = 0
-                    action_flag = True
-
-                # Arrow Down - Shoulder CW
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_DOWN') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Shoulder CW")
-                    target_position[3] = -speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_DOWN') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Shoulder CW")
-                    target_position[3] = 0
-                    action_flag = True
-
-                # Arrow Left - Base CW
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_LEFT') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Shoulder CW")
-                    target_position[1] = speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_LEFT') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Shoulder CW")
-                    target_position[1] = 0
-                    action_flag = True
-
-                # Arrow Right - Base CW
-                if ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_RIGHT') and \
-                    (event.state == 1)):
-                    self.__logger.info("Start Base CW")
-                    target_position[1] = -speed
-                    action_flag = True
-                elif ((event.ev_type == 'Key') and \
-                    (event.code == 'KEY_RIGHT') and \
-                    (event.state == 0)):
-                    self.__logger.info("Stop Base CW")
-                    target_position[1] = 0
-                    action_flag = True
-
-                # Execute key command.
-                if action_flag:
-                    action_flag = False
-                    self.__logger.info("Target speeds:", target_position)
-                    self.__controller.move_speed(target_position)
-                    current_point = self.__controller.current_position()
-                    self.__logger.info("Reach:", current_point)
-
-            if time_to_stop:
-                self.stop()
-                break
+        if self.__key_bd is None:
+            self.__key_bd = KBD(self.__controller)
+            self.__key_bd.start()
 
     def __prg_manual(self):
 
@@ -411,7 +237,7 @@ class RobotTaskManager:
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_realtive_base(steps, speed)
+                self.__controller.move_relative_base(steps, speed)
 
             elif command == "shoulder" or command == "1":
                 steps = input("Enter steps: ")
@@ -428,7 +254,7 @@ class RobotTaskManager:
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_realtive_shoulder(steps, speed)
+                self.__controller.move_relative_shoulder(steps, speed)
 
             elif command == "elbow" or command == "2":
                 steps = input("Enter steps: ")
@@ -445,7 +271,7 @@ class RobotTaskManager:
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_realtive_elbow(steps, speed)
+                self.__controller.move_relative_elbow(steps, speed)
 
             elif command == "p" or command == "3":
                 steps = input("Enter steps: ")
@@ -463,7 +289,7 @@ class RobotTaskManager:
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_realtive_p(steps, speed)
+                self.__controller.move_relative_p(steps, speed)
 
             elif command == "r" or command == "4":
                 steps = input("Enter steps: ")
@@ -480,7 +306,7 @@ class RobotTaskManager:
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_realtive_r(steps, speed)
+                self.__controller.move_relative_r(steps, speed)
 
             elif command == "gripper" or command == "5":
                 steps = input("Enter steps: ")
@@ -497,7 +323,7 @@ class RobotTaskManager:
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_realtive_gripper(steps, speed)
+                self.__controller.move_relative_gripper(steps, speed)
 
             elif command == "pos":
 
@@ -516,7 +342,7 @@ class RobotTaskManager:
                 print(poses)
 
             else:
-                print("Invalied command: {}".format(command))
+                print("Invalid command: {}".format(command))
 
     def __prg_robot_grasp1(self):
 
@@ -526,23 +352,23 @@ class RobotTaskManager:
         speed = 100
 
         # Trajectory but like commands.
-        self.__controller.move_realtive_base(450, speed)
-        self.__controller.move_realtive_shoulder(600, speed)
-        self.__controller.move_realtive_p(200, speed)
-        self.__controller.move_realtive_elbow(-400, speed)
-        self.__controller.move_realtive_r(110, speed)
-        self.__controller.move_realtive_shoulder(100, speed)
-        self.__controller.move_realtive_gripper(-10, speed)
-        self.__controller.move_realtive_shoulder(-100, speed)
-        self.__controller.move_realtive_base(-900, speed)
-        self.__controller.move_realtive_r(-220, speed)
-        self.__controller.move_realtive_shoulder(100, speed)
-        self.__controller.move_realtive_shoulder(-100, speed)
-        self.__controller.move_realtive_r(110, speed)
-        self.__controller.move_realtive_elbow(400, speed)
-        self.__controller.move_realtive_p(-200, speed)
-        self.__controller.move_realtive_shoulder(-600, speed)
-        self.__controller.move_realtive_base(450, speed)
+        self.__controller.move_relative_base(450, speed)
+        self.__controller.move_relative_shoulder(600, speed)
+        self.__controller.move_relative_p(200, speed)
+        self.__controller.move_relative_elbow(-400, speed)
+        self.__controller.move_relative_r(110, speed)
+        self.__controller.move_relative_shoulder(100, speed)
+        self.__controller.move_relative_gripper(-10, speed)
+        self.__controller.move_relative_shoulder(-100, speed)
+        self.__controller.move_relative_base(-900, speed)
+        self.__controller.move_relative_r(-220, speed)
+        self.__controller.move_relative_shoulder(100, speed)
+        self.__controller.move_relative_shoulder(-100, speed)
+        self.__controller.move_relative_r(110, speed)
+        self.__controller.move_relative_elbow(400, speed)
+        self.__controller.move_relative_p(-200, speed)
+        self.__controller.move_relative_shoulder(-600, speed)
+        self.__controller.move_relative_base(450, speed)
 
         self.stop()
 
@@ -586,7 +412,7 @@ class RobotTaskManager:
             print("Target:", position)
             current_point = scale_speeds(position, speed)
             print("Result:", current_point)
-            self.__controller.move_realtive(current_point)
+            self.__controller.move_relative(current_point)
             current_point = self.__controller.current_position()
             print("Reach:", current_point)
             print("")
@@ -637,6 +463,3 @@ class RobotTaskManager:
         self.__logger.info("Digital Inputs: " + str(inputs))
 
         self.stop()
-
-    def __load(self):
-        print("Load program")
