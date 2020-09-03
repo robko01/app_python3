@@ -38,6 +38,35 @@ from robot_task_manager import ExecutionMode
 
 from controllers.robot_factory import RobotFactory
 
+#region File Attributes
+
+__author__ = "Orlin Dimitrov"
+"""Author of the file."""
+
+__copyright__ = "Copyright 2020, Orlin Dimitrov"
+"""Copyrighter"""
+
+__credits__ = []
+"""Credits"""
+
+__license__ = "GPLv3"
+"""License
+@see http://www.gnu.org/licenses/"""
+
+__version__ = "1.0.0"
+"""Version of the file."""
+
+__maintainer__ = "Orlin Dimitrov"
+"""Name of the maintainer."""
+
+__email__ = "robko01@8bitclub.com"
+"""E-mail of the author."""
+
+__status__ = "Debug"
+"""File status."""
+
+#endregion
+
 __device = None
 __logger = None
 
@@ -69,7 +98,7 @@ def main():
     robot = RobotFactory.create_robot(args.port, args.cont)
 
     if robot is None:
-        sys.exit("No controller type specyfied")
+        sys.exit("No controller type specified")
 
     __device = RobotTaskManager(robot)
 
@@ -87,10 +116,10 @@ def interupt_handler(signum, frame):
     global __device, __logger
 
     if signum == 2:
-        __logger.warning("Stoped by interupt.")
+        __logger.warning("Stopped by interupt.")
 
     elif signum == 15:
-        __logger.warning("Stoped by termination.")
+        __logger.warning("Stopped by termination.")
 
     else:
         __logger.warning("Signal handler called. Signal: {}; Frame: {}".format(signum, frame))
@@ -101,4 +130,4 @@ def interupt_handler(signum, frame):
 if __name__ == "__main__":
     main()
 
-# TODO: Change reposytory and naming, test by virtual env and machine.
+# TODO: Change repository and naming, test by virtual env and machine.
