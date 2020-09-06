@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from controllers.orlin369.protocol.communicator import Communicator
 from controllers.orlin369.protocol.package_type import PackageType
 from controllers.orlin369.protocol.response import Response
 
@@ -55,7 +54,7 @@ __status__ = "Debug"
 
 #endregion
 
-class PackageManager(Communicator):
+class PackageManager:
     """Package manager."""
 
 #region Attributes
@@ -64,6 +63,10 @@ class PackageManager(Communicator):
     """Print callback."""
 
 #endregion
+
+    def __init__(self, communicator):
+
+        self.__communicator = communicator
 
 #region Private Methods
 
@@ -158,7 +161,7 @@ class PackageManager(Communicator):
         if self.__print_callback is not None:
             self.__print_callback(req_frame)
 
-        res_frame = self._send_frame(req_frame)
+        res_frame = self.__communicator.send_frame(req_frame)
         list_res_frame = list(res_frame)
 
         if self.__print_callback is not None:

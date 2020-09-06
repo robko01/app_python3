@@ -54,7 +54,7 @@ __status__ = "Debug"
 #endregion
 
 class FrameIndexes(Enum):
-    """This class is dedicated to read data from SDM630 energy meter."""
+    """Frame index description."""
 
     Sentinel = 0
     PackageType = 1

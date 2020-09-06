@@ -83,6 +83,8 @@ class Response:
 #region Constructor
 
     def __init__(self, frame):
+        """Constructor"""
+
         self.__frame = frame
         self.__parse()
 

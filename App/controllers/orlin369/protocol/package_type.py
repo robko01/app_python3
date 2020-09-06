@@ -53,11 +53,6 @@ __status__ = "Debug"
 
 #endregion
 
-#/**
-# * This class is dedicated to read data from SDM630 energy meter.
-# *
-# * @see https://bg-etech.de/download/manual/SDM630Register1-5.pdf
-# */
 class PackageType(Enum):
     """Package Type"""
 
