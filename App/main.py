@@ -3,27 +3,22 @@
 
 """
 
-MIT License
+Robko 01 - Python Controll Software
 
-Copyright (c) [2019] [Orlin Dimitrov]
+Copyright (C) [2020] [Orlin Dimitrov]
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
@@ -70,6 +65,23 @@ __status__ = "Debug"
 __device = None
 __logger = None
 
+def interupt_handler(signum, frame):
+    """Interupt handler."""
+
+    global __device, __logger
+
+    if signum == 2:
+        __logger.warning("Stopped by interupt.")
+
+    elif signum == 15:
+        __logger.warning("Stopped by termination.")
+
+    else:
+        __logger.warning("Signal handler called. Signal: {}; Frame: {}".format(signum, frame))
+
+    if __device is not None:
+        __device.stop()
+
 def main():
     """Main function."""
 
@@ -88,14 +100,14 @@ def main():
 
     # Add arguments.
     parser.add_argument("--prg", type=str, default="grasp2", help="Builtin program")
-    parser.add_argument("--port", type=str, default="COM3", help="Serial port")
+    parser.add_argument("--port", type=str, default="COM7", help="Serial port")
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--step", type=str, default="f", help="Step mode")
 
     # Take arguments.
     args = parser.parse_args()
 
-    robot = RobotFactory.create_robot(args.port, args.cont)
+    robot = RobotFactory.create_robot(**vars(args))
 
     if robot is None:
         sys.exit("No controller type specified")
@@ -109,23 +121,6 @@ def main():
 
     __logger.info("Starting PRG: " + str(args.prg))
     __device.run(args.prg)
-
-def interupt_handler(signum, frame):
-    """Interupt handler."""
-
-    global __device, __logger
-
-    if signum == 2:
-        __logger.warning("Stopped by interupt.")
-
-    elif signum == 15:
-        __logger.warning("Stopped by termination.")
-
-    else:
-        __logger.warning("Signal handler called. Signal: {}; Frame: {}".format(signum, frame))
-
-    if __device is not None:
-        __device.stop()
 
 if __name__ == "__main__":
     main()
