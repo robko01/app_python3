@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import time
 from struct import pack, unpack
 
+from App.controllers.orlin369.protocol.package_manager import PackageManager
+
 from controllers.base_robko01 import BaseRobko01
 from controllers.orlin369.op_code import OpCode
 from controllers.orlin369.status_code import StatusCode
@@ -61,6 +63,10 @@ __status__ = "Debug"
 class Robko01(BaseRobko01):
     """This class is dedicated to controll robot controller made by Orlin Dimitrov."""
 
+    __comunicator = None
+
+    __pm = None
+
 #region Constructor
 
     def __init__(self, communicator):
@@ -69,6 +75,8 @@ class Robko01(BaseRobko01):
             raise ValueError("Communicator can not be None.")
 
         self.__communicator = communicator
+
+        self.__pm = PackageManager(self.__communicator)
 
 #endregion
 
@@ -138,7 +146,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__communicator.request(OpCode.Ping.value, payload)
+            response = self.__pm.request(OpCode.Ping.value, payload)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.Ping.value:
@@ -167,7 +175,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__communicator.request(OpCode.Stop.value)
+            response = self.__pm.request(OpCode.Stop.value)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.Stop.value:
@@ -196,7 +204,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__communicator.request(OpCode.Disable.value)
+            response = self.__pm.request(OpCode.Disable.value)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.Disable.value:
@@ -225,7 +233,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__communicator.request(OpCode.Enable.value)
+            response = self.__pm.request(OpCode.Enable.value)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.Enable.value:
@@ -254,7 +262,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__communicator.request(OpCode.Clear.value)
+            response = self.__pm.request(OpCode.Clear.value)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.Clear.value:
@@ -297,7 +305,7 @@ class Robko01(BaseRobko01):
                 int(current_point[8]), int(current_point[9]),\
                 int(current_point[10]), int(current_point[11]))
 
-            response = self.__communicator.request(OpCode.MoveRelative.value, payload)
+            response = self.__pm.request(OpCode.MoveRelative.value, payload)
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
@@ -345,7 +353,7 @@ class Robko01(BaseRobko01):
                 int(current_point[8]), int(current_point[9]),\
                 int(current_point[10]), int(current_point[11]))
 
-            response = self.__communicator.request(OpCode.MoveAbsolute.value, payload)
+            response = self.__pm.request(OpCode.MoveAbsolute.value, payload)
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
@@ -383,7 +391,7 @@ class Robko01(BaseRobko01):
 
         while True:
 
-            response = self.__communicator.request(OpCode.IsMoving.value)
+            response = self.__pm.request(OpCode.IsMoving.value)
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
@@ -417,7 +425,7 @@ class Robko01(BaseRobko01):
         position = None
 
         while True:
-            response = self.__communicator.request(OpCode.CurrentPosition.value)
+            response = self.__pm.request(OpCode.CurrentPosition.value)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.CurrentPosition.value:
@@ -451,7 +459,7 @@ class Robko01(BaseRobko01):
 
         while True:
 
-            response = self.__communicator.request(OpCode.DI.value)
+            response = self.__pm.request(OpCode.DI.value)
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
@@ -490,7 +498,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__communicator.request(OpCode.DO.value)
+            response = self.__pm.request(OpCode.DO.value)
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
@@ -537,7 +545,7 @@ class Robko01(BaseRobko01):
                 current_point[8], current_point[9],\
                 current_point[10], current_point[11])
 
-            response = self.__communicator.request(OpCode.MoveSpeed.value, payload)
+            response = self.__pm.request(OpCode.MoveSpeed.value, payload)
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.MoveSpeed.value:

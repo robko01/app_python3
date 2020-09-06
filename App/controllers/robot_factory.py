@@ -22,11 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from controllers.orlin369.protocol.package_manager import PackageManager as OrkoPM
-from controllers.orlin369.robko01 import Robko01 as Orko01
+from App.communicators.serial.communicator import Communicator as SerCom
+from App.controllers.orlin369.robko01 import Robko01 as Orko01
 
-from controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
-from controllers.tu_gabrovo.robko01 import Robko01 as Gabko01
+from App.controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
+from App.controllers.tu_gabrovo.robko01 import Robko01 as Gabko01
 
 #region File Attributes
 
@@ -61,19 +61,30 @@ class RobotFactory:
     """Robot factory."""
 
     @staticmethod
-    def create_robot(c_port, c_type):
+    def create_robot(**kwargs):
 
         robot = None
 
-        if c_type is None:
+        cont = None
+        if "cont" in kwargs:
+            cont = kwargs["cont"]
+
+        if cont is None:
             raise ValueError("Robot type can not be None.")
 
-        elif c_type == "orlin369":
-            robot = Orko01(OrkoPM(c_port))
+        elif cont == "orlin369":
 
-        elif c_type == "tugab":
-            robot = Gabko01(GabkoPM(c_port))
+            if "port" in kwargs and "host" not in kwargs:
+                name = kwargs["port"]
+                robot = Orko01(SerCom(name))
 
+            elif "port" in kwargs and "host" in kwargs:
+                host = kwargs["host"]
+                port = kwargs["port"]
+                robot = Orko01(IPCom(host, port))
+
+        elif cont == "tugab":
+            robot = Gabko01(GabkoPM(kwargs))
 
         else:
             raise ValueError("No controller type specyfyed.")

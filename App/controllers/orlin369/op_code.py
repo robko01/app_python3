@@ -137,7 +137,7 @@ class OpCode(Enum):
             text = "Move Absolute"
 
         elif code == OpCode.DO.value:
-            text = "Digitl Outputs"
+            text = "Digital Outputs"
 
         elif code == OpCode.DI.value:
             text = "Digital Inputs"
