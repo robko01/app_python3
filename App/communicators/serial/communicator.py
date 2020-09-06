@@ -23,37 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-
 import serial
 
-#region File Attributes
-
-__author__ = "Orlin Dimitrov"
-"""Author of the file."""
-
-__copyright__ = "Copyright 2020, Orlin Dimitrov"
-"""Copyrighter"""
-
-__credits__ = []
-"""Credits"""
-
-__license__ = "GPLv3"
-"""License
-@see http://www.gnu.org/licenses/"""
-
-__version__ = "1.0.0"
-"""Version of the file."""
-
-__maintainer__ = "Orlin Dimitrov"
-"""Name of the maintainer."""
-
-__email__ = "robko01@8bitclub.com"
-"""E-mail of the author."""
-
-__status__ = "Debug"
-"""File status."""
-
-#endregion
+from communicators.base_communicator import BaseCommunicator
 
 #region File Attributes
 
@@ -84,7 +56,7 @@ __status__ = "Debug"
 
 #endregion
 
-class Communicator:
+class Communicator(BaseCommunicator):
     """This class is dedicated to work with the serial interface."""
 
 #region Attributes
@@ -117,11 +89,11 @@ class Communicator:
 
 #region Protected Methods
 
-    def _send(self, payload):
+    def send(self, payload):
 
         self.__port.write(payload)
 
-    def _receive(self):
+    def receive(self):
 
         frame = None
         wait = 0.1
@@ -141,15 +113,15 @@ class Communicator:
 
         return frame
 
-    def _send_frame(self, req_frame):
+    def send_frame(self, req_frame):
 
         if self.__port.isOpen() is False:
             raise Exception("Port is not opened on level Communicator.")
 
         #self._open()
-        self._send(req_frame)
+        self.send(req_frame)
         res_frame = None
-        res_frame = self._receive()
+        res_frame = self.receive()
         #self._close()
         return res_frame
 
