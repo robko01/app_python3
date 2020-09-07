@@ -28,8 +28,8 @@ import signal
 
 from utils.logger import crate_log_file, get_logger
 
-from robot_task_manager import RobotTaskManager
-from robot_task_manager import ExecutionMode
+from task_manager import TaskManager
+from task_manager import ExecutionMode
 
 from controllers.robot_factory import RobotFactory
 
@@ -62,13 +62,13 @@ __status__ = "Debug"
 
 #endregion
 
-__device = None
+__tm = None
 __logger = None
 
 def interupt_handler(signum, frame):
     """Interupt handler."""
 
-    global __device, __logger
+    global __tm, __logger
 
     if signum == 2:
         __logger.warning("Stopped by interupt.")
@@ -79,13 +79,13 @@ def interupt_handler(signum, frame):
     else:
         __logger.warning("Signal handler called. Signal: {}; Frame: {}".format(signum, frame))
 
-    if __device is not None:
-        __device.stop()
+    if __tm is not None:
+        __tm.stop()
 
 def main():
     """Main function."""
 
-    global __device, __logger
+    global __tm, __logger
 
     # Add signal handler.
     signal.signal(signal.SIGINT, interupt_handler)
@@ -99,10 +99,11 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Add arguments.
-    parser.add_argument("--prg", type=str, default="grasp2", help="Builtin program")
+    parser.add_argument("--task", type=str, default="grasp2", help="Builtin program")
     parser.add_argument("--port", type=str, default="COM7", help="Serial port")
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--step", type=str, default="f", help="Step mode")
+    parser.add_argument("--host", type=str, default=None, help="Host of the robot.")
 
     # Take arguments.
     args = parser.parse_args()
@@ -112,17 +113,14 @@ def main():
     if robot is None:
         sys.exit("No controller type specified")
 
-    __device = RobotTaskManager(robot)
+    __tm = TaskManager(robot, args.task)
 
     if args.step == "f":
-        __device.execution_mode = ExecutionMode.Continue
+        __tm.execution_mode = ExecutionMode.Continue
     elif args.step == "t":
-        __device.execution_mode = ExecutionMode.Step
+        __tm.execution_mode = ExecutionMode.Step
 
-    __logger.info("Starting PRG: " + str(args.prg))
-    __device.run(args.prg)
+    __tm.start()
 
 if __name__ == "__main__":
     main()
-
-# TODO: Change repository and naming, test by virtual env and machine.
