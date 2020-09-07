@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # Use keyboard input.
 from pynput.keyboard import Key, Listener
 
+from tasks.base_task import BaseTask
+
 from utils.logger import get_logger
 from utils.utils import scale_speeds
 
@@ -59,7 +61,7 @@ __status__ = "Debug"
 
 #endregion
 
-class KBD:
+class TaskKbd(BaseTask):
     """Keyboard robot controller."""
 
 #region Attributes
@@ -84,18 +86,6 @@ class KBD:
 
     __commands = None
     """Commands for the robot."""
-
-#endregion
-
-#region Constructor
-
-    def __init__(self, controller):
-
-        self.__commands = Commands()
-
-        self.__logger = get_logger(__name__)
-
-        self.__controller = controller
 
 #endregion
 
@@ -318,20 +308,17 @@ class KBD:
     def start(self):
         """Start the app."""
 
-        if self.__controller is not None:
+        if self.__commands is None:
+            self.__commands = Commands()
 
-            # Enter synchronous mode.
-            self.__controller.synchronous = True
+        if self.__logger is None:
+            self.__logger = get_logger(__name__)
 
-            # Wait for controller to respond.
-            self.__controller.wait_for_controller()
+        self._start_cont()
 
-            # Enable the motors.
-            self.__controller.enable()
-
-            # Show position.
-            current_point = self.__controller.current_position()
-            self.__logger.info("Position: {}".format(current_point))
+        # Show position.
+        current_point = self._controller.current_position()
+        self.__logger.info("Position: {}".format(current_point))
 
         if self.__listener is None:
 
@@ -341,13 +328,11 @@ class KBD:
 
             self.__listener.start()
 
-        while not self.__stop_flag:
+        while not self._stop_flag:
             pass
 
     def stop(self):
         """Stop the app."""
-
-        self.__stop_flag = True
 
         if self.__listener is not None:
 
@@ -355,12 +340,6 @@ class KBD:
             del self.__listener
             self.__listener = None
 
-        if self.__controller is not None:
-
-            # Stop all the motors.
-            self.__controller.stop()
-
-            # Disable motors.
-            self.__controller.disable()
+        self._stop_cont()
 
 #endregion
