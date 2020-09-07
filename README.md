@@ -27,9 +27,9 @@ For the normal operation of the script there are libraries that need to be prein
 ## First run
 After installation, the script is ready for operation. This happens in the following way.
 
-        $ python main.py --port <DEVICE COM PORT> --prg grasp2
+        $ python main.py --port <DEVICE COM PORT> --task grasp2
 
 To approach the robot, it will be presented to the computer as a serial port.
 The example is marked COM5.
 You need to find out which is the correct port for you by using the device manager.
-The argument --prg serves to indicate which program to execute the robot.
+The argument --task serves to indicate which program to execute the robot.
