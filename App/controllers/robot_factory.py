@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from App.communicators.serial.communicator import Communicator as SerCom
+from App.communicators.ip.communicator import Communicator as IPCom
 from App.controllers.orlin369.robko01 import Robko01 as Orko01
 
 from App.controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
@@ -79,9 +80,10 @@ class RobotFactory:
                 robot = Orko01(SerCom(name))
 
             elif "port" in kwargs and "host" in kwargs:
-                host = kwargs["host"]
-                port = kwargs["port"]
-                robot = Orko01(IPCom(host, port))
+                if kwargs["host"] is not None or kwargs["host"] is not "":
+                    host = kwargs["host"]
+                    port = kwargs["port"]
+                    robot = Orko01(IPCom(host, port))
 
         elif cont == "tugab":
             robot = Gabko01(GabkoPM(kwargs))
