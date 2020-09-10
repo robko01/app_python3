@@ -55,7 +55,7 @@ __status__ = "Debug"
 
 #endregion
 
-class TaskTemplate(BaseTask):
+class TaskInputs(BaseTask):
     """Task template class."""
 
 #region Attributes

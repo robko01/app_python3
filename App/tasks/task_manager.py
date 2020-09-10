@@ -31,6 +31,7 @@ from tasks.task_cmd.task_cmd import TaskCmd
 from tasks.task_grasp_1.task_grasp_1 import TaskGrasp1
 from tasks.task_grasp_2.task_grasp_2 import TaskGrasp2
 from tasks.task_grasp_3.task_grasp_3 import TaskGrasp3
+from tasks.task_inputs.task_inputs import TaskInputs
 
 #region File Attributes
 
@@ -73,7 +74,7 @@ class ExecutionMode(Enum):
     Continue = 2
     """Continue execution mode."""
 
-class RobotTaskManager:
+class TaskManager:
     """This class handles the robot tasks in nice procedure way."""
 
 #region Attributes
@@ -125,20 +126,25 @@ class RobotTaskManager:
 
 #region Constructor
 
-    def __init__(self, controller, task_name):
+    def __init__(self, **kwargs):
         """Constructor
 
         Parameters
         ----------
-        controller : mixed
-            Robot controller.
+        kwargs : mixed
+            Key wards arguments.
         """
 
         self.__logger = get_logger(__name__)
 
-        self.__controller = controller
+        if "controller" in kwargs:
+            self.__controller = kwargs["controller"]
 
-        self.__set_task(task_name)
+        if "task" in kwargs:
+            self.__set_task(kwargs["task"])
+
+        if "em" in kwargs:
+            self.__execution_mode = kwargs["em"]
 
 #endregion
 
@@ -156,22 +162,22 @@ class RobotTaskManager:
         self.__task_name = task_name
 
         if self.__task_name == "cmd":
-            self.__task = TaskCmd(cont=self.__controller)
+            self.__task = TaskCmd(cont=self.__controller, em=self.__execution_mode)
 
         elif self.__task_name == "grasp1":
-            self.__task = TaskGrasp1(cont=self.__controller)
+            self.__task = TaskGrasp1(cont=self.__controller, em=self.__execution_mode)
 
         elif self.__task_name == "grasp2":
-            self.__task = TaskGrasp2(cont=self.__controller)
+            self.__task = TaskGrasp2(cont=self.__controller, em=self.__execution_mode)
 
         elif self.__task_name == "grasp3":
-            self.__task = TaskGrasp3(cont=self.__controller)
+            self.__task = TaskGrasp3(cont=self.__controller, em=self.__execution_mode)
 
         elif self.__task_name == "inputs":
-            self.__read_inputs()
+            self.__task = TaskInputs(cont=self.__controller, em=self.__execution_mode)
 
         elif self.__task_name == "kb":
-            self.__task = TaskKbd(cont=self.__controller)
+            self.__task = TaskKbd(cont=self.__controller, em=self.__execution_mode)
 
         elif  self.__task_name is not None:
             self.__logger.error("No program selected")
@@ -188,7 +194,7 @@ class RobotTaskManager:
 
         if self.__task is not None:
             self.__logger.info("Starting task: {}".format(self.__task_name))
-            self.__key_bd.start()
+            self.__task.start()
 
     def stop(self):
         """Stop the task."""

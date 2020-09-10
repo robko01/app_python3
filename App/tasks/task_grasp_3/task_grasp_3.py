@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from tasks.base_task import BaseTask
 
+from utils.utils import scale_speeds
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -86,8 +88,8 @@ class TaskGrasp3(BaseTask):
             print("Target:", position)
             current_point = scale_speeds(position, speed)
             print("Result:", current_point)
-            self.__controller.move_absolute(current_point)
-            current_point = self.__controller.current_position()
+            self._controller.move_absolute(current_point)
+            current_point = self._controller.current_position()
             print("Reach:", current_point)
             print("")
 

@@ -69,7 +69,7 @@ class TaskKbd(BaseTask):
     __logger = None
     """Logger"""
 
-    __controller = None
+    _controller = None
     """Robot controller."""
 
     __listener = None
@@ -93,11 +93,11 @@ class TaskKbd(BaseTask):
 
     def __send_command(self):
 
-        if self.__controller is not None:
+        if self._controller is not None:
 
             print(self.__directions)
 
-            response = self.__controller.move_speed(self.__directions)
+            response = self._controller.move_speed(self.__directions)
             if response.is_valid():
                 print("OK")
 
@@ -113,7 +113,7 @@ class TaskKbd(BaseTask):
     def __add_cur_position(self):
 
         # Show position.
-        current_point = self.__controller.current_position()
+        current_point = self._controller.current_position()
         self.__logger.info("Position: {}".format(current_point))
 
         self.__commands.append(current_point)
@@ -128,7 +128,7 @@ class TaskKbd(BaseTask):
 
         for command in self.__commands:
 
-            response = self.__controller.move_absolute(command)
+            response = self._controller.move_absolute(command)
             if response.is_valid():
                 print("OK")
 

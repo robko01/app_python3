@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from tasks.base_task import BaseTask
 
+from utils.utils import scale_speeds
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -84,24 +86,24 @@ class TaskGrasp2(BaseTask):
 
         command = ""
         for position in trajectory:
-            if self.execution_mode == ExecutionMode.Step:
+            if self._execution_mode == "1":
                 command = input("Press Enter to continue or type command: ")
                 print("Command:", command)
 
             command = command.lower()
 
             if command == "continue":
-                self.execution_mode = ExecutionMode.Continue
+                self._execution_mode = "2"
 
             elif command == "home":
-                self.__controller.move_absolute([0, 300, 0, 300, 0, 300, 0, 300, 0, 300, 0, 300])
+                self._controller.move_absolute([0, 300, 0, 300, 0, 300, 0, 300, 0, 300, 0, 300])
                 break
 
             print("Target:", position)
             current_point = scale_speeds(position, speed)
             print("Result:", current_point)
-            self.__controller.move_relative(current_point)
-            current_point = self.__controller.current_position()
+            self._controller.move_relative(current_point)
+            current_point = self._controller.current_position()
             print("Reach:", current_point)
             print("")
 

@@ -22,12 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from App.communicators.serial.communicator import Communicator as SerCom
-from App.communicators.ip.communicator import Communicator as IPCom
-from App.controllers.orlin369.robko01 import Robko01 as Orko01
+from communicators.serial.communicator import Communicator as SerCom
+from communicators.ip.communicator import Communicator as IPCom
+from controllers.orlin369.robko01 import Robko01 as Orko01
 
-from App.controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
-from App.controllers.tu_gabrovo.robko01 import Robko01 as Gabko01
+from controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
+from controllers.tu_gabrovo.robko01 import Robko01 as Gabko01
 
 #region File Attributes
 
@@ -58,7 +58,7 @@ __status__ = "Debug"
 
 #endregion
 
-class RobotFactory:
+class ControllerFactory:
     """Robot factory."""
 
     @staticmethod
@@ -75,12 +75,13 @@ class RobotFactory:
 
         elif cont == "orlin369":
 
-            if "port" in kwargs and "host" not in kwargs:
-                name = kwargs["port"]
-                robot = Orko01(SerCom(name))
+            if "port" in kwargs and "host" in kwargs:
+                if kwargs["host"] is None:
+                    name = kwargs["port"]
+                    robot = Orko01(SerCom(name))
 
             elif "port" in kwargs and "host" in kwargs:
-                if kwargs["host"] is not None or kwargs["host"] is not "":
+                if kwargs["host"] is not None or kwargs["host"] is not None:
                     host = kwargs["host"]
                     port = kwargs["port"]
                     robot = Orko01(IPCom(host, port))

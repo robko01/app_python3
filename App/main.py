@@ -28,10 +28,9 @@ import signal
 
 from utils.logger import crate_log_file, get_logger
 
-from task_manager import TaskManager
-from task_manager import ExecutionMode
+from tasks.task_manager import TaskManager
 
-from controllers.robot_factory import RobotFactory
+from controllers.controller_factory import ControllerFactory
 
 #region File Attributes
 
@@ -99,27 +98,21 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Add arguments.
-    parser.add_argument("--task", type=str, default="grasp2", help="Builtin program")
-    parser.add_argument("--port", type=str, default="COM7", help="Serial port")
+    parser.add_argument("--task", type=str, default="kb", help="Builtin program")
+    parser.add_argument("--port", type=str, default="COM17", help="Serial port")
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
-    parser.add_argument("--step", type=str, default="f", help="Step mode")
+    parser.add_argument("--em", type=str, default="f", help="Step mode")
     parser.add_argument("--host", type=str, default=None, help="Host of the robot.")
 
     # Take arguments.
     args = parser.parse_args()
 
-    robot = RobotFactory.create_robot(**vars(args))
+    controller = ControllerFactory.create_robot(**vars(args))
 
-    if robot is None:
+    if controller is None:
         sys.exit("No controller type specified")
 
-    __tm = TaskManager(robot, args.task)
-
-    if args.step == "f":
-        __tm.execution_mode = ExecutionMode.Continue
-    elif args.step == "t":
-        __tm.execution_mode = ExecutionMode.Step
-
+    __tm = TaskManager(controller=controller, task=args.task, em=args.em)
     __tm.start()
 
 if __name__ == "__main__":

@@ -93,7 +93,7 @@ class TaskCmd(BaseTask):
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_relative_base(steps, speed)
+                self._controller.move_relative_base(steps, speed)
 
             elif command == "shoulder" or command == "1":
                 steps = input("Enter steps: ")
@@ -110,7 +110,7 @@ class TaskCmd(BaseTask):
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_relative_shoulder(steps, speed)
+                self._controller.move_relative_shoulder(steps, speed)
 
             elif command == "elbow" or command == "2":
                 steps = input("Enter steps: ")
@@ -127,7 +127,7 @@ class TaskCmd(BaseTask):
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_relative_elbow(steps, speed)
+                self._controller.move_relative_elbow(steps, speed)
 
             elif command == "p" or command == "3":
                 steps = input("Enter steps: ")
@@ -145,7 +145,7 @@ class TaskCmd(BaseTask):
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_relative_p(steps, speed)
+                self._controller.move_relative_p(steps, speed)
 
             elif command == "r" or command == "4":
                 steps = input("Enter steps: ")
@@ -162,7 +162,7 @@ class TaskCmd(BaseTask):
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_relative_r(steps, speed)
+                self._controller.move_relative_r(steps, speed)
 
             elif command == "gripper" or command == "5":
                 steps = input("Enter steps: ")
@@ -179,16 +179,16 @@ class TaskCmd(BaseTask):
 
                 print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
-                self.__controller.move_relative_gripper(steps, speed)
+                self._controller.move_relative_gripper(steps, speed)
 
             elif command == "pos":
 
-                current_point = self.__controller.current_position()
+                current_point = self._controller.current_position()
                 print("Current position:", current_point)
 
             elif command == "add_c_pos":
 
-                current_point = self.__controller.current_position()
+                current_point = self._controller.current_position()
                 print("Current position:", current_point)
                 poses.append(current_point)
 

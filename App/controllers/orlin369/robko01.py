@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import time
 from struct import pack, unpack
 
-from App.controllers.orlin369.protocol.package_manager import PackageManager
-
 from controllers.base_robko01 import BaseRobko01
+
+from controllers.orlin369.protocol.package_manager import PackageManager
 from controllers.orlin369.op_code import OpCode
 from controllers.orlin369.status_code import StatusCode
 

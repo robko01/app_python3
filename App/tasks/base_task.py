@@ -65,6 +65,9 @@ class BaseTask:
     _stop_flag = False
     """Stop flag."""
 
+    _execution_mode = 0
+    """Execution mode."""
+
 #endregion
 
 #region Constructor
@@ -76,6 +79,9 @@ class BaseTask:
         if "cont" in self._kwargs:
             self._controller = self._kwargs["cont"]
 
+        if "em" in self._kwargs:
+            self._execution_mode = self._kwargs["em"]
+
     def __del__(self):
 
         self.stop()
@@ -86,6 +92,9 @@ class BaseTask:
 
     def _start_cont(self):
         """Start the app."""
+
+        if self._stop_flag:
+            return
 
         self._stop_flag = False
 
@@ -104,6 +113,9 @@ class BaseTask:
 
     def _stop_cont(self):
         """Stop the app."""
+
+        if not self._stop_flag:
+            return
 
         self._stop_flag = True
 
