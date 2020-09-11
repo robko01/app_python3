@@ -134,11 +134,9 @@ class BaseTask:
 #region Public Methods
 
     def start(self):
-
-        pass
+        """Start the task."""
 
     def stop(self):
-
-        self._stop_cont()
+        """Stop the task."""
 
 #endregion

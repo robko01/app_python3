@@ -24,9 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from tasks.base_task import BaseTask
 
-from utils.logger import get_logger
-from utils.utils import scale_speeds
-
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -78,7 +75,7 @@ class TaskCmd(BaseTask):
                 self.stop()
                 break
 
-            elif command == "base" or command == "0":
+            if "base" or "0" in command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -95,7 +92,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_base(steps, speed)
 
-            elif command == "shoulder" or command == "1":
+            elif "shoulder" or "1" in command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -112,7 +109,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_shoulder(steps, speed)
 
-            elif command == "elbow" or command == "2":
+            elif "elbow" or "2" in command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -129,7 +126,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_elbow(steps, speed)
 
-            elif command == "p" or command == "3":
+            elif "p" or "3" in command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -147,7 +144,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_p(steps, speed)
 
-            elif command == "r" or command == "4":
+            elif "r" or "4" in command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -164,7 +161,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_r(steps, speed)
 
-            elif command == "gripper" or command == "5":
+            elif "gripper" or "5" in command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 

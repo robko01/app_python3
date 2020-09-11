@@ -98,7 +98,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Add arguments.
-    parser.add_argument("--task", type=str, default="kb", help="Builtin program")
+    parser.add_argument("--task", type=str, default="grasp2", help="Builtin program")
     parser.add_argument("--port", type=str, default="COM17", help="Serial port")
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")

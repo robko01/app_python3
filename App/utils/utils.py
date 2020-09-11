@@ -95,34 +95,34 @@ def scale_speeds(position, speed):
 
     positions = []
 
-    for index in range(len(position)):
+    for key, value in enumerate(position):
 
-        if index % 2 == 0:
-            positions.append(position[index])
+        if key % 2 == 0:
+            positions.append(value)
 
     max_pos = max(positions)
 
     speeds = []
 
-    for index in range(len(positions)):
+    for key, value in enumerate(positions):
 
         if max_pos == 0:
             speeds.append(100)
 
         else:
-            speeds.append(abs(scale(positions[index], 0, max_pos, 0, speed)))
+            speeds.append(abs(scale(value, 0, max_pos, 0, speed)))
 
     pos_index = 0
     speed_index = 0
 
-    for index in range(len(position)):
+    for key, value in enumerate(position):
 
-        if index % 2 == 0:
-            position[index] = positions[pos_index]
+        if key % 2 == 0:
+            position[key] = positions[pos_index]
             pos_index += 1
 
         else:
-            position[index] = speeds[speed_index]
+            position[key] = speeds[speed_index]
             speed_index += 1
 
     return position
