@@ -57,16 +57,13 @@ __status__ = "Debug"
 class PackageManager:
     """Package manager."""
 
-#region Attributes
-
-    __print_callback = None
-    """Print callback."""
-
-#endregion
+#region Constructor
 
     def __init__(self, communicator):
 
         self.__communicator = communicator
+
+#endregion
 
 #region Private Methods
 
@@ -102,17 +99,6 @@ class PackageManager:
 #endregion
 
 #region Public Methods
-
-    def set_print(self, callback):
-        """Set printer function.
-
-        Parameters
-        ----------
-        callback : pointer to function
-            Printer function.
-        """
-
-        self.__print_callback = callback
 
     def request(self, opcode, payload=None):
         """Request to device.
@@ -158,14 +144,8 @@ class PackageManager:
         req_frame.append(crc[0])
         req_frame.append(crc[1])
 
-        if self.__print_callback is not None:
-            self.__print_callback(req_frame)
-
         res_frame = self.__communicator.send_frame(req_frame)
         list_res_frame = list(res_frame)
-
-        if self.__print_callback is not None:
-            self.__print_callback(req_frame)
 
         return Response(list(list_res_frame))
 
