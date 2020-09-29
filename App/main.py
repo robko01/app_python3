@@ -99,10 +99,10 @@ def main():
 
     # Add arguments.
     parser.add_argument("--task", type=str, default="grasp2", help="Builtin program")
-    parser.add_argument("--port", type=str, default="COM17", help="Serial port")
+    parser.add_argument("--port", type=str, default="COM3", help="Serial port or TCP port.")
+    parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.")
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")
-    parser.add_argument("--host", type=str, default=None, help="Host of the robot.")
 
     # Take arguments.
     args = parser.parse_args()
