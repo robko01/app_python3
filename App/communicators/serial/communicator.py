@@ -27,6 +27,8 @@ import serial
 
 from communicators.base_communicator import BaseCommunicator
 
+from utils.logger import get_logger
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -70,6 +72,9 @@ class Communicator(BaseCommunicator):
     __baudrate = 115200 #921600
     """Baud rate."""
 
+    __logger = None
+    """Logger"""
+
 #endregion
 
 #region Constructor
@@ -85,15 +90,43 @@ class Communicator(BaseCommunicator):
 
         self.__port = serial.Serial(name, self.__baudrate)
 
+        self.__logger = get_logger(__name__)
+
+#endregion
+
+#region Private Methods
+
+    def __make_buffer(self, frame):
+        """Make human readable the buffer."""
+
+        buffer = ""
+        length = len(frame)
+        index = 0
+
+        for data in frame:
+            if index < length - 1:
+                buffer += "{}, ".format(data)
+
+            else:
+                buffer += "{}".format(data)
+
+            index += 1
+
+        return buffer
+
 #endregion
 
 #region Protected Methods
 
-    def send(self, payload):
+    def send(self, frame):
+        """Send data."""
 
-        self.__port.write(payload)
+        msg = "To Robot: {}".format(self.__make_buffer(frame))
+        self.__logger.debug(msg)
+        self.__port.write(frame)
 
     def receive(self):
+        """Receive the frame."""
 
         frame = None
         wait = 0.1
@@ -109,14 +142,17 @@ class Communicator(BaseCommunicator):
             time.sleep(wait)
 
             if times > self.__timeout:
-                raise Exception("Time out has ocurred in Communicator.")
+                raise TimeoutError("Time out has ocurred in Communicator.")
 
+        msg = "From Robot: {}".format(self.__make_buffer(frame))
+        self.__logger.debug(msg)
         return frame
 
     def send_frame(self, req_frame):
+        """Send the frame."""
 
         if self.__port.isOpen() is False:
-            raise Exception("Port is not opened on level Communicator.")
+            raise FileNotFoundError("Port is not opened on level Communicator.")
 
         #self._open()
         self.send(req_frame)

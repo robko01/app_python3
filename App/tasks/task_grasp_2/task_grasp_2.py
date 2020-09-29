@@ -27,6 +27,8 @@ from tasks.base_task import BaseTask
 
 from utils.utils import scale_speeds
 
+from utils.logger import get_logger
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -59,12 +61,27 @@ __status__ = "Debug"
 class TaskGrasp2(BaseTask):
     """Grasp 2"""
 
+    __logger = None
+
+    def __is_move_cb(self, result):
+
+        msg = "Is moving: {:08b}".format(result)
+        self.__logger.debug(msg)
+
 #region Public Methods
 
     def start(self):
         """Start the task."""
 
+        if self.__logger is None:
+            self.__logger = get_logger(__name__)
+
+        self.__logger.debug("Starting")
+
         self._start_cont()
+        self._controller.is_moving_cb(self.__is_move_cb)
+
+        self.__logger.debug("Started")
 
         # Set the speed.
         speed = 100
@@ -88,7 +105,7 @@ class TaskGrasp2(BaseTask):
         for position in trajectory:
             if self._execution_mode == "1":
                 command = input("Press Enter to continue or type command: ")
-                print("Command:", command)
+                print("Command: {}".format(command))
 
             command = command.lower()
 
@@ -99,12 +116,16 @@ class TaskGrasp2(BaseTask):
                 self._controller.move_absolute([0, 300, 0, 300, 0, 300, 0, 300, 0, 300, 0, 300])
                 break
 
-            print("Target:", position)
+            self.__logger.debug("Target: {}".format(position))
             current_point = scale_speeds(position, speed)
-            print("Result:", current_point)
+            self.__logger.debug("Result: {}".format(current_point))
             self._controller.move_relative(current_point)
             current_point = self._controller.current_position()
-            print("Reach:", current_point)
-            print("")
+            self.__logger.debug("Reach: {}".format(current_point))
+            self.__logger.debug("")
+
+        self._controller.wait_to_stop()
+
+        self.__logger.debug("End")
 
 #endregion

@@ -195,6 +195,7 @@ class TaskManager:
         if self.__task is not None:
             self.__logger.info("Starting task: {}".format(self.__task_name))
             self.__task.start()
+            self.__logger.info("Ending task: {}".format(self.__task_name))
 
     def stop(self):
         """Stop the task."""

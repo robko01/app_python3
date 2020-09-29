@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from tasks.base_task import BaseTask
 
+from utils.logger import get_logger
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -56,10 +58,20 @@ __status__ = "Debug"
 class TaskCmd(BaseTask):
     """Command line test tool."""
 
+#region Attributes
+
+    __logger = None
+    """Logger"""
+
+#endregion
+
 #region Public Methods
 
     def start(self):
         """Start the task."""
+
+        if self.__logger is None:
+            self.__logger = get_logger(__name__)
 
         self._start_cont()
 
@@ -67,7 +79,7 @@ class TaskCmd(BaseTask):
 
         while not self._stop_flag:
 
-            print("")
+            self.__logger.info("")
             command = input("Enter command: ")
             command = command.lower()
 
@@ -88,7 +100,7 @@ class TaskCmd(BaseTask):
                 steps = int(steps.lower())
                 speed = int(speed.lower())
 
-                print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
+                self.__logger.info("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
                 self._controller.move_relative_base(steps, speed)
 
@@ -105,7 +117,7 @@ class TaskCmd(BaseTask):
                 steps = int(steps.lower())
                 speed = int(speed.lower())
 
-                print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
+                self.__logger.info("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
                 self._controller.move_relative_shoulder(steps, speed)
 
@@ -122,7 +134,7 @@ class TaskCmd(BaseTask):
                 steps = int(steps.lower())
                 speed = int(speed.lower())
 
-                print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
+                self.__logger.info("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
                 self._controller.move_relative_elbow(steps, speed)
 
@@ -140,7 +152,7 @@ class TaskCmd(BaseTask):
                 speed = int(speed.lower())
 
 
-                print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
+                self.__logger.info("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
                 self._controller.move_relative_p(steps, speed)
 
@@ -157,7 +169,7 @@ class TaskCmd(BaseTask):
                 steps = int(steps.lower())
                 speed = int(speed.lower())
 
-                print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
+                self.__logger.info("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
                 self._controller.move_relative_r(steps, speed)
 
@@ -174,27 +186,27 @@ class TaskCmd(BaseTask):
                 steps = int(steps.lower())
                 speed = int(speed.lower())
 
-                print("Execute %s @ %d steps and %d speed." % (command, steps, speed))
+                self.__logger.info("Execute %s @ %d steps and %d speed." % (command, steps, speed))
 
                 self._controller.move_relative_gripper(steps, speed)
 
             elif command == "pos":
 
                 current_point = self._controller.current_position()
-                print("Current position:", current_point)
+                self.__logger.info("Current position:", current_point)
 
             elif command == "add_c_pos":
 
                 current_point = self._controller.current_position()
-                print("Current position:", current_point)
+                self.__logger.info("Current position:", current_point)
                 poses.append(current_point)
 
             elif command == "ls_pos":
 
-                print("Current positions:")
-                print(poses)
+                self.__logger.info("Current positions:")
+                self.__logger.info(poses)
 
             else:
-                print("Invalid command: {}".format(command))
+                self.__logger.info("Invalid command: {}".format(command))
 
 #endregion
