@@ -30,6 +30,9 @@ from controllers.base_robko01 import BaseRobko01
 from controllers.orlin369.protocol.package_manager import PackageManager
 from controllers.orlin369.op_code import OpCode
 from controllers.orlin369.status_code import StatusCode
+from controllers.orlin369.exceptions import InvalidPackage
+from controllers.orlin369.exceptions import InvalidOperationCode
+from controllers.orlin369.exceptions import InvalidStatusCode
 
 #region File Attributes
 
@@ -63,9 +66,18 @@ __status__ = "Debug"
 class Robko01(BaseRobko01):
     """This class is dedicated to controll robot controller made by Orlin Dimitrov."""
 
-    __comunicator = None
+#region Attributes
+
+    __communicator = None
+    """Communicator"""
 
     __pm = None
+    """Package manager."""
+
+    __is_moving_cb = None
+    """Callback"""
+
+#endregion
 
 #region Constructor
 
@@ -152,12 +164,13 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.Ping.value:
                         break
                     else:
-                        print("Ping: Invalid operation code: " + str(ord(response.opcode)))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Ping: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -181,12 +194,13 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.Stop.value:
                         break
                     else:
-                        print("Stop: Invalid operation code: " + str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Stop: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -210,12 +224,13 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.Disable.value:
                         break
                     else:
-                        print("Disable: Invalid operation code: " + str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Disable: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -239,12 +254,13 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.Enable.value:
                         break
                     else:
-                        print("Enable: Invalid operation code: " + str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Enable: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -268,12 +284,13 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.Clear.value:
                         break
                     else:
-                        print("Clear: Invalid operation code: " + str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Clear: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -306,21 +323,23 @@ class Robko01(BaseRobko01):
                 int(current_point[10]), int(current_point[11]))
 
             response = self.__pm.request(OpCode.MoveRelative.value, payload)
-
             if response.is_valid():
+
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.MoveRelative.value:
                         break
                     else:
-                        print("Move Relative: Invalid operation code: " +\
-                            str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
+
                 elif response.status == StatusCode.Busy.value:
                     break
+
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Move Relative: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
         if self.synchronous:
             self.wait_to_stop()
@@ -354,21 +373,24 @@ class Robko01(BaseRobko01):
                 int(current_point[10]), int(current_point[11]))
 
             response = self.__pm.request(OpCode.MoveAbsolute.value, payload)
-
             if response.is_valid():
+
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.MoveAbsolute.value:
                         break
                     else:
-                        print("Move Absolute: Invalid operation code: " +\
-                            str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
+
                 elif response.status == StatusCode.Busy.value:
                     break
+
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Move Absolute: Invalid package.")
+                raise InvalidPackage("Invalid package.")
+
 
             time.sleep(self._sync_interval)
 
@@ -398,17 +420,20 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.IsMoving.value:
                         value = response.payload
                         result = value[0]
-                        #print("Is Moving: " + str(self.__int_to_bin(bytes(value))))
                         break
                     else:
-                        print("Invalid operation code: " + str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Is Moving: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
+
+        if self.__is_moving_cb is not None:
+            self.__is_moving_cb(result)
 
         return result
 
@@ -433,13 +458,13 @@ class Robko01(BaseRobko01):
                         position = unpack("<hhhhhhhhhhhh", bytes(value))
                         break
                     else:
-                        print("Current Position: Invalid operation code: " +\
-                            str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Current Position: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -465,17 +490,16 @@ class Robko01(BaseRobko01):
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.DI.value:
                         value = response.payload
-                        #print("Inputs: " + str(self.__int_to_bin(bytes(value))))
                         output = value
                         break
                     else:
-                        print("Digital Inputs: Invalid operation code: " + \
-                            str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Digital Inputs: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -504,20 +528,19 @@ class Robko01(BaseRobko01):
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.DO.value:
                         arr = [int(x) for x in bin(value)[2:]]
-                        print("Digital Outputs: " + str(arr))
                         break
                     else:
-                        print("Digital Outputs: Invalid operation code: " + \
-                            str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Digital Outputs: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
-        return response
+        return arr
 
     def move_speed(self, current_point):
         """Move the robot in speed mode.
@@ -551,14 +574,17 @@ class Robko01(BaseRobko01):
                     if response.opcode == OpCode.MoveSpeed.value:
                         break
                     else:
-                        print("Move Speed: Invalid operation code: " + str(response.opcode))
+                        raise InvalidOperationCode("Operation code: {}".format(response.opcode))
+
                 elif response.status == StatusCode.Busy.value:
                     break
+
                 else:
-                    print("Status: " + StatusCode.to_text(response.status) \
-                      + "; OpCode: " + OpCode.to_text(response.opcode))
+                    raise InvalidStatusCode("Status: {}; OpCode: {}".format(\
+                        StatusCode.to_text(response.status),\
+                        OpCode.to_text(response.opcode)))
             else:
-                print("Move Speed: Invalid package.")
+                raise InvalidPackage("Invalid package.")
 
             time.sleep(self._sync_interval)
 
@@ -796,5 +822,8 @@ class Robko01(BaseRobko01):
 
         point = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, steps, speed]
         return self.move_absolute(point)
+
+    def is_moving_cb(self, cb):
+        self.__is_moving_cb = cb
 
 #endregion
