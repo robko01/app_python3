@@ -52,10 +52,14 @@ __email__ = "robko01@8bitclub.com"
 __status__ = "Debug"
 """File status."""
 
+__class_name__ = "TaskGrasp1"
+"""Task name."""
+
 #endregion
 
 class TaskGrasp1(BaseTask):
-    """Grasp 1"""
+    """Task Grasp 1
+    """
 
 #region Public Methods
 

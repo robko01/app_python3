@@ -50,8 +50,8 @@ __maintainer__ = "Orlin Dimitrov"
 __email__ = "robko01@8bitclub.com"
 """E-mail of the author."""
 
-__status__ = "Debug"
-"""File status."""
+__class_name__ = "TaskCmd"
+"""Task name."""
 
 #endregion
 
@@ -64,6 +64,12 @@ class TaskCmd(BaseTask):
     """Logger"""
 
 #endregion
+
+    def __init__(self, **kwargs):
+
+        super().__init__(kwargs)
+
+        self._name = __class_name__
 
 #region Public Methods
 
@@ -87,7 +93,7 @@ class TaskCmd(BaseTask):
                 self.stop()
                 break
 
-            if "base" or "0" in command:
+            if "base" == command or "0" == command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -104,7 +110,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_base(steps, speed)
 
-            elif "shoulder" or "1" in command:
+            elif "shoulder" == command or "1" == command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -121,7 +127,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_shoulder(steps, speed)
 
-            elif "elbow" or "2" in command:
+            elif "elbow" == command or "2" == command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -138,7 +144,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_elbow(steps, speed)
 
-            elif "p" or "3" in command:
+            elif "p" == command or "3" == command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -156,7 +162,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_p(steps, speed)
 
-            elif "r" or "4" in command:
+            elif "r" == command or "4" == command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 
@@ -173,7 +179,7 @@ class TaskCmd(BaseTask):
 
                 self._controller.move_relative_r(steps, speed)
 
-            elif "gripper" or "5" in command:
+            elif "gripper" == command or "5" == command:
                 steps = input("Enter steps: ")
                 speed = input("Enter speed: ")
 

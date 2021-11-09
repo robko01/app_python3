@@ -54,6 +54,9 @@ __email__ = "robko01@8bitclub.com"
 __status__ = "Debug"
 """File status."""
 
+__class_name__ = "TaskGrasp3"
+"""Task name."""
+
 #endregion
 
 class TaskGrasp3(BaseTask):

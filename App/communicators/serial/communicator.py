@@ -63,7 +63,7 @@ class Communicator(BaseCommunicator):
 
 #region Attributes
 
-    __port = None
+    __client = None
     """Serial port."""
 
     __timeout = 5
@@ -88,7 +88,7 @@ class Communicator(BaseCommunicator):
             Serial port name.
         """
 
-        self.__port = serial.Serial(name, self.__baudrate)
+        self.__client = serial.Serial(name, self.__baudrate)
 
         self.__logger = get_logger(__name__)
 
@@ -105,10 +105,10 @@ class Communicator(BaseCommunicator):
 
         for data in frame:
             if index < length - 1:
-                buffer += "{}, ".format(data)
+                buffer += "{:02X}, ".format(data)
 
             else:
-                buffer += "{}".format(data)
+                buffer += "{:02X}".format(data)
 
             index += 1
 
@@ -121,9 +121,9 @@ class Communicator(BaseCommunicator):
     def send(self, frame):
         """Send data."""
 
-        msg = "To Robot: {}".format(self.__make_buffer(frame))
+        msg = "TX -> {}".format(self.__make_buffer(frame))
         self.__logger.debug(msg)
-        self.__port.write(frame)
+        self.__client.write(frame)
 
     def receive(self):
         """Receive the frame."""
@@ -133,9 +133,9 @@ class Communicator(BaseCommunicator):
         times = 0
 
         while True:
-            size = self.__port.inWaiting()
+            size = self.__client.inWaiting()
             if size > 0:
-                frame = self.__port.read(size)
+                frame = self.__client.read(size)
                 break
 
             times += wait
@@ -144,14 +144,14 @@ class Communicator(BaseCommunicator):
             if times > self.__timeout:
                 raise TimeoutError("Time out has ocurred in Communicator.")
 
-        msg = "From Robot: {}".format(self.__make_buffer(frame))
+        msg = "RX <- {}".format(self.__make_buffer(frame))
         self.__logger.debug(msg)
         return frame
 
     def send_frame(self, req_frame):
         """Send the frame."""
 
-        if self.__port.isOpen() is False:
+        if self.__client.isOpen() is False:
             raise FileNotFoundError("Port is not opened on level Communicator.")
 
         #self._open()
@@ -168,36 +168,36 @@ class Communicator(BaseCommunicator):
     def connect(self):
         """Connect to the device."""
 
-        if self.__port.isOpen() is False:
+        if self.__client.isOpen() is False:
 
-            self.__port.timeout = self.__timeout
-            self.__port.setDTR(False)
-            self.__port.setRTS(False)
-            self.__port.open()
+            self.__client.timeout = self.__timeout
+            self.__client.setDTR(False)
+            self.__client.setRTS(False)
+            self.__client.open()
 
     def disconnect(self):
         """Disconnect from device."""
 
-        if self.__port.isOpen() is True:
+        if self.__client.isOpen() is True:
 
-            self.__port.setDTR(False)
-            self.__port.setRTS(False)
-            self.__port.close()
+            self.__client.setDTR(False)
+            self.__client.setRTS(False)
+            self.__client.close()
 
     def reset(self):
         """Reset target device."""
 
-        if self.__port.isOpen() is False:
+        if self.__client.isOpen() is False:
             raise Exception("Port is not opened on level Communicator.")
 
-        self.__port.setDTR(False)
-        self.__port.setRTS(False)
+        self.__client.setDTR(False)
+        self.__client.setRTS(False)
         time.sleep(0.001)
-        self.__port.setDTR(True)
-        self.__port.setRTS(True)
+        self.__client.setDTR(True)
+        self.__client.setRTS(True)
         time.sleep(0.001)
-        self.__port.setDTR(False)
-        self.__port.setRTS(False)
+        self.__client.setDTR(False)
+        self.__client.setRTS(False)
         time.sleep(self.__timeout)
 
 #endregion

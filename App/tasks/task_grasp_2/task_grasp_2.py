@@ -56,6 +56,9 @@ __email__ = "robko01@8bitclub.com"
 __status__ = "Debug"
 """File status."""
 
+__class_name__ = "TaskGrasp2"
+"""Task name."""
+
 #endregion
 
 class TaskGrasp2(BaseTask):
@@ -63,10 +66,20 @@ class TaskGrasp2(BaseTask):
 
     __logger = None
 
+    def __init__(self, **kwargs):
+
+        super().__init__(kwargs)
+
+        self._name = __class_name__
+
+#region Private Methods
+
     def __is_move_cb(self, result):
 
         msg = "Is moving: {:08b}".format(result)
         self.__logger.debug(msg)
+
+#endregion
 
 #region Public Methods
 

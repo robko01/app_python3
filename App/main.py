@@ -97,23 +97,42 @@ def main():
     # Create parser.
     parser = argparse.ArgumentParser()
 
+    controller_type = "ser"
+    # controller_type = "ip"
+
     # Add arguments.
-    parser.add_argument("--task", type=str, default="grasp2", help="Builtin program")
-    parser.add_argument("--port", type=str, default="COM3", help="Serial port or TCP port.")
-    parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.")
-    parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
-    parser.add_argument("--em", type=str, default="f", help="Step mode")
+    if controller_type == "ser":
+        parser.add_argument("--task", type=str, default="task_cmd", help="Builtin program")
+        # parser.add_argument("--task", type=str, default="task_grasp_2", help="Builtin program")
+        parser.add_argument("--port", type=str, default="COM3", help="Serial port or TCP port.")
+        parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.")
+        parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
+        parser.add_argument("--em", type=str, default="f", help="Step mode")
+
+    elif controller_type == "ip":
+        parser.add_argument("--task", type=str, default="task_grasp_2", help="Builtin program")
+        parser.add_argument("--port", type=int, default=10182, help="Serial port or TCP port.")
+        parser.add_argument("--host", type=str, default="172.33.4.200", help="Host/IP of the robot.")
+        parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
+        parser.add_argument("--em", type=str, default="f", help="Step mode")
 
     # Take arguments.
     args = parser.parse_args()
 
-    controller = ControllerFactory.create_robot(**vars(args))
+    controller = ControllerFactory.create(**vars(args))
 
     if controller is None:
         sys.exit("No controller type specified")
 
-    __tm = TaskManager(controller=controller, task=args.task, em=args.em)
-    __tm.start()
+    __tm = TaskManager(controller=controller)
+
+    names = __tm.list_tasks()
+    for name in names:
+        __logger.info("Found task: {}".format(name))
+
+    __tm.start(args.task)
+
+    __tm.stop()
 
 if __name__ == "__main__":
     main()

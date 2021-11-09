@@ -53,6 +53,9 @@ __email__ = "robko01@8bitclub.com"
 __status__ = "Debug"
 """File status."""
 
+__class_name__ = "TaskTemplate"
+"""Task name."""
+
 #endregion
 
 class TaskTemplate(BaseTask):

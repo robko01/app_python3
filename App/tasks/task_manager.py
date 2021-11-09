@@ -22,16 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+import os
+import importlib
+
 from enum import Enum
 
 from utils.logger import get_logger
-
-from tasks.task_kbd.task_kbd import TaskKbd
-from tasks.task_cmd.task_cmd import TaskCmd
-from tasks.task_grasp_1.task_grasp_1 import TaskGrasp1
-from tasks.task_grasp_2.task_grasp_2 import TaskGrasp2
-from tasks.task_grasp_3.task_grasp_3 import TaskGrasp3
-from tasks.task_inputs.task_inputs import TaskInputs
 
 #region File Attributes
 
@@ -88,9 +84,6 @@ class TaskManager:
     __execution_mode = ExecutionMode.Pause
     """Mode of execution."""
 
-    __task_name = ""
-    """Program name."""
-
     __task = None
     """The task."""
 
@@ -140,68 +133,96 @@ class TaskManager:
         if "controller" in kwargs:
             self.__controller = kwargs["controller"]
 
-        if "task" in kwargs:
-            self.__set_task(kwargs["task"])
-
-        if "em" in kwargs:
-            self.__execution_mode = kwargs["em"]
-
 #endregion
 
 #region Private Methods
 
-    def __set_task(self, task_name):
-        """Set execution mode.
-
-        Parameters
-        ----------
-        program : str
-            Program name.
+    def __load_task(self, task_name):
+        """Load the task.
+        Args:
+            task_name (str): Name of the task.
+        Raises:
+            ImportError: Raise when module can not me imported.
+            ModuleNotFoundError: Raise when module can not be found.
+            AttributeError: Not existing attribute.
+            ValueError: Attribute __class_name__ is not set properly.
+        Returns:
+            [mixed]: Instance of the class module.
         """
 
-        self.__task_name = task_name
+        module_path = "tasks.{}.{}".format(task_name, task_name)
 
-        if self.__task_name == "cmd":
-            self.__task = TaskCmd(cont=self.__controller, em=self.__execution_mode)
+        module = importlib.import_module(module_path)
+        if module is None:
+            raise ImportError("{}.{}".format(module_path))        
 
-        elif self.__task_name == "grasp1":
-            self.__task = TaskGrasp1(cont=self.__controller, em=self.__execution_mode)
+        if not hasattr(module, "__class_name__"):
+            raise AttributeError("Module: {}, has no attribute __class_name__.".format(module_path))
 
-        elif self.__task_name == "grasp2":
-            self.__task = TaskGrasp2(cont=self.__controller, em=self.__execution_mode)
+        if module.__class_name__ == "":
+            raise ValueError("Module: {}.__class_name__ is empty.".format(module_path))
 
-        elif self.__task_name == "grasp3":
-            self.__task = TaskGrasp3(cont=self.__controller, em=self.__execution_mode)
+        class_module = getattr(module, module.__class_name__)
+        if class_module is None:
+            raise ModuleNotFoundError("{}.{}".format(module_path, module.__class_name__))
+        
+        class_isinstance = class_module(controller=self.__controller, em=self.__execution_mode)
 
-        elif self.__task_name == "inputs":
-            self.__task = TaskInputs(cont=self.__controller, em=self.__execution_mode)
-
-        elif self.__task_name == "kb":
-            self.__task = TaskKbd(cont=self.__controller, em=self.__execution_mode)
-
-        elif  self.__task_name is not None:
-            self.__logger.error("No program selected")
-
-        else:
-            self.__logger.error("No program selected")
+        return class_isinstance
 
 #endregion
 
 #region Public Methods
 
-    def start(self):
-        """Start the task."""
+    def list_tasks(self):
+        """List the existing tasks.
+
+        Returns:
+            list: Names of the plugins
+        """
+
+        list_of_dirs = []
+
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        dirs = os.listdir(dir_path)
+        for item in dirs:
+
+            if item.startswith("__"):
+                continue
+
+            if item == "task_template":
+                continue
+
+            plugin_path = os.path.join(dir_path, item)
+
+            if os.path.isdir(plugin_path):
+                list_of_dirs.append(item)
+
+        return list_of_dirs
+
+    def start(self, start):
+        """Start the task.
+
+        Args:
+            start (str): Task folder name.
+        """        
+
+        self.stop()
+
+        if self.__task is None:
+            self.__task = self.__load_task(start)
 
         if self.__task is not None:
-            self.__logger.info("Starting task: {}".format(self.__task_name))
+            self.__logger.info("Starting task: {}".format(self.__task.name))
             self.__task.start()
-            self.__logger.info("Ending task: {}".format(self.__task_name))
+            self.__logger.info("Ending task: {}".format(self.__task.name))
 
     def stop(self):
         """Stop the task."""
 
         if self.__task is not None:
-            self.__logger.info("Stopping task: {}".format(self.__task_name))
+            self.__logger.info("Stopping task: {}".format(self.__task.name))
             self.__task.stop()
 
 #endregion

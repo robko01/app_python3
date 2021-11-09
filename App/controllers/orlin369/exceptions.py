@@ -63,7 +63,6 @@ class InvalidStatusCode(Exception):
 
     pass
 
-
 class InvalidPackage(Exception):
     """Invalid package exception."""
 

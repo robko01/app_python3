@@ -68,23 +68,26 @@ class BaseTask:
     _execution_mode = 0
     """Execution mode."""
 
+    _name = ""
+
 #endregion
+
+    @property
+    def name(self):
+
+        return self._name
 
 #region Constructor
 
-    def __init__(self, **kwargs):
+    def __init__(self, kwargs):
 
         self._kwargs = kwargs
 
-        if "cont" in self._kwargs:
-            self._controller = self._kwargs["cont"]
+        if "controller" in self._kwargs:
+            self._controller = self._kwargs["controller"]
 
         if "em" in self._kwargs:
             self._execution_mode = self._kwargs["em"]
-
-    def __del__(self):
-
-        self.stop()
 
 #endregion
 

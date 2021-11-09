@@ -24,7 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-import serial
+import socket
+
+from utils.logger import get_logger
 
 from communicators.base_communicator import BaseCommunicator
 
@@ -62,19 +64,127 @@ class Communicator(BaseCommunicator):
 
 #region Attributes
 
+    __logger = None
+    """Data logger.
+    """    
+
+    __timeout = 5
+    """Timeout in second.
+    """
+
     __host = None
-    """Robot host."""
+    """Service host.
+    """
 
     __port = None
-    """Robot port."""
+    """Servoice port.
+    """
+
+    __client = None
+    """Socket client.
+    """    
 
 #endregion
 
 #region Constructor
 
-    def __init__(self, host, port):
+    def __init__(self, host, port=10182):
+        """Constructor
+
+        Args:
+            host (str): IP address or domain of the target.
+            port (int): Port of the service. Default is 10182.
+        """
 
         self.__host = host
         self.__port = port
+
+        self.__client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        self.__logger = get_logger(__name__)
+
+#endregion
+
+#region Private Methods
+
+    def __make_buffer(self, frame):
+        """Make human readable the buffer."""
+
+        buffer = ""
+        length = len(frame)
+        index = 0
+
+        for data in frame:
+            if index < length - 1:
+                buffer += "{:02X}, ".format(data)
+
+            else:
+                buffer += "{:02X}".format(data)
+
+            index += 1
+
+        return buffer
+
+#endregion
+
+#region Protected Methods
+
+    def send(self, frame):
+        """Send data."""
+
+        msg = "TX -> {}".format(self.__make_buffer(frame))
+        self.__logger.debug(msg)
+        self.__client.sendall(frame)
+
+    def receive(self):
+        """Receive the frame."""
+
+        frame = None
+        wait = 0.1
+        times = 0
+
+        frame = self.__client.recv(1024)
+
+        msg = "RX <- {}".format(self.__make_buffer(frame))
+        self.__logger.debug(msg)
+        return frame
+
+    def send_frame(self, req_frame):
+        """Send the frame."""
+
+        # if self.__client.isOpen() is False:
+            # raise FileNotFoundError("Port is not opened on level Communicator.")
+
+        #self._open()
+        self.send(req_frame)
+        res_frame = None
+        res_frame = self.receive()
+        #self._close()
+        return res_frame
+
+#endregion
+
+#region Public Methods
+
+    def connect(self):
+        """Connect to the device.
+        """
+
+        if self.__client is not None:
+
+            self.__client.connect((self.__host, self.__port))
+            # self.__client.settimeout = self.__timeout
+
+    def disconnect(self):
+        """Disconnect from device.
+        """
+
+        if self.__client is not None:
+
+            self.__client.close()
+
+    def reset(self):
+
+        pass
 
 #endregion

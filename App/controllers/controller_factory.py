@@ -62,31 +62,31 @@ class ControllerFactory:
     """Robot factory."""
 
     @staticmethod
-    def create_robot(**kwargs):
+    def create(**kwargs):
 
         robot = None
 
-        cont = None
+        controller = None
         if "cont" in kwargs:
-            cont = kwargs["cont"]
+            controller = kwargs["cont"]
 
-        if cont is None:
+        if controller is None:
             raise ValueError("Robot type can not be None.")
 
-        elif cont == "orlin369":
+        elif controller == "orlin369":
 
             if "port" in kwargs and "host" in kwargs:
                 if kwargs["host"] is None:
                     name = kwargs["port"]
                     robot = Orko01(SerCom(name))
 
-            elif "port" in kwargs and "host" in kwargs:
+            if "port" in kwargs and "host" in kwargs:
                 if kwargs["host"] is not None or kwargs["host"] is not None:
                     host = kwargs["host"]
                     port = kwargs["port"]
                     robot = Orko01(IPCom(host, port))
 
-        elif cont == "tugab":
+        elif controller == "tugab":
             robot = Gabko01(GabkoPM(kwargs))
 
         else:
