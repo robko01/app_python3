@@ -97,7 +97,7 @@ class TaskGrasp2(BaseTask):
         self.__logger.debug("Started")
 
         # Set the speed.
-        speed = 100
+        speed = 150
 
         # Trajectory path.
         trajectory = [ \
