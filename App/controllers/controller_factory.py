@@ -76,14 +76,13 @@ class ControllerFactory:
         elif controller == "orlin369":
 
             if "port" in kwargs and "host" in kwargs:
-                if kwargs["host"] is None:
+                if not kwargs["port"].isnumeric():
                     name = kwargs["port"]
                     robot = Orko01(SerCom(name))
 
-            if "port" in kwargs and "host" in kwargs:
-                if kwargs["host"] is not None or kwargs["host"] is not None:
+                if kwargs["host"] is not None and kwargs["port"].isnumeric():
                     host = kwargs["host"]
-                    port = kwargs["port"]
+                    port = int(kwargs["port"])
                     robot = Orko01(IPCom(host, port))
 
         elif controller == "tugab":
