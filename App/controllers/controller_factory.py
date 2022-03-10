@@ -74,16 +74,18 @@ class ControllerFactory:
             raise ValueError("Robot type can not be None.")
 
         elif controller == "orlin369":
-
             if "port" in kwargs and "host" in kwargs:
-                if not kwargs["port"].isnumeric():
-                    name = kwargs["port"]
-                    robot = Orko01(SerCom(name))
 
-                if kwargs["host"] is not None and kwargs["port"].isnumeric():
+                # IP based.
+                if kwargs["port"].isnumeric() and kwargs["host"] != None:
                     host = kwargs["host"]
                     port = int(kwargs["port"])
                     robot = Orko01(IPCom(host, port))
+
+                # Serial based.
+                elif not kwargs["port"].isnumeric() and kwargs["host"] == None:
+                    name = kwargs["port"]
+                    robot = Orko01(SerCom(name))
 
         elif controller == "tugab":
             robot = Gabko01(GabkoPM(kwargs))
