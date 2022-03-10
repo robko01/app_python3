@@ -588,8 +588,8 @@ class Robko01(BaseRobko01):
 
             time.sleep(self._sync_interval)
 
-        if self.synchronous:
-            self.wait_to_stop()
+        # if self.synchronous:
+        #     self.wait_to_stop()
 
         return response
 
