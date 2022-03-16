@@ -51,29 +51,19 @@ __class_name__ = "TaskGUI"
 
 #endregion
 
-class AxisKeyController():
+class AxisActionController():
 
 #region Attributes
 
-    __key_cw = ""
-
-    __key_ccw = ""
-
     __direction = 0
 
-    __speed = 50
+    __speed = 100
 
 #endregion
 
 #region Constructor
 
     def __init__(self, **kwargs):
-
-        if "key_cw" in kwargs:
-            self.__key_cw = kwargs["key_cw"]
-
-        if "key_ccw" in kwargs:
-            self.__key_ccw = kwargs["key_ccw"]
 
         if "callback" in kwargs:
             self.__callback = kwargs["callback"]
@@ -86,16 +76,6 @@ class AxisKeyController():
 #region Propertyes
 
     @property
-    def key_cw(self):
-        
-        return self.__key_cw
-
-    @property
-    def key_ccw(self):
-        
-        return self.__key_ccw
-
-    @property
     def speed(self):
 
         return self.__speed
@@ -104,6 +84,11 @@ class AxisKeyController():
     def speed(self, value):
 
         self.__speed = value
+
+    @property
+    def is_stopped(self):
+
+        return self.__direction == 0
 
 #endregion
 
