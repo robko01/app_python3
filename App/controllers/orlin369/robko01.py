@@ -480,7 +480,7 @@ class Robko01(BaseRobko01):
         """
 
         response = None
-        output = None
+        value = None
 
         while True:
 
@@ -489,8 +489,7 @@ class Robko01(BaseRobko01):
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.DI.value:
-                        value = response.payload
-                        output = value
+                        value = response.payload[0]
                         break
                     else:
                         raise InvalidOperationCode("Operation code: {}".format(response.opcode))
@@ -503,7 +502,7 @@ class Robko01(BaseRobko01):
 
             time.sleep(self._sync_interval)
 
-        return response, output
+        return value
 
     def set_outputs(self, value):
         """Set robot outputs.
