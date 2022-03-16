@@ -22,11 +22,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+from dataclasses import field
+from email.mime import base
+import queue
 from tkinter import *
 
-from tasks.task_ui.axis_key_controller import *
+from tasks.task_ui.actions import Actions
+from tasks.task_ui.axis_action_controller import *
+from tasks.task_ui.led import LedStatus
+from tasks.task_ui.led import LedShape
+from tasks.task_ui.led import LED
 
 from utils.logger import get_logger
+from utils.thread_timer import ThreadTimer
+from utils.timer import Timer
 
 #region File Attributes
 
@@ -63,17 +72,29 @@ class GUI():
 
     __logger = None
 
+
     __master = None
 
-    __Lab = None
+    __axis_controllr = []
+
+    __frm_port_a_leds = []
+
+    __frm_axis_labels = []
+
+
+    __actions_queue = None
+
 
     __controller = None
 
-    __speed = 100
-
-    __key_controllers = []
-
     __speeds = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    __current_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    __port_a_inputs = 0
+
+    __motors_states = 0
+
 
     __positions = []
 
@@ -83,22 +104,65 @@ class GUI():
 
     def __init__(self, **kwargs):
 
-        # if "logger" in kwargs:
-        #     self.__logger = kwargs["logger"]
-
         if "controller" in kwargs:
             self.__controller = kwargs["controller"]
 
+        if self.__logger is None:
+            self.__logger = get_logger(__name__)
+
+        self.__actions_queue = queue.Queue()
+
+        self.__action_update_timer = ThreadTimer()
+        self.__action_update_timer.update_rate = 0.01
+        self.__action_update_timer.set_cb(self.__action_timer_cb)
+
+        self.__frm_update_timer = Timer()
+        self.__frm_update_timer.update_rate = 0.05
+        self.__frm_update_timer.set_cb(self.__frm_update)
+
+        # Key controllers.
+        self.__axis_controllr.append(AxisActionController(callback=self.__axis_0))
+        self.__axis_controllr.append(AxisActionController(callback=self.__axis_1))
+        self.__axis_controllr.append(AxisActionController(callback=self.__axis_2))
+        self.__axis_controllr.append(AxisActionController(callback=self.__axis_3))
+        self.__axis_controllr.append(AxisActionController(callback=self.__axis_4))
+        self.__axis_controllr.append(AxisActionController(callback=self.__axis_5))
+
 #endregion
 
-#region Private Methods (Robot)
+#region Private Methods (Action Control)
 
-    def __update_robot(self):
+    def __put_action(self, action):
 
-        self.__controller.move_speed(self.__speeds)
+        self.__actions_queue.put(action)
 
-        moving_bits = self.__controller.is_moving()
-        self.__logger.debug("Bits: {}".format(moving_bits))
+    def __do_action(self, action):
+
+        if action == Actions.NONE:
+            pass
+
+        if action == Actions.UpdateSpeeds:
+            self.__controller.move_speed(self.__speeds)
+
+        elif action == Actions.UpdateOutputs:
+            self.__controller.set_outputs(self.__port_a_outputs)
+
+        elif action == Actions.RunStoredPositions:
+            for position in self.__positions:
+                self.__controller.move_relative(position)
+                c_position = self.__controller.current_position()
+                msg = "Current position: {}".format(c_position)
+                self.__logger.debug(msg)
+
+    def __action_timer_cb(self):
+
+        self.__motors_states = self.__controller.is_moving()
+        self.__port_a_inputs = self.__controller.get_inputs()
+        self.__current_position = self.__controller.current_position()
+
+        if not self.__actions_queue.empty():
+            action = self.__actions_queue.get()
+            self.__do_action(action)
 
 #endregion
 
@@ -115,7 +179,7 @@ class GUI():
         elif direction == -1:
             self.__speeds[1] = speed
 
-        self.__update_robot()
+        self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_1(self, direction, speed):
 
@@ -128,7 +192,7 @@ class GUI():
         elif direction == -1:
             self.__speeds[3] = speed
 
-        self.__update_robot()
+        self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_2(self, direction, speed):
 
@@ -144,7 +208,7 @@ class GUI():
             self.__speeds[5] = -speed
             self.__speeds[11] = speed
 
-        self.__update_robot()
+        self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_3(self, direction, speed):
 
@@ -160,7 +224,7 @@ class GUI():
             self.__speeds[7] = speed
             self.__speeds[9] = -speed
 
-        self.__update_robot()
+        self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_4(self, direction, speed):
 
@@ -176,7 +240,7 @@ class GUI():
             self.__speeds[7] = -speed
             self.__speeds[9] = -speed
 
-        self.__update_robot()
+        self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_5(self, direction, speed):
 
@@ -189,75 +253,288 @@ class GUI():
         elif direction == -1:
             self.__speeds[11] = -speed
 
-        self.__update_robot()
+        self.__put_action(Actions.UpdateSpeeds)
 
 #endregion
 
-#region Private Methods (Keys CB)
+#region Private Methods (Form)
 
-    def __key_up(self, event):
-        message = 'up {}'.format(event.char)
-        self.__Lab.config(text=message)
+    def __update_port_a_outputs(self):
 
-    def __key_down(self, event):
-        message = 'down {}'.format(event.char)
-        self.__Lab.config(text=message)
+        value = 0
+        
+        for bit in range(0, 8):
+            value += self.__vars[bit].get()
 
-        for key_controller in self.__key_controllers:
-            if event.char == key_controller.key_cw:
-                key_controller.set_cw()
+        self.__port_a_outputs = value
+        self.__put_action(Actions.UpdateOutputs)
+        
+    def __create_port_a_outputs(self):
 
-            elif event.char == key_controller.key_ccw:
-                key_controller.set_ccw()
+        self.__vars = []
 
-        if event.char == " ":
-            for key_controller in self.__key_controllers:
+        # Create the frame.
+        self.__lbl_frame = LabelFrame(self.__master, text="DO on port A")
+
+        # Create the check boxes.
+        for index in range(0, 8):
+
+            # Bit wight.
+            bit_weight = (2**index)
+
+            # Create the check box.
+            var = IntVar()
+            check = Checkbutton(self.__lbl_frame, variable=var, onvalue=bit_weight, offvalue=0, command=self.__update_port_a_outputs)
+            check.grid(row=0, column=index)
+            self.__vars.append(var)
+        
+        # Place the frame.
+        self.__lbl_frame.place(x=33, y=200)
+
+
+    def __update_port_a_inputs(self):
+
+        if len(self.__frm_port_a_leds) == 8:
+            led_index = 7
+            for index in range(0, 8):
+                if (2**index) & self.__port_a_inputs:
+                    self.__frm_port_a_leds[led_index].turnon()
+                else:
+                    self.__frm_port_a_leds[led_index].turnoff()
+                led_index -= 1
+
+    def __create_port_a_inputs(self):
+
+        # Create the frame.
+        self.__lbl_frame = LabelFrame(self.__master, text="DI on port A")
+
+        led_w = 20
+        led_h = 20
+
+        for index in range(0, 8):
+
+            led = LED(self.__lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+                width=led_w, height=led_h, appearance=RAISED,
+                blink=0, bd=1, outline="")
+            led.frame.grid(row=0, column=index)
+
+            self.__frm_port_a_leds.append(led)
+
+        # Place the frame.
+        self.__lbl_frame.place(x=350, y=200)
+
+
+    def __update_axis_label(self):
+
+        for index in range(0, 6):
+            text = "P: {}\nV: {}".format(self.__current_position[index*2], self.__current_position[index*2 + 1])
+            self.__frm_axis_labels[index].config(text=text)
+
+    def __create_axis_controls(self):
+        
+        w_size = 10
+        h_size = 10
+
+        # Create the frame.
+        self.__frame = Frame(self.__master)
+
+        empty_text = "P: {}\nV: {}".format(0, 0)
+        
+        fields = {
+            "cw":[
+                {
+                    "text": "Base CW",
+                    "press": lambda event: self.__axis_controllr[0].set_cw(),
+                    "release": lambda event: self.__axis_controllr[0].set_ccw()
+                },
+                {
+                    "text": "Shoulder UP",
+                    "press": lambda event: self.__axis_controllr[1].set_cw(),
+                    "release": lambda event: self.__axis_controllr[1].set_ccw()
+                },
+                {
+                    "text": "Elbow UP",
+                    "press": lambda event: self.__axis_controllr[2].set_cw(),
+                    "release": lambda event: self.__axis_controllr[2].set_ccw()
+                },
+                {
+                    "text": "P UP",
+                    "press": lambda event: self.__axis_controllr[3].set_cw(),
+                    "release": lambda event: self.__axis_controllr[3].set_ccw()
+                },
+                {
+                    "text": "R CW",
+                    "press": lambda event: self.__axis_controllr[4].set_cw(),
+                    "release": lambda event: self.__axis_controllr[4].set_ccw()
+                },
+                {
+                    "text": "Gripper OPEN",
+                    "press": lambda event: self.__axis_controllr[5].set_cw(),
+                    "release": lambda event: self.__axis_controllr[5].set_ccw()
+                },
+            ],
+            "ccw":[
+                {
+                    "text": "Base CCW",
+                    "press": lambda event: self.__axis_controllr[0].set_ccw(),
+                    "release": lambda event: self.__axis_controllr[0].set_cw()
+                },
+                {
+                    "text": "Shoulder DOWN",
+                    "press": lambda event: self.__axis_controllr[1].set_ccw(),
+                    "release": lambda event: self.__axis_controllr[1].set_cw()
+                },
+                {
+                    "text": "Elbow DOWN",
+                    "press": lambda event: self.__axis_controllr[2].set_ccw(),
+                    "release": lambda event: self.__axis_controllr[2].set_cw()
+                },
+                {
+                    "text": "P DOWN",
+                    "press": lambda event: self.__axis_controllr[3].set_ccw(),
+                    "release": lambda event: self.__axis_controllr[3].set_cw()
+                },
+                {
+                    "text": "R CCW",
+                    "press": lambda event: self.__axis_controllr[4].set_ccw(),
+                    "release": lambda event: self.__axis_controllr[4].set_cw()
+                },
+                {
+                    "text": "Gripper CLOSE",
+                    "press": lambda event: self.__axis_controllr[5].set_ccw(),
+                    "release": lambda event: self.__axis_controllr[5].set_cw()
+                }
+            ]
+        }
+
+        buttons_cw = []
+        buttons_ccw = []
+
+        for index in range(0, 6):
+
+            self.__frm_axis_labels.append(Label(self.__frame, text=empty_text))
+            self.__frm_axis_labels[index].grid(row=0, column=index, ipadx=h_size, ipady=w_size, sticky='ew')
+
+            buttons_cw.append(Button(self.__frame, text=fields["cw"][index]["text"]))
+            buttons_cw[index].bind("<ButtonPress-1>", fields["cw"][index]["press"])
+            buttons_cw[index].bind("<ButtonRelease-1>", fields["cw"][index]["release"])
+            buttons_cw[index].grid(row=1, column=index, ipadx=h_size, ipady=w_size, sticky='ew')
+
+            buttons_ccw.append(Button(self.__frame, text=fields["ccw"][index]["text"]))
+            buttons_ccw[index].bind("<ButtonPress-1>", fields["ccw"][index]["press"])
+            buttons_ccw[index].bind("<ButtonRelease-1>", fields["ccw"][index]["release"])
+            buttons_ccw[index].grid(row=2, column=index, ipadx=h_size, ipady=w_size, sticky='ew')
+
+        # Place the frame.
+        self.__frame.place(x=33, y=33)
+
+
+    def __frm_key_release(self, event):
+        message = "up {}".format(event.char)
+        self.__lbl_buttons_state.config(text=message)
+
+    def __frm_key_press(self, event):
+
+        char = event.char
+
+        message = "down {}".format(char)
+        self.__lbl_buttons_state.config(text=message)
+
+        if char == " ":
+            for key_controller in self.__axis_controllr:
                 key_controller.stop()
 
+        elif char == "1":
+            self.__axis_controllr[0].set_cw()
 
-        elif event.char == "p":
-            position = self.__controller.current_position()
-            msg = "Current position: {}".format(position)
-            print(msg)
-        
-        elif event.char == "s":
-            position = self.__controller.current_position()
-            self.__positions.append(position)
-            msg = "Stored position: {}".format(position)
-            print(msg)
+        elif char == "q":
+            self.__axis_controllr[0].set_ccw()
 
-        elif event.char == "l":
+        elif char == "2":
+            self.__axis_controllr[1].set_cw()
+
+        elif char == "w":
+            self.__axis_controllr[1].set_ccw()
+
+        elif char == "3":
+            self.__axis_controllr[2].set_cw()
+
+        elif char == "e":
+            self.__axis_controllr[2].set_ccw()
+
+        elif char == "4":
+            self.__axis_controllr[3].set_cw()
+
+        elif char == "r":
+            self.__axis_controllr[3].set_ccw()
+
+        elif char == "5":
+            self.__axis_controllr[4].set_cw()
+
+        elif char == "t":
+            self.__axis_controllr[4].set_ccw()
+
+        elif char == "6":
+            self.__axis_controllr[5].set_cw()
+
+        elif char == "y":
+            self.__axis_controllr[5].set_ccw()
+
+        elif char == "s":
+            self.__positions.append(self.__current_position)
+
+        elif char == "l":
             for position in self.__positions:
                 msg = "Stored position: {}".format(position)
-                print(msg)
+                self.__logger.debug(msg)
 
-        elif event.char == "g":
-            for position in self.__positions:
-                self.__controller.move_relative(position)
-                c_position = self.__controller.current_position()
-                msg = "Current position: {}".format(c_position)
-                print(msg)
+        elif char == "g":
+            action = Actions.RunStoredPositions
+            self.__put_action(action)
 
-#endregion
+    def __frm_update(self):
 
-#region Private Methods (UI)
+        self.__update_axis_label()
 
-    def __create_form(self):
+        self.__update_port_a_inputs()
+
+        # Display states ans inputs.
+        self.__lbl_axis_states.config(text="State: {}; Inputes: {}".format(self.__motors_states, self.__port_a_inputs))
+
+        # Stop the gripper if it is closed enough.
+        if not (2 & self.__port_a_inputs):
+            if not self.__axis_controllr[5].is_stopped:
+                self.__axis_controllr[5].stop()
+
+    def __frm_on_closing(self):
+
+        self.__is_runing = False
+
+    def __frm_create(self):
 
         self.__master = Tk()
-        self.__master.geometry("300x300")
+        self.__master.geometry("600x300")
         self.__master.title("Robko 01")
+        self.__master.protocol("WM_DELETE_WINDOW", self.__frm_on_closing)
 
         # Bind keys.
-        self.__master.bind_all("<KeyPress>", self.__key_down)
-        self.__master.bind_all("<KeyRelease>", self.__key_up)
+        self.__master.bind_all("<KeyPress>", self.__frm_key_press)
+        self.__master.bind_all("<KeyRelease>", self.__frm_key_release)
 
-        display='Press Any Button, or Press  Key'
-        self.__Lab = Label(self.__master, text=display, width=len(display))
-        self.__Lab.pack(pady=40)
-        # self.__Lab.bind_all('<Key>', self.key)
+        display="Press Any Button, or Press  Key"
+        self.__lbl_buttons_state = Label(self.__master, text=display, width=len(display))
+        self.__lbl_buttons_state.place(x=3, y=1) # , width= 400, height= 300)
 
-        self.__master.mainloop()
+        # ========================= State =========================
+        display="---"
+        self.__lbl_axis_states = Label(self.__master, text=display)
+        self.__lbl_axis_states.place(x=33, y=50, width= 400) #, height= 300)
+
+        self.__create_axis_controls()
+
+        self.__create_port_a_outputs()
+
+        self.__create_port_a_inputs()
 
 #endregion
 
@@ -265,18 +542,22 @@ class GUI():
 
     def start(self):
 
-        if self.__logger is None:
-            self.__logger = get_logger(__name__)
+        self.__action_update_timer.start()
 
-        # Key controllers.
-        self.__key_controllers.append(AxisKeyController(key_cw="1", key_ccw="q", callback=self.__axis_0, speed=self.__speed))
-        self.__key_controllers.append(AxisKeyController(key_cw="2", key_ccw="w", callback=self.__axis_1, speed=self.__speed))
-        self.__key_controllers.append(AxisKeyController(key_cw="3", key_ccw="e", callback=self.__axis_2, speed=self.__speed))
-        self.__key_controllers.append(AxisKeyController(key_cw="4", key_ccw="r", callback=self.__axis_3, speed=self.__speed))
-        self.__key_controllers.append(AxisKeyController(key_cw="5", key_ccw="t", callback=self.__axis_4, speed=self.__speed))
-        self.__key_controllers.append(AxisKeyController(key_cw="6", key_ccw="y", callback=self.__axis_5, speed=self.__speed))
+        self.__frm_create()
+        self.__frm_update_timer.start()
 
-        # The UI.
-        self.__create_form()
+        self.__is_runing = True
+        while self.__is_runing:
+            self.__master.update()
+            self.__frm_update_timer.update()
+
+        self.__master.quit()
+
+    def stop(self):
+
+        self.__is_runing = False
+
+        self.__action_update_timer.stop()
 
 #endregion

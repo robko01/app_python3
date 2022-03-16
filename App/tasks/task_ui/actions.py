@@ -22,13 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import time
-import threading
-
-from tasks.base_task import BaseTask
-from tasks.task_ui.ui import GUI
-
-from utils.logger import get_logger
+from enum import Enum
 
 #region File Attributes
 
@@ -54,46 +48,17 @@ __maintainer__ = "Orlin Dimitrov"
 __email__ = "robko01@8bitclub.com"
 """E-mail of the author."""
 
-__class_name__ = "TaskUI"
+__class_name__ = "TaskGUI"
 """Task name."""
 
 #endregion
 
-class TaskUI(BaseTask):
-    """UI tool."""
+class Actions(Enum):
 
-#region Attributes
+    NONE = 0
 
-    __logger = None
-    """Logger"""
+    SaveCurrentPosition = 15
+    RunStoredPositions = 17
 
-#endregion
-
-#region Constructor
-
-    def __init__(self, **kwargs):
-
-        super().__init__(kwargs)
-
-        self._name = __class_name__
-
-#endregion
-
-#region Interface Methods
-
-    def start(self):
-        """Start the task."""
-
-        if self.__logger is None:
-            self.__logger = get_logger(__name__)
-
-        self._start_cont()
-
-        self.__ui = GUI(controller=self._controller)
-        self.__ui.start()
-
-    def stop(self):
-
-        self.__ui.stop()
-
-#endregion
+    UpdateSpeeds = 18
+    UpdateOutputs = 19
