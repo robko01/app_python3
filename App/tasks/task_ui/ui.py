@@ -75,12 +75,13 @@ class GUI():
 
     __master = None
 
-    __axis_controllr = []
+    __axis_controllers = []
 
     __frm_port_a_leds = []
 
     __frm_axis_labels = []
 
+    __frm_axis_control_leds = []
 
     __actions_queue = None
 
@@ -121,12 +122,12 @@ class GUI():
         self.__frm_update_timer.set_cb(self.__frm_update)
 
         # Key controllers.
-        self.__axis_controllr.append(AxisActionController(callback=self.__axis_0))
-        self.__axis_controllr.append(AxisActionController(callback=self.__axis_1))
-        self.__axis_controllr.append(AxisActionController(callback=self.__axis_2))
-        self.__axis_controllr.append(AxisActionController(callback=self.__axis_3))
-        self.__axis_controllr.append(AxisActionController(callback=self.__axis_4))
-        self.__axis_controllr.append(AxisActionController(callback=self.__axis_5))
+        self.__axis_controllers.append(AxisActionController(callback=self.__axis_0))
+        self.__axis_controllers.append(AxisActionController(callback=self.__axis_1))
+        self.__axis_controllers.append(AxisActionController(callback=self.__axis_2))
+        self.__axis_controllers.append(AxisActionController(callback=self.__axis_3))
+        self.__axis_controllers.append(AxisActionController(callback=self.__axis_4))
+        self.__axis_controllers.append(AxisActionController(callback=self.__axis_5))
 
 #endregion
 
@@ -324,6 +325,36 @@ class GUI():
         self.__lbl_frame.place(x=350, y=200)
 
 
+    def __update_axis_control_leds(self):
+
+        if len(self.__frm_axis_control_leds) == 6:
+            for index in range(0, 6):
+                if (2**index) & self.__motors_states:
+                    self.__frm_axis_control_leds[index].turnon()
+                else:
+                    self.__frm_axis_control_leds[index].turnoff()
+
+    def __create_axis_control_leds(self):
+
+        # Create the frame.
+        self.__lbl_frame = LabelFrame(self.__master, text="Axis control")
+
+        led_w = 20
+        led_h = 20
+
+        for index in range(0, 6):
+
+            led = LED(self.__lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+                width=led_w, height=led_h, appearance=RAISED,
+                blink=0, bd=1, outline="")
+            led.frame.grid(row=0, column=index)
+
+            self.__frm_axis_control_leds.append(led)
+
+        # Place the frame.
+        self.__lbl_frame.place(x=350, y=250)
+
+
     def __update_axis_label(self):
 
         for index in range(0, 6):
@@ -344,65 +375,65 @@ class GUI():
             "cw":[
                 {
                     "text": "Base CW",
-                    "press": lambda event: self.__axis_controllr[0].set_cw(),
-                    "release": lambda event: self.__axis_controllr[0].set_ccw()
+                    "press": lambda event: self.__axis_controllers[0].set_cw(),
+                    "release": lambda event: self.__axis_controllers[0].set_ccw()
                 },
                 {
                     "text": "Shoulder UP",
-                    "press": lambda event: self.__axis_controllr[1].set_cw(),
-                    "release": lambda event: self.__axis_controllr[1].set_ccw()
+                    "press": lambda event: self.__axis_controllers[1].set_cw(),
+                    "release": lambda event: self.__axis_controllers[1].set_ccw()
                 },
                 {
                     "text": "Elbow UP",
-                    "press": lambda event: self.__axis_controllr[2].set_cw(),
-                    "release": lambda event: self.__axis_controllr[2].set_ccw()
+                    "press": lambda event: self.__axis_controllers[2].set_cw(),
+                    "release": lambda event: self.__axis_controllers[2].set_ccw()
                 },
                 {
                     "text": "P UP",
-                    "press": lambda event: self.__axis_controllr[3].set_cw(),
-                    "release": lambda event: self.__axis_controllr[3].set_ccw()
+                    "press": lambda event: self.__axis_controllers[3].set_cw(),
+                    "release": lambda event: self.__axis_controllers[3].set_ccw()
                 },
                 {
                     "text": "R CW",
-                    "press": lambda event: self.__axis_controllr[4].set_cw(),
-                    "release": lambda event: self.__axis_controllr[4].set_ccw()
+                    "press": lambda event: self.__axis_controllers[4].set_cw(),
+                    "release": lambda event: self.__axis_controllers[4].set_ccw()
                 },
                 {
                     "text": "Gripper OPEN",
-                    "press": lambda event: self.__axis_controllr[5].set_cw(),
-                    "release": lambda event: self.__axis_controllr[5].set_ccw()
+                    "press": lambda event: self.__axis_controllers[5].set_cw(),
+                    "release": lambda event: self.__axis_controllers[5].set_ccw()
                 },
             ],
             "ccw":[
                 {
                     "text": "Base CCW",
-                    "press": lambda event: self.__axis_controllr[0].set_ccw(),
-                    "release": lambda event: self.__axis_controllr[0].set_cw()
+                    "press": lambda event: self.__axis_controllers[0].set_ccw(),
+                    "release": lambda event: self.__axis_controllers[0].set_cw()
                 },
                 {
                     "text": "Shoulder DOWN",
-                    "press": lambda event: self.__axis_controllr[1].set_ccw(),
-                    "release": lambda event: self.__axis_controllr[1].set_cw()
+                    "press": lambda event: self.__axis_controllers[1].set_ccw(),
+                    "release": lambda event: self.__axis_controllers[1].set_cw()
                 },
                 {
                     "text": "Elbow DOWN",
-                    "press": lambda event: self.__axis_controllr[2].set_ccw(),
-                    "release": lambda event: self.__axis_controllr[2].set_cw()
+                    "press": lambda event: self.__axis_controllers[2].set_ccw(),
+                    "release": lambda event: self.__axis_controllers[2].set_cw()
                 },
                 {
                     "text": "P DOWN",
-                    "press": lambda event: self.__axis_controllr[3].set_ccw(),
-                    "release": lambda event: self.__axis_controllr[3].set_cw()
+                    "press": lambda event: self.__axis_controllers[3].set_ccw(),
+                    "release": lambda event: self.__axis_controllers[3].set_cw()
                 },
                 {
                     "text": "R CCW",
-                    "press": lambda event: self.__axis_controllr[4].set_ccw(),
-                    "release": lambda event: self.__axis_controllr[4].set_cw()
+                    "press": lambda event: self.__axis_controllers[4].set_ccw(),
+                    "release": lambda event: self.__axis_controllers[4].set_cw()
                 },
                 {
                     "text": "Gripper CLOSE",
-                    "press": lambda event: self.__axis_controllr[5].set_ccw(),
-                    "release": lambda event: self.__axis_controllr[5].set_cw()
+                    "press": lambda event: self.__axis_controllers[5].set_ccw(),
+                    "release": lambda event: self.__axis_controllers[5].set_cw()
                 }
             ]
         }
@@ -441,44 +472,44 @@ class GUI():
         self.__lbl_buttons_state.config(text=message)
 
         if char == " ":
-            for key_controller in self.__axis_controllr:
+            for key_controller in self.__axis_controllers:
                 key_controller.stop()
 
         elif char == "1":
-            self.__axis_controllr[0].set_cw()
+            self.__axis_controllers[0].set_cw()
 
         elif char == "q":
-            self.__axis_controllr[0].set_ccw()
+            self.__axis_controllers[0].set_ccw()
 
         elif char == "2":
-            self.__axis_controllr[1].set_cw()
+            self.__axis_controllers[1].set_cw()
 
         elif char == "w":
-            self.__axis_controllr[1].set_ccw()
+            self.__axis_controllers[1].set_ccw()
 
         elif char == "3":
-            self.__axis_controllr[2].set_cw()
+            self.__axis_controllers[2].set_cw()
 
         elif char == "e":
-            self.__axis_controllr[2].set_ccw()
+            self.__axis_controllers[2].set_ccw()
 
         elif char == "4":
-            self.__axis_controllr[3].set_cw()
+            self.__axis_controllers[3].set_cw()
 
         elif char == "r":
-            self.__axis_controllr[3].set_ccw()
+            self.__axis_controllers[3].set_ccw()
 
         elif char == "5":
-            self.__axis_controllr[4].set_cw()
+            self.__axis_controllers[4].set_cw()
 
         elif char == "t":
-            self.__axis_controllr[4].set_ccw()
+            self.__axis_controllers[4].set_ccw()
 
         elif char == "6":
-            self.__axis_controllr[5].set_cw()
+            self.__axis_controllers[5].set_cw()
 
         elif char == "y":
-            self.__axis_controllr[5].set_ccw()
+            self.__axis_controllers[5].set_ccw()
 
         elif char == "s":
             self.__positions.append(self.__current_position)
@@ -496,15 +527,14 @@ class GUI():
 
         self.__update_axis_label()
 
-        self.__update_port_a_inputs()
+        self.__update_axis_control_leds()
 
-        # Display states ans inputs.
-        self.__lbl_axis_states.config(text="State: {}; Inputes: {}".format(self.__motors_states, self.__port_a_inputs))
+        self.__update_port_a_inputs()
 
         # Stop the gripper if it is closed enough.
         if not (2 & self.__port_a_inputs):
-            if not self.__axis_controllr[5].is_stopped:
-                self.__axis_controllr[5].stop()
+            if not self.__axis_controllers[5].is_stopped:
+                self.__axis_controllers[5].stop()
 
     def __frm_on_closing(self):
 
@@ -523,18 +553,15 @@ class GUI():
 
         display="Press Any Button, or Press  Key"
         self.__lbl_buttons_state = Label(self.__master, text=display, width=len(display))
-        self.__lbl_buttons_state.place(x=3, y=1) # , width= 400, height= 300)
-
-        # ========================= State =========================
-        display="---"
-        self.__lbl_axis_states = Label(self.__master, text=display)
-        self.__lbl_axis_states.place(x=33, y=50, width= 400) #, height= 300)
+        self.__lbl_buttons_state.place(x=33, y=250) # , width= 400, height= 300)
 
         self.__create_axis_controls()
 
         self.__create_port_a_outputs()
 
         self.__create_port_a_inputs()
+
+        self.__create_axis_control_leds()
 
 #endregion
 
