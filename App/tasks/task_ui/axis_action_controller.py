@@ -90,6 +90,11 @@ class AxisActionController():
 
         return self.__direction == 0
 
+    @property
+    def direction(self):
+
+        return self.__direction
+
 #endregion
 
 #region Public Methods

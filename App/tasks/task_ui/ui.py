@@ -556,7 +556,7 @@ class GUI():
 
         # Stop the gripper if it is closed enough.
         if not (2 & self.__port_a_inputs):
-            if not self.__frm_axis_controllers[5].is_stopped:
+            if self.__frm_axis_controllers[5].direction == -1:
                 self.__frm_axis_controllers[5].stop()
 
     def __frm_on_closing(self):
