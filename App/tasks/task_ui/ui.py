@@ -399,64 +399,64 @@ class GUI():
                 {
                     "text": "Base CW",
                     "press": lambda event: self.__frm_axis_controllers[0].set_cw(),
-                    "release": lambda event: self.__frm_axis_controllers[0].set_ccw()
+                    "release": lambda event: self.__frm_axis_controllers[0].stop()
                 },
                 {
                     "text": "Shoulder UP",
                     "press": lambda event: self.__frm_axis_controllers[1].set_cw(),
-                    "release": lambda event: self.__frm_axis_controllers[1].set_ccw()
+                    "release": lambda event: self.__frm_axis_controllers[1].stop()
                 },
                 {
                     "text": "Elbow UP",
                     "press": lambda event: self.__frm_axis_controllers[2].set_cw(),
-                    "release": lambda event: self.__frm_axis_controllers[2].set_ccw()
+                    "release": lambda event: self.__frm_axis_controllers[2].stop()
                 },
                 {
                     "text": "P UP",
                     "press": lambda event: self.__frm_axis_controllers[3].set_cw(),
-                    "release": lambda event: self.__frm_axis_controllers[3].set_ccw()
+                    "release": lambda event: self.__frm_axis_controllers[3].stop()
                 },
                 {
                     "text": "R CW",
                     "press": lambda event: self.__frm_axis_controllers[4].set_cw(),
-                    "release": lambda event: self.__frm_axis_controllers[4].set_ccw()
+                    "release": lambda event: self.__frm_axis_controllers[4].stop()
                 },
                 {
                     "text": "Gripper OPEN",
                     "press": lambda event: self.__frm_axis_controllers[5].set_cw(),
-                    "release": lambda event: self.__frm_axis_controllers[5].set_ccw()
+                    "release": lambda event: self.__frm_axis_controllers[5].stop()
                 },
             ],
             "ccw":[
                 {
                     "text": "Base CCW",
                     "press": lambda event: self.__frm_axis_controllers[0].set_ccw(),
-                    "release": lambda event: self.__frm_axis_controllers[0].set_cw()
+                    "release": lambda event: self.__frm_axis_controllers[0].stop()
                 },
                 {
                     "text": "Shoulder DOWN",
                     "press": lambda event: self.__frm_axis_controllers[1].set_ccw(),
-                    "release": lambda event: self.__frm_axis_controllers[1].set_cw()
+                    "release": lambda event: self.__frm_axis_controllers[1].stop()
                 },
                 {
                     "text": "Elbow DOWN",
                     "press": lambda event: self.__frm_axis_controllers[2].set_ccw(),
-                    "release": lambda event: self.__frm_axis_controllers[2].set_cw()
+                    "release": lambda event: self.__frm_axis_controllers[2].stop()
                 },
                 {
                     "text": "P DOWN",
                     "press": lambda event: self.__frm_axis_controllers[3].set_ccw(),
-                    "release": lambda event: self.__frm_axis_controllers[3].set_cw()
+                    "release": lambda event: self.__frm_axis_controllers[3].stop()
                 },
                 {
                     "text": "R CCW",
                     "press": lambda event: self.__frm_axis_controllers[4].set_ccw(),
-                    "release": lambda event: self.__frm_axis_controllers[4].set_cw()
+                    "release": lambda event: self.__frm_axis_controllers[4].stop()
                 },
                 {
                     "text": "Gripper CLOSE",
                     "press": lambda event: self.__frm_axis_controllers[5].set_ccw(),
-                    "release": lambda event: self.__frm_axis_controllers[5].set_cw()
+                    "release": lambda event: self.__frm_axis_controllers[5].stop()
                 }
             ]
         }
