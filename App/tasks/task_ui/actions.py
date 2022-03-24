@@ -57,8 +57,14 @@ class Actions(Enum):
 
     NONE = 0
 
+    DoTest1 = 10
+    DoTest2 = 11
+
     SaveCurrentPosition = 15
     RunStoredPositions = 17
 
     UpdateSpeeds = 18
     UpdateOutputs = 19
+
+    ClearController = 20
+    ReasetController = 21

@@ -22,10 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from dataclasses import field
-from email.mime import base
 import queue
 from tkinter import *
+from tkinter.messagebox import askyesno
+from tkinter.ttk import Notebook
 
 from tasks.task_ui.actions import Actions
 from tasks.task_ui.axis_action_controller import *
@@ -171,6 +171,19 @@ class GUI():
         elif action == Actions.UpdateOutputs:
             self.__controller.set_outputs(self.__port_a_outputs)
 
+        elif action == Actions.ClearController:
+            self.__controller.clear()
+
+        elif action == Actions.ReasetController:
+            pass
+
+        elif action == Actions.DoTest1:
+            self.__controller.move_absolute([200, 100, 200, 100, 200, 100, 0, 0, 0, 0, 0, 0])
+
+        elif action == Actions.DoTest2:
+            self.__controller.move_absolute([0, 100, 0, 100, 0, 100, 0, 0, 0, 0, 0, 0])
+
+
         elif action == Actions.RunStoredPositions:
             for position in self.__positions:
                 self.__controller.move_relative(position)
@@ -281,7 +294,163 @@ class GUI():
 
 #endregion
 
+#region Private Methods (Keyboard Events)
+
+    def __frm_key_release(self, event):
+        message = "up {}".format(event.char)
+        self.__lbl_buttons_state.config(text=message)
+
+    def __frm_key_press(self, event):
+
+        char = event.char
+
+        message = "down {}".format(char)
+        self.__lbl_buttons_state.config(text=message)
+
+        if char == " ":
+            for key_controller in self.__frm_axis_controllers:
+                key_controller.stop()
+
+        elif char == "1":
+            self.__frm_axis_controllers[0].set_cw()
+
+        elif char == "q":
+            self.__frm_axis_controllers[0].set_ccw()
+
+        elif char == "2":
+            self.__frm_axis_controllers[1].set_cw()
+
+        elif char == "w":
+            self.__frm_axis_controllers[1].set_ccw()
+
+        elif char == "3":
+            self.__frm_axis_controllers[2].set_cw()
+
+        elif char == "e":
+            self.__frm_axis_controllers[2].set_ccw()
+
+        elif char == "4":
+            self.__frm_axis_controllers[3].set_cw()
+
+        elif char == "r":
+            self.__frm_axis_controllers[3].set_ccw()
+
+        elif char == "5":
+            self.__frm_axis_controllers[4].set_cw()
+
+        elif char == "t":
+            self.__frm_axis_controllers[4].set_ccw()
+
+        elif char == "6":
+            self.__frm_axis_controllers[5].set_cw()
+
+        elif char == "y":
+            self.__frm_axis_controllers[5].set_ccw()
+
+        elif char == "s":
+            self.__positions.append(self.__current_position)
+
+        elif char == "l":
+            for position in self.__positions:
+                msg = "Stored position: {}".format(position)
+                self.__logger.debug(msg)
+
+        elif char == "g":
+            action = Actions.RunStoredPositions
+            self.__put_action(action)
+
+#endregion
+
 #region Private Methods (Form)
+
+    def __create_tabs(self):
+
+        self.__tab_control = Notebook(self.__master)
+
+        self.__tab_man = Frame(self.__tab_control)
+        self.__tab_control.add(self.__tab_man, text="Manual")
+
+        self.__tab_auto = Frame(self.__tab_control)
+        self.__tab_control.add(self.__tab_auto, text="Auto")        
+
+        self.__tab_control.pack(expand=1, fill ="both")
+
+
+    def __mnu_clear_controller(self):
+
+        answer = askyesno(title="Clear axis positions", message="Are you sure you want to clear the axis positions?")
+        if answer:
+            self.__put_action(Actions.ClearController)
+
+    def __mnu_reset_controller(self):
+
+        answer = askyesno(title="Reset robot controller", message="Are you sure you want to reset the robot controller?")
+        if answer:
+            self.__put_action(Actions.ReasetController)
+
+    def __mnu_enable_kbc(self):
+
+        value = self.__bv_enable_kbc.get()
+
+        if value:
+            # Bind keys.
+            self.__bid_press = self.__master.bind_all("<KeyPress>", self.__frm_key_press)
+            self.__bid_release = self.__master.bind_all("<KeyRelease>", self.__frm_key_release)
+
+        else:
+            # Unbind keys.
+            self.__master.unbind("<KeyPress>", self.__bid_press)
+            self.__master.unbind("<KeyRelease>", self.__bid_release)
+
+    def __mnu__do_test_1(self):
+
+        self.__put_action(Actions.DoTest1)
+
+    def __mnu__do_test_2(self):
+
+        self.__put_action(Actions.DoTest2)
+
+    def __create_menu_bar(self):
+
+        donothing = None
+
+        # Menu bar.
+        menu_bar = Menu(self.__master)
+
+        # First menu block.
+        filemenu = Menu(menu_bar, tearoff=0)
+        filemenu.add_command(label="New", command=donothing)
+        filemenu.add_command(label="Open", command=donothing)
+        filemenu.add_command(label="Save", command=donothing)
+        filemenu.add_separator()
+        filemenu.add_command(label="Exit", command=self.__frm_on_closing)
+        menu_bar.add_cascade(label="File", menu=filemenu)
+
+        # Second menu block.
+        controller_menu = Menu(menu_bar, tearoff=0)
+        controller_menu.add_command(label="Clear", command=self.__mnu_clear_controller)
+        controller_menu.add_command(label="Reset", command=self.__mnu_reset_controller)
+        
+        self.__bv_enable_kbc = BooleanVar()
+        self.__bv_enable_kbc.set(False)
+        controller_menu.add_checkbutton(
+            label="Enable Keyboard Control",
+            onvalue=1,
+            offvalue=0,
+            variable=self.__bv_enable_kbc,
+            command=self.__mnu_enable_kbc)
+        # controller_menu.add_command(label="Do Test 1", command=self.__mnu__do_test_1)
+        # controller_menu.add_command(label="Do Test 2", command=self.__mnu__do_test_2)
+        menu_bar.add_cascade(label="Controller", menu=controller_menu)
+
+        # Third menu block.
+        helpmenu = Menu(menu_bar, tearoff=0)
+        helpmenu.add_command(label="About", command=donothing)
+        menu_bar.add_cascade(label="Help", menu=helpmenu)
+
+        # Add the menu.
+        self.__master.config(menu=menu_bar)
+
 
     def __update_port_a_outputs(self):
 
@@ -298,7 +467,7 @@ class GUI():
         self.__vars = []
 
         # Create the frame.
-        self.__lbl_frame = LabelFrame(self.__master, text="DO on port A")
+        self.__lbl_frame = LabelFrame(self.__tab_man, text="DO on port A")
 
         # Create the check boxes.
         for index in range(0, 8):
@@ -330,7 +499,7 @@ class GUI():
     def __create_port_a_inputs(self):
 
         # Create the frame.
-        self.__lbl_frame = LabelFrame(self.__master, text="DI on port A")
+        self.__lbl_frame = LabelFrame(self.__tab_man, text="DI on port A")
 
         led_w = 20
         led_h = 20
@@ -360,7 +529,7 @@ class GUI():
     def __create_axis_control_leds(self):
 
         # Create the frame.
-        self.__lbl_frame = LabelFrame(self.__master, text="Axis control")
+        self.__lbl_frame = LabelFrame(self.__tab_man, text="Axis control LEDs")
 
         led_w = 20
         led_h = 20
@@ -378,6 +547,11 @@ class GUI():
         self.__lbl_frame.place(x=350, y=250)
 
 
+    def __update_slider_speed(self, event):
+
+        for index in range(0, 6):
+            self.__frm_axis_controllers[index].speed = self.__sldr_speed.get()
+
     def __update_axis_label(self):
 
         for index in range(0, 6):
@@ -390,7 +564,7 @@ class GUI():
         h_size = 10
 
         # Create the frame.
-        self.__frame = Frame(self.__master)
+        self.__frame = Frame(self.__tab_man)
 
         empty_text = "P: {}\nV: {}".format(0, 0)
 
@@ -467,84 +641,21 @@ class GUI():
         for index in range(0, 6):
 
             self.__frm_axis_labels.append(Label(self.__frame, text=empty_text))
-            self.__frm_axis_labels[index].grid(row=0, column=index, ipadx=h_size, ipady=w_size, sticky='ew')
+            self.__frm_axis_labels[index].grid(row=0, column=index, ipadx=h_size, ipady=w_size, sticky="ew")
 
             buttons_cw.append(Button(self.__frame, text=fields["cw"][index]["text"]))
             buttons_cw[index].bind("<ButtonPress-1>", fields["cw"][index]["press"])
             buttons_cw[index].bind("<ButtonRelease-1>", fields["cw"][index]["release"])
-            buttons_cw[index].grid(row=1, column=index, ipadx=h_size, ipady=w_size, sticky='ew')
+            buttons_cw[index].grid(row=1, column=index, ipadx=h_size, ipady=w_size, sticky="ew")
 
             buttons_ccw.append(Button(self.__frame, text=fields["ccw"][index]["text"]))
             buttons_ccw[index].bind("<ButtonPress-1>", fields["ccw"][index]["press"])
             buttons_ccw[index].bind("<ButtonRelease-1>", fields["ccw"][index]["release"])
-            buttons_ccw[index].grid(row=2, column=index, ipadx=h_size, ipady=w_size, sticky='ew')
+            buttons_ccw[index].grid(row=2, column=index, ipadx=h_size, ipady=w_size, sticky="ew")
 
         # Place the frame.
         self.__frame.place(x=33, y=33)
 
-
-    def __frm_key_release(self, event):
-        message = "up {}".format(event.char)
-        self.__lbl_buttons_state.config(text=message)
-
-    def __frm_key_press(self, event):
-
-        char = event.char
-
-        message = "down {}".format(char)
-        self.__lbl_buttons_state.config(text=message)
-
-        if char == " ":
-            for key_controller in self.__frm_axis_controllers:
-                key_controller.stop()
-
-        elif char == "1":
-            self.__frm_axis_controllers[0].set_cw()
-
-        elif char == "q":
-            self.__frm_axis_controllers[0].set_ccw()
-
-        elif char == "2":
-            self.__frm_axis_controllers[1].set_cw()
-
-        elif char == "w":
-            self.__frm_axis_controllers[1].set_ccw()
-
-        elif char == "3":
-            self.__frm_axis_controllers[2].set_cw()
-
-        elif char == "e":
-            self.__frm_axis_controllers[2].set_ccw()
-
-        elif char == "4":
-            self.__frm_axis_controllers[3].set_cw()
-
-        elif char == "r":
-            self.__frm_axis_controllers[3].set_ccw()
-
-        elif char == "5":
-            self.__frm_axis_controllers[4].set_cw()
-
-        elif char == "t":
-            self.__frm_axis_controllers[4].set_ccw()
-
-        elif char == "6":
-            self.__frm_axis_controllers[5].set_cw()
-
-        elif char == "y":
-            self.__frm_axis_controllers[5].set_ccw()
-
-        elif char == "s":
-            self.__positions.append(self.__current_position)
-
-        elif char == "l":
-            for position in self.__positions:
-                msg = "Stored position: {}".format(position)
-                self.__logger.debug(msg)
-
-        elif char == "g":
-            action = Actions.RunStoredPositions
-            self.__put_action(action)
 
     def __frm_update(self):
 
@@ -566,17 +677,17 @@ class GUI():
     def __frm_create(self):
 
         self.__master = Tk()
-        self.__master.geometry("600x300")
+        self.__master.geometry("700x400")
         self.__master.title("Robko 01")
         self.__master.protocol("WM_DELETE_WINDOW", self.__frm_on_closing)
-
-        # Bind keys.
-        self.__master.bind_all("<KeyPress>", self.__frm_key_press)
-        self.__master.bind_all("<KeyRelease>", self.__frm_key_release)
 
         display="Press Any Button, or Press  Key"
         self.__lbl_buttons_state = Label(self.__master, text=display, width=len(display))
         self.__lbl_buttons_state.place(x=33, y=250) # , width= 400, height= 300)
+
+        self.__create_menu_bar()
+
+        self.__create_tabs()
 
         self.__create_axis_controls()
 
@@ -585,6 +696,14 @@ class GUI():
         self.__create_port_a_inputs()
 
         self.__create_axis_control_leds()
+
+        self.__lbl_frame = LabelFrame(self.__master, text="Axises speed")
+
+        self.__sldr_speed = Scale(self.__lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
+        self.__sldr_speed.grid(row=0, column=0, sticky="ew")
+        self.__sldr_speed.set(100)
+
+        self.__lbl_frame.place(x=33, y=275) # , width= 400, height= 300)
 
 #endregion
 
