@@ -697,13 +697,13 @@ class GUI():
 
         self.__create_axis_control_leds()
 
-        self.__lbl_frame = LabelFrame(self.__master, text="Axises speed")
+        self.__lbl_frame = LabelFrame(self.__tab_man, text="Axises speed")
 
         self.__sldr_speed = Scale(self.__lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
         self.__sldr_speed.grid(row=0, column=0, sticky="ew")
         self.__sldr_speed.set(100)
 
-        self.__lbl_frame.place(x=33, y=275) # , width= 400, height= 300)
+        self.__lbl_frame.place(x=33, y=250) # , width= 400, height= 300)
 
 #endregion
 
