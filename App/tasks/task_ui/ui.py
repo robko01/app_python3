@@ -102,7 +102,7 @@ class GUI():
     """Robot controller.
     """
 
-    __speeds = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    __current_speeds = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     """Axis speeds.
     """
 
@@ -116,10 +116,6 @@ class GUI():
 
     __axis_states = 0
     """Axis action states.
-    """
-
-    __positions = []
-    """Program positions.
     """
 
 #endregion
@@ -166,7 +162,7 @@ class GUI():
             pass
 
         if action == Actions.UpdateSpeeds:
-            self.__controller.move_speed(self.__speeds)
+            self.__controller.move_speed(self.__current_speeds)
 
         elif action == Actions.UpdateOutputs:
             self.__controller.set_outputs(self.__port_a_outputs)
@@ -183,14 +179,6 @@ class GUI():
         elif action == Actions.DoTest2:
             self.__controller.move_absolute([0, 100, 0, 100, 0, 100, 0, 0, 0, 0, 0, 0])
 
-
-        elif action == Actions.RunStoredPositions:
-            for position in self.__positions:
-                self.__controller.move_relative(position)
-                c_position = self.__controller.current_position()
-                msg = "Current position: {}".format(c_position)
-                self.__logger.debug(msg)
-
     def __action_timer_cb(self):
 
         self.__axis_states = self.__controller.is_moving()
@@ -205,90 +193,42 @@ class GUI():
 
 #region Private Methods (Axices CB)
 
-    def __axis_0(self, direction, speed):
+    def __axis_0(self, speed):
 
-        if direction == 0:
-            self.__speeds[1] = 0
-
-        elif direction == 1:
-            self.__speeds[1] = -speed
-
-        elif direction == -1:
-            self.__speeds[1] = speed
+        self.__current_speeds[1] = speed * -1
 
         self.__put_action(Actions.UpdateSpeeds)
 
-    def __axis_1(self, direction, speed):
+    def __axis_1(self, speed):
 
-        if direction == 0:
-            self.__speeds[3] = 0
-
-        elif direction == 1:
-            self.__speeds[3] = -speed
-
-        elif direction == -1:
-            self.__speeds[3] = speed
+        self.__current_speeds[3] = speed * -1
 
         self.__put_action(Actions.UpdateSpeeds)
 
-    def __axis_2(self, direction, speed):
+    def __axis_2(self, speed):
 
-        if direction == 0:
-            self.__speeds[5] = 0
-            self.__speeds[11] = 0
-
-        elif direction == 1:
-            self.__speeds[5] = speed
-            self.__speeds[11] = -speed
-
-        elif direction == -1:
-            self.__speeds[5] = -speed
-            self.__speeds[11] = speed
+        self.__current_speeds[5] = speed
+        self.__current_speeds[11] = speed * -1
 
         self.__put_action(Actions.UpdateSpeeds)
 
-    def __axis_3(self, direction, speed):
+    def __axis_3(self, speed):
 
-        if direction == 0:
-            self.__speeds[7] = 0
-            self.__speeds[9] = 0
-
-        elif direction == 1:
-            self.__speeds[7] = -speed
-            self.__speeds[9] = speed
-
-        elif direction == -1:
-            self.__speeds[7] = speed
-            self.__speeds[9] = -speed
+        self.__current_speeds[7] = speed * -1
+        self.__current_speeds[9] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
-    def __axis_4(self, direction, speed):
+    def __axis_4(self, speed):
 
-        if direction == 0:
-            self.__speeds[7] = 0
-            self.__speeds[9] = 0
-
-        elif direction == 1:
-            self.__speeds[7] = speed
-            self.__speeds[9] = speed
-
-        elif direction == -1:
-            self.__speeds[7] = -speed
-            self.__speeds[9] = -speed
+        self.__current_speeds[7] = speed
+        self.__current_speeds[9] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
-    def __axis_5(self, direction, speed):
+    def __axis_5(self, speed):
 
-        if direction == 0:
-            self.__speeds[11] = 0
-
-        elif direction == 1:
-            self.__speeds[11] = speed
-
-        elif direction == -1:
-            self.__speeds[11] = -speed
+        self.__current_speeds[11] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
@@ -346,18 +286,6 @@ class GUI():
 
         elif char == "y":
             self.__frm_axis_controllers[5].set_ccw()
-
-        elif char == "s":
-            self.__positions.append(self.__current_position)
-
-        elif char == "l":
-            for position in self.__positions:
-                msg = "Stored position: {}".format(position)
-                self.__logger.debug(msg)
-
-        elif char == "g":
-            action = Actions.RunStoredPositions
-            self.__put_action(action)
 
 #endregion
 

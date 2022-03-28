@@ -85,6 +85,9 @@ class AxisActionController():
 
         self.__speed = value
 
+        if self.__callback != None:
+            self.__callback(self.__direction * self.__speed)
+
     @property
     def is_stopped(self):
 
@@ -107,7 +110,7 @@ class AxisActionController():
         self.__direction = 0
 
         if self.__callback != None:
-            self.__callback(self.__direction, self.__speed)
+            self.__callback(self.__direction * self.__speed)
 
     def set_cw(self):
 
@@ -121,7 +124,7 @@ class AxisActionController():
             return
 
         if self.__callback != None:
-            self.__callback(self.__direction, self.__speed)
+            self.__callback(self.__direction * self.__speed)
 
     def set_ccw(self):
 
@@ -135,6 +138,6 @@ class AxisActionController():
             return
 
         if self.__callback != None:
-            self.__callback(self.__direction, self.__speed)
+            self.__callback(self.__direction * self.__speed)
 
 #endregion
