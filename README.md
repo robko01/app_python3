@@ -18,25 +18,26 @@ For the normal operation of the script there are libraries that need to be prein
 
 | Name | Version |
 |-|:-:|
-|pynput | 1.7.1 |
-|pyserial | 3.4 |
-|six | 1.15.0 |
+|pyserial | 3.5 |
 
 ## Automatic installation
 
 ## First run
 After installation, the script is ready for operation. This happens in the following way.
+For Windows machines:
+```sh
+        python main.py --port COM<NUMBER> --task task_ui
+```
+For Linux machines:
+```sh
+        python3 main.py --port /dev/ttyUSB<NUMBER> --task task_ui
+```
+For macOS machines:
+```sh
+        python3 main.py --port /dev/cu.usbserial-1110 --task task_ui
+```
 
-        $ python main.py --port COM<NUMBER> --task grasp2
-
-For Windows machines.
-
-        $ python main.py --port /dev/ttyUSB<NUMBER> --task grasp2
-
-For Linux machines.
-
-To approach the robot, it will be presented to the computer as a serial port.
-The example is marked COM5.
-You need to find out which is the correct port for you by using the device manager.
-The argument --task serves to indicate which program to execute the robot.
-
+ - To approach the robot, it will be presented to the computer as a serial port.
+ - The example is marked `COM5`, `/dev/ttyUSB0` or `/dev/cu.usbserial-1110`.
+ - You need to find out which is the correct port for you by using the device manager.
+ - The argument `--task` serves to indicate which program to execute the robot.
