@@ -170,7 +170,7 @@ class GUI():
         elif action == Actions.ClearController:
             self.__controller.clear()
 
-        elif action == Actions.ReasetController:
+        elif action == Actions.ResetController:
             pass
 
         elif action == Actions.DoTest1:
@@ -314,7 +314,7 @@ class GUI():
 
         answer = askyesno(title="Reset robot controller", message="Are you sure you want to reset the robot controller?")
         if answer:
-            self.__put_action(Actions.ReasetController)
+            self.__put_action(Actions.ResetController)
 
     def __mnu_enable_kbc(self):
 

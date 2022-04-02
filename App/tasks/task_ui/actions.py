@@ -67,4 +67,4 @@ class Actions(Enum):
     UpdateOutputs = 19
 
     ClearController = 20
-    ReasetController = 21
+    ResetController = 21
