@@ -78,9 +78,21 @@ class GUI():
     """Form master object.
     """
 
+    __frm_tab_man = None
+    """Form tab manual.
+    """
+
+    __frm_tab_auto = None
+    """Forma tab auto.
+    """
+
     __frm_port_a_input_leds = []
     """Port A input LEDs.
     """
+
+    __frm_port_a_output_chk = []
+    """Port A outputs Checks.
+    """    
 
     __frm_axis_labels = []
     """Axis labels.
@@ -102,7 +114,7 @@ class GUI():
     """Robot controller.
     """
 
-    __current_speeds = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    __current_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     """Axis speeds.
     """
 
@@ -110,12 +122,16 @@ class GUI():
     """Current end-efector position.
     """
 
+    __axis_states = 0
+    """Axis action states.
+    """
+
     __port_a_inputs = 0
     """Port A inputs.
     """
 
-    __axis_states = 0
-    """Axis action states.
+    __port_a_outputs = 0
+    """Port A outputs.
     """
 
 #endregion
@@ -162,7 +178,7 @@ class GUI():
             pass
 
         if action == Actions.UpdateSpeeds:
-            self.__controller.move_speed(self.__current_speeds)
+            self.__controller.move_speed(self.__current_speed)
 
         elif action == Actions.UpdateOutputs:
             self.__controller.set_outputs(self.__port_a_outputs)
@@ -195,40 +211,40 @@ class GUI():
 
     def __axis_0(self, speed):
 
-        self.__current_speeds[1] = speed * -1
+        self.__current_speed[1] = speed * -1
 
         self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_1(self, speed):
 
-        self.__current_speeds[3] = speed * -1
+        self.__current_speed[3] = speed * -1
 
         self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_2(self, speed):
 
-        self.__current_speeds[5] = speed
-        self.__current_speeds[11] = speed * -1
+        self.__current_speed[5] = speed
+        self.__current_speed[11] = speed * -1
 
         self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_3(self, speed):
 
-        self.__current_speeds[7] = speed * -1
-        self.__current_speeds[9] = speed
+        self.__current_speed[7] = speed * -1
+        self.__current_speed[9] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_4(self, speed):
 
-        self.__current_speeds[7] = speed
-        self.__current_speeds[9] = speed
+        self.__current_speed[7] = speed
+        self.__current_speed[9] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_5(self, speed):
 
-        self.__current_speeds[11] = speed
+        self.__current_speed[11] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
@@ -293,15 +309,15 @@ class GUI():
 
     def __create_tabs(self):
 
-        self.__tab_control = Notebook(self.__master)
+        self.notebook = Notebook(self.__master)
 
-        self.__tab_man = Frame(self.__tab_control)
-        self.__tab_control.add(self.__tab_man, text="Manual")
+        self.__frm_tab_man = Frame(self.notebook)
+        self.notebook.add(self.__frm_tab_man, text="Manual")
 
-        self.__tab_auto = Frame(self.__tab_control)
-        self.__tab_control.add(self.__tab_auto, text="Auto")        
+        self.__frm_tab_auto = Frame(self.notebook)
+        self.notebook.add(self.__frm_tab_auto, text="Auto")        
 
-        self.__tab_control.pack(expand=1, fill ="both")
+        self.notebook.pack(expand=1, fill ="both")
 
 
     def __mnu_clear_controller(self):
@@ -385,17 +401,15 @@ class GUI():
         value = 0
 
         for bit in range(0, 8):
-            value += self.__vars[bit].get()
+            value += self.__frm_port_a_output_chk[bit].get()
 
         self.__port_a_outputs = value
         self.__put_action(Actions.UpdateOutputs)
 
     def __create_port_a_outputs(self):
 
-        self.__vars = []
-
         # Create the frame.
-        self.__lbl_frame = LabelFrame(self.__tab_man, text="DO on port A")
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="DO on port A")
 
         # Create the check boxes.
         for index in range(0, 8):
@@ -405,12 +419,12 @@ class GUI():
 
             # Create the check box.
             var = IntVar()
-            check = Checkbutton(self.__lbl_frame, variable=var, onvalue=bit_weight, offvalue=0, command=self.__update_port_a_outputs)
+            check = Checkbutton(lbl_frame, variable=var, onvalue=bit_weight, offvalue=0, command=self.__update_port_a_outputs)
             check.grid(row=0, column=index)
-            self.__vars.append(var)
+            self.__frm_port_a_output_chk.append(var)
 
         # Place the frame.
-        self.__lbl_frame.place(x=33, y=200)
+        lbl_frame.place(x=33, y=200)
 
 
     def __update_port_a_inputs(self):
@@ -419,22 +433,22 @@ class GUI():
             led_index = 7
             for index in range(0, 8):
                 if (2**index) & self.__port_a_inputs:
-                    self.__frm_port_a_input_leds[led_index].turnon()
-                else:
                     self.__frm_port_a_input_leds[led_index].turnoff()
+                else:
+                    self.__frm_port_a_input_leds[led_index].turnon()
                 led_index -= 1
 
     def __create_port_a_inputs(self):
 
         # Create the frame.
-        self.__lbl_frame = LabelFrame(self.__tab_man, text="DI on port A")
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="DI on port A")
 
         led_w = 20
         led_h = 20
 
         for index in range(0, 8):
 
-            led = LED(self.__lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+            led = LED(lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
                 width=led_w, height=led_h, appearance=RAISED,
                 blink=0, bd=1, outline="")
             led.frame.grid(row=0, column=index)
@@ -442,7 +456,7 @@ class GUI():
             self.__frm_port_a_input_leds.append(led)
 
         # Place the frame.
-        self.__lbl_frame.place(x=350, y=200)
+        lbl_frame.place(x=350, y=200)
 
 
     def __update_axis_control_leds(self):
@@ -457,14 +471,14 @@ class GUI():
     def __create_axis_control_leds(self):
 
         # Create the frame.
-        self.__lbl_frame = LabelFrame(self.__tab_man, text="Axis control LEDs")
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axis control LEDs")
 
         led_w = 20
         led_h = 20
 
         for index in range(0, 6):
 
-            led = LED(self.__lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+            led = LED(lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
                 width=led_w, height=led_h, appearance=RAISED,
                 blink=0, bd=1, outline="")
             led.frame.grid(row=0, column=index)
@@ -472,7 +486,7 @@ class GUI():
             self.__frm_axis_control_leds.append(led)
 
         # Place the frame.
-        self.__lbl_frame.place(x=350, y=250)
+        lbl_frame.place(x=350, y=250)
 
 
     def __update_slider_speed(self, event):
@@ -492,7 +506,7 @@ class GUI():
         h_size = 10
 
         # Create the frame.
-        self.__frame = Frame(self.__tab_man)
+        frame = Frame(self.__frm_tab_man)
 
         empty_text = "P: {}\nV: {}".format(0, 0)
 
@@ -568,21 +582,21 @@ class GUI():
 
         for index in range(0, 6):
 
-            self.__frm_axis_labels.append(Label(self.__frame, text=empty_text))
+            self.__frm_axis_labels.append(Label(frame, text=empty_text))
             self.__frm_axis_labels[index].grid(row=0, column=index, ipadx=h_size, ipady=w_size, sticky="ew")
 
-            buttons_cw.append(Button(self.__frame, text=fields["cw"][index]["text"]))
+            buttons_cw.append(Button(frame, text=fields["cw"][index]["text"]))
             buttons_cw[index].bind("<ButtonPress-1>", fields["cw"][index]["press"])
             buttons_cw[index].bind("<ButtonRelease-1>", fields["cw"][index]["release"])
             buttons_cw[index].grid(row=1, column=index, ipadx=h_size, ipady=w_size, sticky="ew")
 
-            buttons_ccw.append(Button(self.__frame, text=fields["ccw"][index]["text"]))
+            buttons_ccw.append(Button(frame, text=fields["ccw"][index]["text"]))
             buttons_ccw[index].bind("<ButtonPress-1>", fields["ccw"][index]["press"])
             buttons_ccw[index].bind("<ButtonRelease-1>", fields["ccw"][index]["release"])
             buttons_ccw[index].grid(row=2, column=index, ipadx=h_size, ipady=w_size, sticky="ew")
 
         # Place the frame.
-        self.__frame.place(x=33, y=33)
+        frame.place(x=33, y=33)
 
 
     def __frm_update(self):
@@ -625,13 +639,13 @@ class GUI():
 
         self.__create_axis_control_leds()
 
-        self.__lbl_frame = LabelFrame(self.__tab_man, text="Axises speed")
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axises speed")
 
-        self.__sldr_speed = Scale(self.__lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
+        self.__sldr_speed = Scale(lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
         self.__sldr_speed.grid(row=0, column=0, sticky="ew")
         self.__sldr_speed.set(100)
 
-        self.__lbl_frame.place(x=33, y=250) # , width= 400, height= 300)
+        lbl_frame.place(x=33, y=250) # , width= 400, height= 300)
 
 #endregion
 
