@@ -37,6 +37,11 @@ from utils.logger import get_logger
 from utils.thread_timer import ThreadTimer
 from utils.timer import Timer
 
+from kinematics.data.c_position import CPosition
+from kinematics.data.j_position import JPosition
+from kinematics.data.steppers_coefficients import SteppersCoefficients
+from kinematics.kinematics import Kinematics
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -163,6 +168,10 @@ class GUI():
         self.__frm_axis_controllers.append(AxisActionController(callback=self.__axis_3))
         self.__frm_axis_controllers.append(AxisActionController(callback=self.__axis_4))
         self.__frm_axis_controllers.append(AxisActionController(callback=self.__axis_5))
+
+        # Kinematics
+        self.__kin = Kinematics()
+        self.__sc = SteppersCoefficients()
 
 #endregion
 
@@ -598,6 +607,38 @@ class GUI():
         # Place the frame.
         frame.place(x=33, y=33)
 
+    def __create_axis_speed(self):
+
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axises speed")
+
+        self.__sldr_speed = Scale(lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
+        self.__sldr_speed.grid(row=0, column=0, sticky="ew")
+        self.__sldr_speed.set(100)
+
+        lbl_frame.place(x=33, y=250) # , width= 400, height= 300)
+
+
+    def __update_cartesian_pos_lbl(self):
+
+        j1 = self.__current_position[0] / self.__sc.T1const
+        j2 = self.__current_position[2] / self.__sc.T2const
+        j3 = self.__current_position[4] / self.__sc.T3const
+        j4 = self.__current_position[6] / self.__sc.T4const
+        j5 = self.__current_position[8] / self.__sc.T5const
+        d_pos = self.__kin.forward_from_scale(j1, j2, j3, j4, j5)
+        x = d_pos[0]
+        y = d_pos[1]
+        z = d_pos[2]
+        p = d_pos[3]
+        r = d_pos[4]
+        message = "X: {0:.2f} P: {3:.2f}\nY: {1:.2f} R: {3:.2f}\nZ: {2:.2f}".format(x, y, z, p, r)
+        self.__lbl_pos.config(text=message)
+    
+    def __create_cartesian_pos_lbl(self):
+        text_pos = "-------------------"
+        self.__lbl_pos = Label(self.__master, text=text_pos, width=len(text_pos))
+        self.__lbl_pos.place(x=33, y=350) # , width= 400, height= 300)
+
 
     def __frm_update(self):
 
@@ -612,6 +653,8 @@ class GUI():
             if self.__frm_axis_controllers[5].direction == -1:
                 self.__frm_axis_controllers[5].stop()
 
+        self.__update_cartesian_pos_lbl()
+
     def __frm_on_closing(self):
 
         self.__is_runing = False
@@ -619,7 +662,7 @@ class GUI():
     def __frm_create(self):
 
         self.__master = Tk()
-        self.__master.geometry("700x400")
+        self.__master.geometry("700x500")
         self.__master.title("Robko 01")
         self.__master.protocol("WM_DELETE_WINDOW", self.__frm_on_closing)
 
@@ -639,15 +682,11 @@ class GUI():
 
         self.__create_axis_control_leds()
 
-        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axises speed")
+        self.__create_axis_speed()
 
-        self.__sldr_speed = Scale(lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
-        self.__sldr_speed.grid(row=0, column=0, sticky="ew")
-        self.__sldr_speed.set(100)
+        self.__create_cartesian_pos_lbl()
 
-        lbl_frame.place(x=33, y=250) # , width= 400, height= 300)
-
-#endregion
+ #endregion
 
 #region Public Methods
 
