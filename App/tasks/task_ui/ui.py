@@ -36,11 +36,14 @@ from tasks.task_ui.led import LED
 from utils.logger import get_logger
 from utils.thread_timer import ThreadTimer
 from utils.timer import Timer
+from utils.utils import scale
 
 from kinematics.data.c_position import CPosition
 from kinematics.data.j_position import JPosition
 from kinematics.data.steppers_coefficients import SteppersCoefficients
 from kinematics.kinematics import Kinematics
+
+from joystick.joystick import JoystickController
 
 #region File Attributes
 
@@ -138,6 +141,14 @@ class GUI():
     __port_a_outputs = 0
     """Port A outputs.
     """
+
+    __dead_zone = 0.2
+    """Joystick analogs dead zone.
+    """    
+
+    __jsc = None
+    """Joiystick controller.
+    """    
 
 #endregion
 
@@ -314,6 +325,61 @@ class GUI():
 
 #endregion
 
+#region Private Methods (Joiystick Events)
+
+    def __jsc_update_cb(self, button_data, axis_data, hat_data):
+
+        # for index in button_data:
+        #     value = button_data[index]
+        #     if value == True:
+        #         print(index, value)
+
+        # print(axis_data)
+
+        axis_to_controller = {0:0, 1:1, 2:4, 3:2, 4:5}
+
+        # Switch right analog function.
+        if button_data[10] == True:
+            axis_to_controller[3] = 3
+
+        else:
+            axis_to_controller[3] = 2
+
+        # Go trought analogs functions and axices.
+        for index in range(4):
+            # Does the axis exists?
+            if index in axis_data:
+                pos = axis_data[index]
+                # Does the axis is out of the dead zone?
+                if abs(pos) >= self.__dead_zone:
+                    self.__frm_axis_controllers[axis_to_controller[index]].speed = int(abs(scale(pos, -1.0, 1.0, -self.__max_speed, self.__max_speed)))
+                    if pos < 0:
+                        self.__frm_axis_controllers[axis_to_controller[index]].set_ccw()
+                    elif pos > 0:
+                        self.__frm_axis_controllers[axis_to_controller[index]].set_cw()
+                    else:
+                        self.__frm_axis_controllers[axis_to_controller[index]].stop()
+                else:
+                    if not self.__frm_axis_controllers[axis_to_controller[index]].is_stopped:
+                        self.__frm_axis_controllers[axis_to_controller[index]].stop()
+
+        index = 4
+        # Does the axis exists?
+        if index in axis_data:
+            pos = axis_data[index]
+            # Does the axis is out of the dead zone?
+            if abs(pos) >= self.__dead_zone:
+                self.__frm_axis_controllers[axis_to_controller[index]].speed = int(abs(scale(pos, -1.0, 1.0, 0, self.__max_speed)))
+                if button_data[9] == True:
+                    self.__frm_axis_controllers[axis_to_controller[index]].set_cw()
+                else:
+                    self.__frm_axis_controllers[axis_to_controller[index]].set_ccw()
+            else:
+                if not self.__frm_axis_controllers[axis_to_controller[index]].is_stopped:
+                    self.__frm_axis_controllers[axis_to_controller[index]].stop()
+
+#endregion
+
 #region Private Methods (Form)
 
     def __create_tabs(self):
@@ -355,6 +421,20 @@ class GUI():
             self.__master.unbind("<KeyPress>", self.__bid_press)
             self.__master.unbind("<KeyRelease>", self.__bid_release)
 
+    def __mnu_enable_jsc(self):
+
+        value = self.__bv_enable_jsc.get()
+
+        if value:
+            if self.__jsc == None:
+                self.__jsc = JoystickController()
+                self.__jsc.update_cb(self.__jsc_update_cb)
+
+        else:
+            if self.__jsc != None:
+                del self.__jsc
+                self.__jsc = None
+
     def __mnu__do_test_1(self):
 
         self.__put_action(Actions.DoTest1)
@@ -392,6 +472,14 @@ class GUI():
             offvalue=0,
             variable=self.__bv_enable_kbc,
             command=self.__mnu_enable_kbc)
+        self.__bv_enable_jsc = BooleanVar()
+        self.__bv_enable_jsc.set(False)
+        controller_menu.add_checkbutton(
+            label="Enable Joystick Control",
+            onvalue=1,
+            offvalue=0,
+            variable=self.__bv_enable_jsc,
+            command=self.__mnu_enable_jsc)
         # controller_menu.add_command(label="Do Test 1", command=self.__mnu__do_test_1)
         # controller_menu.add_command(label="Do Test 2", command=self.__mnu__do_test_2)
         menu_bar.add_cascade(label="Controller", menu=controller_menu)
@@ -500,8 +588,14 @@ class GUI():
 
     def __update_slider_speed(self, event):
 
+        self.__max_speed = self.__sldr_speed.get()
+
+        # If the Joystick is active, do not update speed controllers by hand from he slider.
+        if self.__jsc != None:
+            return
+
         for index in range(0, 6):
-            self.__frm_axis_controllers[index].speed = self.__sldr_speed.get()
+            self.__frm_axis_controllers[index].speed = self.__max_speed
 
     def __update_axis_label(self):
 
@@ -658,6 +752,9 @@ class GUI():
         #         self.__frm_axis_controllers[5].stop()
         
         self.__update_cartesian_pos_lbl()
+
+        if self.__jsc != None:
+            self.__jsc.update()
 
     def __frm_on_closing(self):
 
