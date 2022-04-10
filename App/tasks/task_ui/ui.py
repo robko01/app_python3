@@ -649,10 +649,14 @@ class GUI():
         self.__update_port_a_inputs()
 
         # Stop the gripper if it is closed enough.
-        if not (2 & self.__port_a_inputs):
+        if (1 & self.__port_a_inputs):
             if self.__frm_axis_controllers[5].direction == -1:
                 self.__frm_axis_controllers[5].stop()
-
+        
+        # if (2 & self.__port_a_inputs):
+        #     if self.__frm_axis_controllers[5].direction == -1:
+        #         self.__frm_axis_controllers[5].stop()
+        
         self.__update_cartesian_pos_lbl()
 
     def __frm_on_closing(self):
