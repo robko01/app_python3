@@ -142,13 +142,18 @@ class GUI():
     """Port A outputs.
     """
 
+
     __dead_zone = 0.2
     """Joystick analogs dead zone.
     """    
 
+    __jsax_to_rbtax = {0:0, 1:1, 2:4, 3:2, 4:5}
+    """Joystick controller map to robot axis.
+    """
+
     __jsc = None
     """Joiystick controller.
-    """    
+    """ 
 
 #endregion
 
@@ -336,14 +341,21 @@ class GUI():
 
         # print(axis_data)
 
-        axis_to_controller = {0:0, 1:1, 2:4, 3:2, 4:5}
+        # return
+
+        self.__block_grasping = False
+
+        # Stop all axices!
+        if button_data[15] == True:
+            for key_controller in self.__frm_axis_controllers:
+                if key_controller.is_stopped:
+                    key_controller.stop()
 
         # Switch right analog function.
         if button_data[10] == True:
-            axis_to_controller[3] = 3
-
+            self.__jsax_to_rbtax[3] = 3
         else:
-            axis_to_controller[3] = 2
+            self.__jsax_to_rbtax[3] = 2
 
         # Go trought analogs functions and axices.
         for index in range(4):
@@ -352,31 +364,35 @@ class GUI():
                 pos = axis_data[index]
                 # Does the axis is out of the dead zone?
                 if abs(pos) >= self.__dead_zone:
-                    self.__frm_axis_controllers[axis_to_controller[index]].speed = int(abs(scale(pos, -1.0, 1.0, -self.__max_speed, self.__max_speed)))
+                    self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].speed = int(abs(scale(pos, -1.0, 1.0, -self.__max_speed, self.__max_speed)))
                     if pos < 0:
-                        self.__frm_axis_controllers[axis_to_controller[index]].set_ccw()
+                        self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].set_ccw()
                     elif pos > 0:
-                        self.__frm_axis_controllers[axis_to_controller[index]].set_cw()
+                        self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].set_cw()
                     else:
-                        self.__frm_axis_controllers[axis_to_controller[index]].stop()
+                        self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].stop()
+
+                    # Block grasping when moving elbow.
+                    self.__block_grasping = ((index == 3) and (self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].is_stopped == False))
+
                 else:
-                    if not self.__frm_axis_controllers[axis_to_controller[index]].is_stopped:
-                        self.__frm_axis_controllers[axis_to_controller[index]].stop()
+                    if not self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].is_stopped:
+                        self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].stop()
 
         index = 4
         # Does the axis exists?
-        if index in axis_data:
+        if (index in axis_data) and (self.__block_grasping == False):
             pos = axis_data[index]
             # Does the axis is out of the dead zone?
             if abs(pos) >= self.__dead_zone:
-                self.__frm_axis_controllers[axis_to_controller[index]].speed = int(abs(scale(pos, -1.0, 1.0, 0, self.__max_speed)))
+                self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].speed = int(abs(scale(pos, -1.0, 1.0, 0, self.__max_speed)))
                 if button_data[9] == True:
-                    self.__frm_axis_controllers[axis_to_controller[index]].set_cw()
+                    self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].set_cw()
                 else:
-                    self.__frm_axis_controllers[axis_to_controller[index]].set_ccw()
+                    self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].set_ccw()
             else:
-                if not self.__frm_axis_controllers[axis_to_controller[index]].is_stopped:
-                    self.__frm_axis_controllers[axis_to_controller[index]].stop()
+                if not self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].is_stopped:
+                    self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].stop()
 
 #endregion
 
