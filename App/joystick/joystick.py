@@ -108,7 +108,7 @@ class JoystickController(object):
             for i in range(self.__joystick.get_numhats()):
                 self.__hat_data[i] = (0, 0)
 
-#region
+#endregion
 
 #region Public Methods
 
