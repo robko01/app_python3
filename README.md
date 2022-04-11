@@ -19,6 +19,7 @@ For the normal operation of the script there are libraries that need to be prein
 | Name | Version |
 |-|:-:|
 |pyserial | 3.5 |
+|pygame | 2.1.2 |
 
 ## Automatic installation
 
