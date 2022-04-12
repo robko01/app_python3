@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import queue
 from tkinter import *
+from tkinter import messagebox
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
@@ -441,15 +442,21 @@ class GUI():
 
         value = self.__bv_enable_jsc.get()
 
-        if value:
-            if self.__jsc == None:
-                self.__jsc = JoystickController()
-                self.__jsc.update_cb(self.__jsc_update_cb)
+        try:
 
-        else:
-            if self.__jsc != None:
-                del self.__jsc
-                self.__jsc = None
+            if value:
+                if self.__jsc == None:
+                    self.__jsc = JoystickController()
+                    self.__jsc.update_cb(self.__jsc_update_cb)
+
+            else:
+                if self.__jsc != None:
+                    del self.__jsc
+                    self.__jsc = None
+
+        except Exception as e:
+            messagebox.showerror("error", e)
+            self.__bv_enable_jsc.set(False)
 
     def __mnu__do_test_1(self):
 
