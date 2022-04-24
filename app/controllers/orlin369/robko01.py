@@ -521,7 +521,7 @@ class Robko01(BaseRobko01):
         response = None
 
         while True:
-            response = self.__pm.request(OpCode.DO.value)
+            response = self.__pm.request(OpCode.DO.value, [value])
 
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
