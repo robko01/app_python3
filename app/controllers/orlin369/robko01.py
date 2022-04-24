@@ -526,7 +526,8 @@ class Robko01(BaseRobko01):
             if response.is_valid():
                 if response.status == StatusCode.Ok.value:
                     if response.opcode == OpCode.DO.value:
-                        arr = [int(x) for x in bin(value)[2:]]
+                        response_value = response.payload[0]
+                        arr = [int(x) for x in bin(response_value)[2:]]
                         break
                     else:
                         raise InvalidOperationCode("Operation code: {}".format(response.opcode))

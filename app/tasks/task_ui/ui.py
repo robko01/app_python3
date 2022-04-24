@@ -139,7 +139,7 @@ class GUI():
     """Port A inputs.
     """
 
-    __port_a_outputs = 255
+    __port_a_outputs = 0
     """Port A outputs.
     """
 
@@ -207,7 +207,8 @@ class GUI():
             self.__controller.move_speed(self.__current_speed)
 
         elif action == Actions.UpdateOutputs:
-            self.__controller.set_outputs(self.__port_a_outputs)
+            port_a_output_value = self.__controller.set_outputs(self.__port_a_outputs)
+            print(port_a_output_value)
 
         elif action == Actions.ClearController:
             self.__controller.clear()
@@ -542,9 +543,8 @@ class GUI():
 
             # Create the check box.
             var = IntVar()
-            check = Checkbutton(lbl_frame, variable=var, onvalue=0, offvalue=bit_weight[index], command=self.__update_port_a_outputs)
+            check = Checkbutton(lbl_frame, variable=var, offvalue=0, onvalue=bit_weight[index], command=self.__update_port_a_outputs)
             check.grid(row=0, column=index)
-            var.set(bit_weight[index])
             self.__frm_port_a_output_chk.append(var)
 
         # Place the frame.
