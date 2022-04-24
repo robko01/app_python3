@@ -139,7 +139,7 @@ class GUI():
     """Port A inputs.
     """
 
-    __port_a_outputs = 0
+    __port_a_outputs = 255
     """Port A outputs.
     """
 
@@ -216,10 +216,12 @@ class GUI():
             pass
 
         elif action == Actions.DoTest1:
-            self.__controller.move_absolute([200, 100, 200, 100, 200, 100, 0, 0, 0, 0, 0, 0])
+            # self.__controller.move_absolute([200, 100, 200, 100, 200, 100, 0, 0, 0, 0, 0, 0])
+            pass
 
         elif action == Actions.DoTest2:
-            self.__controller.move_absolute([0, 100, 0, 100, 0, 100, 0, 0, 0, 0, 0, 0])
+            # self.__controller.move_absolute([0, 100, 0, 100, 0, 100, 0, 0, 0, 0, 0, 0])
+            pass
 
     def __action_timer_cb(self):
 
@@ -443,7 +445,6 @@ class GUI():
         value = self.__bv_enable_jsc.get()
 
         try:
-
             if value:
                 if self.__jsc == None:
                     self.__jsc = JoystickController()
@@ -520,27 +521,30 @@ class GUI():
 
         value = 0
 
-        for bit in range(0, 8):
-            value += self.__frm_port_a_output_chk[bit].get()
+        for index in range(0, 8):
+            value += self.__frm_port_a_output_chk[index].get()
 
         self.__port_a_outputs = value
         self.__put_action(Actions.UpdateOutputs)
 
     def __create_port_a_outputs(self):
 
+        # self.__port_a_outputs = 255
+        # self.__put_action(Actions.UpdateOutputs)
+
         # Create the frame.
         lbl_frame = LabelFrame(self.__frm_tab_man, text="DO on port A")
+
+        bit_weight = [128, 64, 32, 16, 8, 4, 2, 1]
 
         # Create the check boxes.
         for index in range(0, 8):
 
-            # Bit wight.
-            bit_weight = (2**index)
-
             # Create the check box.
             var = IntVar()
-            check = Checkbutton(lbl_frame, variable=var, onvalue=bit_weight, offvalue=0, command=self.__update_port_a_outputs)
+            check = Checkbutton(lbl_frame, variable=var, onvalue=0, offvalue=bit_weight[index], command=self.__update_port_a_outputs)
             check.grid(row=0, column=index)
+            var.set(bit_weight[index])
             self.__frm_port_a_output_chk.append(var)
 
         # Place the frame.
@@ -753,7 +757,7 @@ class GUI():
     
     def __create_cartesian_pos_lbl(self):
         text_pos = "-------------------"
-        self.__lbl_pos = Label(self.__master, text=text_pos, width=len(text_pos))
+        self.__lbl_pos = Label(self.__frm_tab_man, text=text_pos, width=len(text_pos))
         self.__lbl_pos.place(x=33, y=350) # , width= 400, height= 300)
 
 
