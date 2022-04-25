@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import queue
+import sys
 from tkinter import *
 from tkinter import messagebox
 from tkinter.messagebox import askyesno
@@ -45,6 +46,8 @@ from kinematics.data.steppers_coefficients import SteppersCoefficients
 from kinematics.kinematics import Kinematics
 
 from joystick.joystick import JoystickController
+
+import serial
 
 #region File Attributes
 
@@ -207,8 +210,7 @@ class GUI():
             self.__controller.move_speed(self.__current_speed)
 
         elif action == Actions.UpdateOutputs:
-            port_a_output_value = self.__controller.set_outputs(self.__port_a_outputs)
-            print(port_a_output_value)
+            self.__controller.set_outputs(self.__port_a_outputs)
 
         elif action == Actions.ClearController:
             self.__controller.clear()
@@ -226,13 +228,21 @@ class GUI():
 
     def __action_timer_cb(self):
 
-        self.__axis_states = self.__controller.is_moving()
-        self.__port_a_inputs = self.__controller.get_inputs()
-        self.__current_position = self.__controller.current_position()
+        try:
+            self.__axis_states = self.__controller.is_moving()
+            self.__port_a_inputs = self.__controller.get_inputs()
+            self.__current_position = self.__controller.current_position()
 
-        if not self.__actions_queue.empty():
-            action = self.__actions_queue.get()
-            self.__do_action(action)
+            if not self.__actions_queue.empty():
+                action = self.__actions_queue.get()
+                self.__do_action(action)
+
+        except serial.serialutil.SerialException as e:
+            self.__logger.info(e)
+
+        except Exception as e:
+            print(type(e))
+            self.__logger.info(e)
 
 #endregion
 
@@ -525,8 +535,9 @@ class GUI():
         for index in range(0, 8):
             value += self.__frm_port_a_output_chk[index].get()
 
-        self.__port_a_outputs = value
-        self.__put_action(Actions.UpdateOutputs)
+        if value != self.__port_a_outputs:
+            self.__port_a_outputs = value
+            self.__put_action(Actions.UpdateOutputs)
 
     def __create_port_a_outputs(self):
 
@@ -538,17 +549,67 @@ class GUI():
 
         bit_weight = [128, 64, 32, 16, 8, 4, 2, 1]
 
+        fields = [
+                {
+                    "text": "Base CW",
+                    "press": lambda event: self.__frm_port_a_output_chk[0].set(bit_weight[0]),
+                    "release": lambda event: self.__frm_port_a_output_chk[0].set(0)
+                },
+                {
+                    "text": "Shoulder UP",
+                    "press": lambda event: self.__frm_port_a_output_chk[1].set(bit_weight[1]),
+                    "release": lambda event: self.__frm_port_a_output_chk[1].set(0)
+                },
+                {
+                    "text": "Elbow UP",
+                    "press": lambda event: self.__frm_port_a_output_chk[2].set(bit_weight[2]),
+                    "release": lambda event: self.__frm_port_a_output_chk[2].set(0)
+                },
+                {
+                    "text": "P UP",
+                    "press": lambda event: self.__frm_port_a_output_chk[3].set(bit_weight[3]),
+                    "release": lambda event: self.__frm_port_a_output_chk[3].set(0)
+                },
+                {
+                    "text": "R CW",
+                    "press": lambda event: self.__frm_port_a_output_chk[4].set(bit_weight[4]),
+                    "release": lambda event: self.__frm_port_a_output_chk[4].set(0)
+                },
+                {
+                    "text": "Gripper OPEN",
+                    "press": lambda event: self.__frm_port_a_output_chk[5].set(bit_weight[5]),
+                    "release": lambda event: self.__frm_port_a_output_chk[5].set(0)
+                },
+                {
+                    "text": "Gripper OPEN",
+                    "press": lambda event: self.__frm_port_a_output_chk[6].set(bit_weight[6]),
+                    "release": lambda event: self.__frm_port_a_output_chk[6].set(0)
+                },
+                {
+                    "text": "Gripper OPEN",
+                    "press": lambda event: self.__frm_port_a_output_chk[7].set(bit_weight[7]),
+                    "release": lambda event: self.__frm_port_a_output_chk[7].set(0)
+                },
+            ]
+
         # Create the check boxes.
         for index in range(0, 8):
 
             # Create the check box.
             var = IntVar()
-            check = Checkbutton(lbl_frame, variable=var, offvalue=0, onvalue=bit_weight[index], command=self.__update_port_a_outputs)
-            check.grid(row=0, column=index)
+            var.trace_add("write", lambda name, nz, operation: self.__update_port_a_outputs())
             self.__frm_port_a_output_chk.append(var)
 
+            check = Checkbutton(lbl_frame, variable=var, offvalue=0, onvalue=bit_weight[index]) # , command=self.__update_port_a_outputs
+            check.grid(row=0, column=index)
+
+            button = Button(lbl_frame, text="{}".format(index))
+            button.bind("<ButtonPress>", fields[index]["press"])
+            button.bind("<ButtonRelease>", fields[index]["release"])
+            button.grid(row=1, column=index)
+
         # Place the frame.
-        lbl_frame.place(x=33, y=200)
+        lbl_frame.place(x=33, y=270)
 
 
     def __update_port_a_inputs(self):
@@ -580,7 +641,7 @@ class GUI():
             self.__frm_port_a_input_leds.append(led)
 
         # Place the frame.
-        lbl_frame.place(x=350, y=200)
+        lbl_frame.place(x=350, y=270)
 
 
     def __update_axis_control_leds(self):
@@ -610,7 +671,7 @@ class GUI():
             self.__frm_axis_control_leds.append(led)
 
         # Place the frame.
-        lbl_frame.place(x=350, y=250)
+        lbl_frame.place(x=350, y=200)
 
 
     def __update_slider_speed(self, event):
@@ -736,7 +797,7 @@ class GUI():
         self.__sldr_speed.grid(row=0, column=0, sticky="ew")
         self.__sldr_speed.set(100)
 
-        lbl_frame.place(x=33, y=250) # , width= 400, height= 300)
+        lbl_frame.place(x=33, y=200) # , width= 400, height= 300)
 
 
     def __update_cartesian_pos_lbl(self):
@@ -758,7 +819,7 @@ class GUI():
     def __create_cartesian_pos_lbl(self):
         text_pos = "-------------------"
         self.__lbl_pos = Label(self.__frm_tab_man, text=text_pos, width=len(text_pos))
-        self.__lbl_pos.place(x=33, y=350) # , width= 400, height= 300)
+        self.__lbl_pos.place(x=150, y=200) # , width= 400, height= 300)
 
 
     def __frm_update(self):
@@ -790,7 +851,7 @@ class GUI():
     def __frm_create(self):
 
         self.__master = Tk()
-        self.__master.geometry("700x500")
+        self.__master.geometry("700x400")
         self.__master.title("Robko 01")
         self.__master.protocol("WM_DELETE_WINDOW", self.__frm_on_closing)
 
