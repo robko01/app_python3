@@ -23,14 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import queue
-import sys
-from tkinter import *
-from tkinter import messagebox
+
+from tkinter import RAISED, BooleanVar, Button, Checkbutton, Frame, IntVar, Label, LabelFrame, Menu, Scale, Tk, messagebox
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
 from tasks.task_ui.actions import Actions
-from tasks.task_ui.axis_action_controller import *
+from tasks.task_ui.axis_action_controller import AxisActionController
 from tasks.task_ui.led import LedStatus
 from tasks.task_ui.led import LedShape
 from tasks.task_ui.led import LED
@@ -40,8 +39,6 @@ from utils.thread_timer import ThreadTimer
 from utils.timer import Timer
 from utils.utils import scale
 
-from kinematics.data.c_position import CPosition
-from kinematics.data.j_position import JPosition
 from kinematics.data.steppers_coefficients import SteppersCoefficients
 from kinematics.kinematics import Kinematics
 
@@ -146,6 +143,7 @@ class GUI():
     """Port A outputs.
     """
 
+    __bit_weight = [128, 64, 32, 16, 8, 4, 2, 1]
 
     __dead_zone = 0.2
     """Joystick analogs dead zone.
@@ -155,9 +153,13 @@ class GUI():
     """Joystick controller map to robot axis.
     """
 
+    __jsbtn_to_rbtoc = {0:6}
+    """Joystick controller map to robot axis.
+    """
+
     __jsc = None
     """Joiystick controller.
-    """ 
+    """
 
 #endregion
 
@@ -241,7 +243,6 @@ class GUI():
             self.__logger.info(e)
 
         except Exception as e:
-            print(type(e))
             self.__logger.info(e)
 
 #endregion
@@ -356,6 +357,28 @@ class GUI():
         # print(axis_data)
 
         # return
+
+        # Key map to OC/DO.
+        # Go trought button map.
+        for button, bit in self.__jsbtn_to_rbtoc.items():
+
+            # Read button state.
+            act_bit_state = button_data[button]
+
+            # Check bit state.
+            prev_bit_state = self.__frm_port_a_output_chk[bit].get() > 0
+
+            # Comapare the bit states.
+            update_flag = prev_bit_state != act_bit_state
+
+            # If it is time to update.
+            if update_flag:
+
+                # Apply actual bit state.
+                if act_bit_state:
+                    self.__frm_port_a_output_chk[bit].set(self.__bit_weight[bit])
+                else:
+                    self.__frm_port_a_output_chk[bit].set(0)
 
         self.__block_grasping = False
 
@@ -541,56 +564,51 @@ class GUI():
 
     def __create_port_a_outputs(self):
 
-        # self.__port_a_outputs = 255
-        # self.__put_action(Actions.UpdateOutputs)
-
-        # Create the frame.
-        lbl_frame = LabelFrame(self.__frm_tab_man, text="DO on port A")
-
-        bit_weight = [128, 64, 32, 16, 8, 4, 2, 1]
-
         fields = [
                 {
-                    "text": "Base CW",
-                    "press": lambda event: self.__frm_port_a_output_chk[0].set(bit_weight[0]),
+                    "text": "7",
+                    "press": lambda event: self.__frm_port_a_output_chk[0].set(self.__bit_weight[0]),
                     "release": lambda event: self.__frm_port_a_output_chk[0].set(0)
                 },
                 {
-                    "text": "Shoulder UP",
-                    "press": lambda event: self.__frm_port_a_output_chk[1].set(bit_weight[1]),
+                    "text": "6",
+                    "press": lambda event: self.__frm_port_a_output_chk[1].set(self.__bit_weight[1]),
                     "release": lambda event: self.__frm_port_a_output_chk[1].set(0)
                 },
                 {
-                    "text": "Elbow UP",
-                    "press": lambda event: self.__frm_port_a_output_chk[2].set(bit_weight[2]),
+                    "text": "5",
+                    "press": lambda event: self.__frm_port_a_output_chk[2].set(self.__bit_weight[2]),
                     "release": lambda event: self.__frm_port_a_output_chk[2].set(0)
                 },
                 {
-                    "text": "P UP",
-                    "press": lambda event: self.__frm_port_a_output_chk[3].set(bit_weight[3]),
+                    "text": "4",
+                    "press": lambda event: self.__frm_port_a_output_chk[3].set(self.__bit_weight[3]),
                     "release": lambda event: self.__frm_port_a_output_chk[3].set(0)
                 },
                 {
-                    "text": "R CW",
-                    "press": lambda event: self.__frm_port_a_output_chk[4].set(bit_weight[4]),
+                    "text": "3",
+                    "press": lambda event: self.__frm_port_a_output_chk[4].set(self.__bit_weight[4]),
                     "release": lambda event: self.__frm_port_a_output_chk[4].set(0)
                 },
                 {
-                    "text": "Gripper OPEN",
-                    "press": lambda event: self.__frm_port_a_output_chk[5].set(bit_weight[5]),
+                    "text": "2",
+                    "press": lambda event: self.__frm_port_a_output_chk[5].set(self.__bit_weight[5]),
                     "release": lambda event: self.__frm_port_a_output_chk[5].set(0)
                 },
                 {
-                    "text": "Gripper OPEN",
-                    "press": lambda event: self.__frm_port_a_output_chk[6].set(bit_weight[6]),
+                    "text": "1",
+                    "press": lambda event: self.__frm_port_a_output_chk[6].set(self.__bit_weight[6]),
                     "release": lambda event: self.__frm_port_a_output_chk[6].set(0)
                 },
                 {
-                    "text": "Gripper OPEN",
-                    "press": lambda event: self.__frm_port_a_output_chk[7].set(bit_weight[7]),
+                    "text": "0",
+                    "press": lambda event: self.__frm_port_a_output_chk[7].set(self.__bit_weight[7]),
                     "release": lambda event: self.__frm_port_a_output_chk[7].set(0)
                 },
             ]
+
+        # Create the frame.
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="DO on port A")
 
         # Create the check boxes.
         for index in range(0, 8):
@@ -600,10 +618,10 @@ class GUI():
             var.trace_add("write", lambda name, nz, operation: self.__update_port_a_outputs())
             self.__frm_port_a_output_chk.append(var)
 
-            check = Checkbutton(lbl_frame, variable=var, offvalue=0, onvalue=bit_weight[index]) # , command=self.__update_port_a_outputs
+            check = Checkbutton(lbl_frame, variable=var, offvalue=0, onvalue=self.__bit_weight[index])
             check.grid(row=0, column=index)
 
-            button = Button(lbl_frame, text="{}".format(index))
+            button = Button(lbl_frame, text="{}".format(fields[index]["text"]), padx=5, pady=2)
             button.bind("<ButtonPress>", fields[index]["press"])
             button.bind("<ButtonRelease>", fields[index]["release"])
             button.grid(row=1, column=index)
