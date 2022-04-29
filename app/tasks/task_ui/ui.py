@@ -23,8 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import queue
+import time
 
-from tkinter import RAISED, BooleanVar, Button, Checkbutton, Frame, IntVar, Label, LabelFrame, Menu, Scale, Tk, messagebox
+from tkinter import BOTTOM, RAISED, SUNKEN, W, X, BooleanVar, Button, Checkbutton, Frame, IntVar, Label, LabelFrame, Listbox, Menu, Scale, Tk, messagebox
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
@@ -161,6 +162,8 @@ class GUI():
     """Joiystick controller.
     """
 
+    __kb_key_state = ""
+
 #endregion
 
 #region Constructor
@@ -194,6 +197,25 @@ class GUI():
         # Kinematics
         self.__kin = Kinematics()
         self.__sc = SteppersCoefficients()
+
+#endregion
+
+#region Private Methods (Autmaton)
+
+    def __init_automation(self):
+
+        pass
+
+    def __update_automation(self):
+
+        # Stop the gripper if it is closed enough.
+        if (1 & self.__port_a_inputs):
+            if self.__frm_axis_controllers[5].direction == -1:
+                self.__frm_axis_controllers[5].stop()
+        
+        # if (2 & self.__port_a_inputs):
+        #     if self.__frm_axis_controllers[5].direction == -1:
+        #         self.__frm_axis_controllers[5].stop()
 
 #endregion
 
@@ -292,16 +314,14 @@ class GUI():
 
 #region Private Methods (Keyboard Events)
 
-    def __frm_key_release(self, event):
-        message = "up {}".format(event.char)
-        self.__lbl_buttons_state.config(text=message)
+    def __kbc_key_release(self, event):
+        self.__kb_key_state = "UP({})".format(event.char)
 
-    def __frm_key_press(self, event):
+    def __kbc_key_press(self, event):
 
         char = event.char
 
-        message = "down {}".format(char)
-        self.__lbl_buttons_state.config(text=message)
+        self.__kb_key_state = "DN({})".format(char)
 
         if char == " ":
             for key_controller in self.__frm_axis_controllers:
@@ -342,6 +362,21 @@ class GUI():
 
         elif char == "y":
             self.__frm_axis_controllers[5].set_ccw()
+
+    def __kbc_enable(self, value):
+        if value:
+            # Bind keys.
+            self.__bid_press = self.__master.bind_all("<KeyPress>", self.__kbc_key_press)
+            self.__bid_release = self.__master.bind_all("<KeyRelease>", self.__kbc_key_release)
+
+            self.__led_kb_state.turnon()
+
+        else:
+            # Unbind keys.
+            self.__master.unbind("<KeyPress>", self.__bid_press)
+            self.__master.unbind("<KeyRelease>", self.__bid_release)
+
+            self.__led_kb_state.turnoff()
 
 #endregion
 
@@ -431,52 +466,7 @@ class GUI():
                 if not self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].is_stopped:
                     self.__frm_axis_controllers[self.__jsax_to_rbtax[index]].stop()
 
-#endregion
-
-#region Private Methods (Form)
-
-    def __create_tabs(self):
-
-        self.notebook = Notebook(self.__master)
-
-        self.__frm_tab_man = Frame(self.notebook)
-        self.notebook.add(self.__frm_tab_man, text="Manual")
-
-        self.__frm_tab_auto = Frame(self.notebook)
-        self.notebook.add(self.__frm_tab_auto, text="Auto")        
-
-        self.notebook.pack(expand=1, fill ="both")
-
-
-    def __mnu_clear_controller(self):
-
-        answer = askyesno(title="Clear axis positions", message="Are you sure you want to clear the axis positions?")
-        if answer:
-            self.__put_action(Actions.ClearController)
-
-    def __mnu_reset_controller(self):
-
-        answer = askyesno(title="Reset robot controller", message="Are you sure you want to reset the robot controller?")
-        if answer:
-            self.__put_action(Actions.ResetController)
-
-    def __mnu_enable_kbc(self):
-
-        value = self.__bv_enable_kbc.get()
-
-        if value:
-            # Bind keys.
-            self.__bid_press = self.__master.bind_all("<KeyPress>", self.__frm_key_press)
-            self.__bid_release = self.__master.bind_all("<KeyRelease>", self.__frm_key_release)
-
-        else:
-            # Unbind keys.
-            self.__master.unbind("<KeyPress>", self.__bid_press)
-            self.__master.unbind("<KeyRelease>", self.__bid_release)
-
-    def __mnu_enable_jsc(self):
-
-        value = self.__bv_enable_jsc.get()
+    def __jsc_enable(self, value):
 
         try:
             if value:
@@ -484,14 +474,52 @@ class GUI():
                     self.__jsc = JoystickController()
                     self.__jsc.update_cb(self.__jsc_update_cb)
 
+                    self.__led_js_state.turnon()
+
             else:
                 if self.__jsc != None:
                     del self.__jsc
                     self.__jsc = None
 
+                    self.__led_js_state.turnoff()
+
         except Exception as e:
             messagebox.showerror("error", e)
             self.__bv_enable_jsc.set(False)
+
+            self.__led_js_state.turnoff()
+
+#endregion
+
+#region Private Methods (Menu)
+
+    def __mnu_clear_controller(self):
+
+        answer = askyesno(title="Clear axis positions",
+            message="Are you sure you want to clear the axis positions?")
+        
+        if answer:
+            self.__put_action(Actions.ClearController)
+
+    def __mnu_reset_controller(self):
+
+        answer = askyesno(title="Reset robot controller",
+            message="Are you sure you want to reset the robot controller?")
+        
+        if answer:
+            self.__put_action(Actions.ResetController)
+
+    def __mnu_enable_kbc(self):
+
+        value = self.__bv_enable_kbc.get()
+
+        self.__kbc_enable(value)
+
+    def __mnu_enable_jsc(self):
+
+        value = self.__bv_enable_jsc.get()
+
+        self.__jsc_enable(value)
 
     def __mnu__do_test_1(self):
 
@@ -530,6 +558,7 @@ class GUI():
             offvalue=0,
             variable=self.__bv_enable_kbc,
             command=self.__mnu_enable_kbc)
+
         self.__bv_enable_jsc = BooleanVar()
         self.__bv_enable_jsc.set(False)
         controller_menu.add_checkbutton(
@@ -538,8 +567,11 @@ class GUI():
             offvalue=0,
             variable=self.__bv_enable_jsc,
             command=self.__mnu_enable_jsc)
+
         # controller_menu.add_command(label="Do Test 1", command=self.__mnu__do_test_1)
+
         # controller_menu.add_command(label="Do Test 2", command=self.__mnu__do_test_2)
+
         menu_bar.add_cascade(label="Controller", menu=controller_menu)
 
         # Third menu block.
@@ -550,6 +582,158 @@ class GUI():
         # Add the menu.
         self.__master.config(menu=menu_bar)
 
+#endregion
+
+#region Private Methods (Tabs)
+
+    def __create_tabs(self):
+
+        self.notebook = Notebook(self.__master)
+
+        self.__frm_tab_man = Frame(self.notebook)
+        self.notebook.add(self.__frm_tab_man, text="Manual")
+
+        self.__frm_tab_auto = Frame(self.notebook)
+        self.notebook.add(self.__frm_tab_auto, text="Auto")        
+
+        self.notebook.pack(expand=1, fill ="both")
+
+#endregion
+
+#region Private Methods (Status Bar)
+
+    def __update_port_a_inputs(self):
+
+        if len(self.__frm_port_a_input_leds) == 8:
+            led_index = 7
+            for index in range(0, 8):
+                if (2**index) & self.__port_a_inputs:
+                    self.__frm_port_a_input_leds[led_index].turnoff()
+                else:
+                    self.__frm_port_a_input_leds[led_index].turnon()
+                led_index -= 1
+
+    def __create_port_a_inputs(self):
+
+        # Create the frame.
+        lbl_frame = LabelFrame(self.__frm_status_frame, text="DI on port A")
+        lbl_frame.place(x=300, y=0)
+
+        led_w = 20
+        led_h = 20
+
+        for index in range(0, 8):
+
+            led = LED(lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+                width=led_w, height=led_h, appearance=RAISED,
+                blink=0, bd=1, outline="")
+            led.frame.grid(row=0, column=index)
+
+            self.__frm_port_a_input_leds.append(led)
+
+
+    def __update_axis_control_leds(self):
+
+        if len(self.__frm_axis_control_leds) == 6:
+            for index in range(0, 6):
+                if (2**index) & self.__axis_states:
+                    self.__frm_axis_control_leds[index].turnon()
+                else:
+                    self.__frm_axis_control_leds[index].turnoff()
+
+    def __create_axis_control_leds(self):
+
+        # Create the frame.
+        lbl_frame = LabelFrame(self.__frm_status_frame, text="Axis control LEDs")
+        lbl_frame.place(x=160, y=0)
+
+        led_w = 20
+        led_h = 20
+
+        for index in range(0, 6):
+
+            led = LED(lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+                width=led_w, height=led_h, appearance=RAISED,
+                blink=0, bd=1, outline="")
+            led.frame.grid(row=0, column=index)
+
+            self.__frm_axis_control_leds.append(led)
+
+
+    def __update_cartesian_pos_lbl(self):
+
+        j1 = self.__current_position[0] / self.__sc.T1const
+        j2 = self.__current_position[2] / self.__sc.T2const
+        j3 = self.__current_position[4] / self.__sc.T3const
+        j4 = self.__current_position[6] / self.__sc.T4const
+        j5 = self.__current_position[8] / self.__sc.T5const
+        d_pos = self.__kin.forward_from_scale(j1, j2, j3, j4, j5)
+        x = d_pos[0]
+        y = d_pos[1]
+        z = d_pos[2]
+        p = d_pos[3]
+        r = d_pos[4]
+        message = "X: {0:4.2f} P: {3:4.2f}\nY: {1:4.2f} R: {3:4.2f}\nZ: {2:4.2f}".format(x, y, z, p, r)
+        self.__lbl_pos.config(text=message)
+    
+    def __create_cartesian_pos_lbl(self):
+        text_pos = "-------------------"
+        self.__lbl_pos = Label(self.__frm_status_frame, text=text_pos, width=len(text_pos))
+        self.__lbl_pos.place(x=500, y=0) # , width= 400, height= 300)
+
+
+    def __craete_kb_status_led(self):
+
+        kb_status_frame = LabelFrame(self.__frm_status_frame, text="Keyboard")
+        kb_status_frame.place(x=30, y=0)
+
+        self.__led_kb_state = LED(kb_status_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+                width=20, height=20, appearance=RAISED,
+                blink=0, bd=1, outline="")
+        self.__led_kb_state.frame.grid(row=0, column=0)
+
+        self.__lbl_kb_status = Label(kb_status_frame)
+        self.__lbl_kb_status.place(x=23, y=0)
+
+    def __craete_js_status_led(self):
+
+        js_status_frame = LabelFrame(self.__frm_status_frame, text="Joystick")
+        js_status_frame.place(x=100, y=0)
+
+        self.__led_js_state = LED(js_status_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
+                width=20, height=20, appearance=RAISED,
+                blink=0, bd=1, outline="")
+        self.__led_js_state.frame.grid(row=0, column=1)
+
+
+    def __update_status_bar(self):
+
+        self.__update_axis_control_leds()
+
+        self.__update_port_a_inputs()
+
+        self.__update_cartesian_pos_lbl()
+
+        self.__lbl_kb_status.config(text="{}".format(self.__kb_key_state))
+
+    def __create_status_bar(self):
+
+        self.__frm_status_frame = Frame(self.__master, bd=1, relief=SUNKEN, height=50)
+        self.__frm_status_frame.pack(side=BOTTOM, fill=X)
+
+        self.__craete_kb_status_led()
+
+        self.__craete_js_status_led()
+
+        self.__create_axis_control_leds()
+
+        self.__create_port_a_inputs()
+
+        self.__create_cartesian_pos_lbl()
+
+#endregion
+
+#region Private Methods (Tab Manual)
 
     def __update_port_a_outputs(self):
 
@@ -627,72 +811,10 @@ class GUI():
             button.grid(row=1, column=index)
 
         # Place the frame.
-        lbl_frame.place(x=33, y=270)
+        lbl_frame.place(x=300, y=200)
 
 
-    def __update_port_a_inputs(self):
-
-        if len(self.__frm_port_a_input_leds) == 8:
-            led_index = 7
-            for index in range(0, 8):
-                if (2**index) & self.__port_a_inputs:
-                    self.__frm_port_a_input_leds[led_index].turnoff()
-                else:
-                    self.__frm_port_a_input_leds[led_index].turnon()
-                led_index -= 1
-
-    def __create_port_a_inputs(self):
-
-        # Create the frame.
-        lbl_frame = LabelFrame(self.__frm_tab_man, text="DI on port A")
-
-        led_w = 20
-        led_h = 20
-
-        for index in range(0, 8):
-
-            led = LED(lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
-                width=led_w, height=led_h, appearance=RAISED,
-                blink=0, bd=1, outline="")
-            led.frame.grid(row=0, column=index)
-
-            self.__frm_port_a_input_leds.append(led)
-
-        # Place the frame.
-        lbl_frame.place(x=350, y=270)
-
-
-    def __update_axis_control_leds(self):
-
-        if len(self.__frm_axis_control_leds) == 6:
-            for index in range(0, 6):
-                if (2**index) & self.__axis_states:
-                    self.__frm_axis_control_leds[index].turnon()
-                else:
-                    self.__frm_axis_control_leds[index].turnoff()
-
-    def __create_axis_control_leds(self):
-
-        # Create the frame.
-        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axis control LEDs")
-
-        led_w = 20
-        led_h = 20
-
-        for index in range(0, 6):
-
-            led = LED(lbl_frame, shape=LedShape.ROUND, status=LedStatus.OFF,
-                width=led_w, height=led_h, appearance=RAISED,
-                blink=0, bd=1, outline="")
-            led.frame.grid(row=0, column=index)
-
-            self.__frm_axis_control_leds.append(led)
-
-        # Place the frame.
-        lbl_frame.place(x=350, y=200)
-
-
-    def __update_slider_speed(self, event):
+    def __update_axis_speed(self, event):
 
         self.__max_speed = self.__sldr_speed.get()
 
@@ -703,7 +825,18 @@ class GUI():
         for index in range(0, 6):
             self.__frm_axis_controllers[index].speed = self.__max_speed
 
-    def __update_axis_label(self):
+    def __create_axis_speed(self):
+
+        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axises speed")
+
+        self.__sldr_speed = Scale(lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_axis_speed)
+        self.__sldr_speed.grid(row=0, column=0, sticky="ew")
+        self.__sldr_speed.set(100)
+
+        lbl_frame.place(x=33, y=200) # , width= 400, height= 300)
+
+
+    def __update_axis_controls(self):
 
         for index in range(0, 6):
             text = "P: {}\nV: {}".format(self.__current_position[index*2], self.__current_position[index*2 + 1])
@@ -807,60 +940,33 @@ class GUI():
         # Place the frame.
         frame.place(x=33, y=33)
 
-    def __create_axis_speed(self):
+#endregion
 
-        lbl_frame = LabelFrame(self.__frm_tab_man, text="Axises speed")
+#region Private Methods (Tab Auto)
 
-        self.__sldr_speed = Scale(lbl_frame, from_=20, to=150, orient="horizontal", command=self.__update_slider_speed)
-        self.__sldr_speed.grid(row=0, column=0, sticky="ew")
-        self.__sldr_speed.set(100)
+    def __create_list_view(self):
 
-        lbl_frame.place(x=33, y=200) # , width= 400, height= 300)
+        listbox = Listbox(self.__frm_tab_auto)
+        listbox.insert(1,"India")
+        listbox.insert(2, "USA")
+        listbox.insert(3, "Japan")
+        listbox.insert(4, "Austrelia")
+        listbox.place(x=20, y=20)
 
+#endregion
 
-    def __update_cartesian_pos_lbl(self):
-
-        j1 = self.__current_position[0] / self.__sc.T1const
-        j2 = self.__current_position[2] / self.__sc.T2const
-        j3 = self.__current_position[4] / self.__sc.T3const
-        j4 = self.__current_position[6] / self.__sc.T4const
-        j5 = self.__current_position[8] / self.__sc.T5const
-        d_pos = self.__kin.forward_from_scale(j1, j2, j3, j4, j5)
-        x = d_pos[0]
-        y = d_pos[1]
-        z = d_pos[2]
-        p = d_pos[3]
-        r = d_pos[4]
-        message = "X: {0:.2f} P: {3:.2f}\nY: {1:.2f} R: {3:.2f}\nZ: {2:.2f}".format(x, y, z, p, r)
-        self.__lbl_pos.config(text=message)
-    
-    def __create_cartesian_pos_lbl(self):
-        text_pos = "-------------------"
-        self.__lbl_pos = Label(self.__frm_tab_man, text=text_pos, width=len(text_pos))
-        self.__lbl_pos.place(x=150, y=200) # , width= 400, height= 300)
-
+#region Private Methods (Form)
 
     def __frm_update(self):
 
-        self.__update_axis_label()
+        self.__update_status_bar()
 
-        self.__update_axis_control_leds()
-
-        self.__update_port_a_inputs()
-
-        # Stop the gripper if it is closed enough.
-        if (1 & self.__port_a_inputs):
-            if self.__frm_axis_controllers[5].direction == -1:
-                self.__frm_axis_controllers[5].stop()
-        
-        # if (2 & self.__port_a_inputs):
-        #     if self.__frm_axis_controllers[5].direction == -1:
-        #         self.__frm_axis_controllers[5].stop()
-        
-        self.__update_cartesian_pos_lbl()
+        self.__update_axis_controls()
 
         if self.__jsc != None:
             self.__jsc.update()
+
+        self.__update_automation()
 
     def __frm_on_closing(self):
 
@@ -868,16 +974,16 @@ class GUI():
 
     def __frm_create(self):
 
+        self.__init_automation()
+
         self.__master = Tk()
         self.__master.geometry("700x400")
         self.__master.title("Robko 01")
         self.__master.protocol("WM_DELETE_WINDOW", self.__frm_on_closing)
 
-        display="Press Any Button, or Press  Key"
-        self.__lbl_buttons_state = Label(self.__master, text=display, width=len(display))
-        self.__lbl_buttons_state.place(x=33, y=250) # , width= 400, height= 300)
-
         self.__create_menu_bar()
+
+        self.__create_status_bar()
 
         self.__create_tabs()
 
@@ -885,13 +991,9 @@ class GUI():
 
         self.__create_port_a_outputs()
 
-        self.__create_port_a_inputs()
-
-        self.__create_axis_control_leds()
-
         self.__create_axis_speed()
 
-        self.__create_cartesian_pos_lbl()
+        self.__create_list_view()
 
  #endregion
 
