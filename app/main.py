@@ -125,4 +125,7 @@ def main():
     __tm.stop()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        __logger.error(e)
