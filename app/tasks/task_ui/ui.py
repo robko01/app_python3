@@ -23,9 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import queue
-import time
 
-from tkinter import BOTTOM, RAISED, SUNKEN, W, X, BooleanVar, Button, Checkbutton, Frame, IntVar, Label, LabelFrame, Listbox, Menu, Scale, Tk, messagebox
+from tkinter import BOTTOM, RAISED, SUNKEN, W, X, BooleanVar, Button, Checkbutton, Frame, IntVar, Label, LabelFrame, Listbox, Menu, PhotoImage, Scale, Text, Tk, messagebox
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
@@ -944,6 +943,21 @@ class GUI():
 
 #region Private Methods (Tab Auto)
 
+    def resizeImage(self, img, newWidth, newHeight):
+
+        oldWidth = img.width()
+        oldHeight = img.height()
+        newPhotoImage = PhotoImage(width=newWidth, height=newHeight)
+
+        for x in range(newWidth):
+            for y in range(newHeight):
+                xOld = int(x*oldWidth/newWidth)
+                yOld = int(y*oldHeight/newHeight)
+                rgb = '#%02x%02x%02x' % img.get(xOld, yOld)
+                newPhotoImage.put(rgb, (x, y))
+
+        return newPhotoImage
+
     def __create_list_view(self):
 
         listbox = Listbox(self.__frm_tab_auto)
@@ -951,7 +965,27 @@ class GUI():
         listbox.insert(2, "USA")
         listbox.insert(3, "Japan")
         listbox.insert(4, "Austrelia")
-        listbox.place(x=20, y=20)
+        listbox.place(x=20, y=20, w=300, h=200)
+
+        cmd_input = Text(self.__frm_tab_auto)
+        cmd_input.place(x=20, y=200, w=300, h=20)
+
+        # cwf = os.path.dirname(os.path.abspath(__file__))
+        # file_name = os.path.join(cwf, "resources", "images", "arrow-up.png")
+        # image = PhotoImage(file=file_name)
+        # img = self.resizeImage(image, 15, 110)
+        # btn_up = Button(self.__frm_tab_auto, text="UP", image=img, compound="left")
+        btn_up = Button(self.__frm_tab_auto, text="UP")
+        btn_up.place(x=320, y=20, w=50, h=30)
+
+        btn_up = Button(self.__frm_tab_auto, text="DOWN")
+        btn_up.place(x=320, y=50, w=50, h=30)
+
+        btn_up = Button(self.__frm_tab_auto, text="RUN")
+        btn_up.place(x=320, y=80, w=50, h=30)
+
+        btn_up = Button(self.__frm_tab_auto, text="STOP")
+        btn_up.place(x=320, y=110, w=50, h=30)
 
 #endregion
 
