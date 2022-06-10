@@ -28,11 +28,11 @@ from tkinter import BOTTOM, RAISED, SUNKEN, W, X, BooleanVar, Button, Checkbutto
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
-from tasks.task_ui.actions import Actions
-from tasks.task_ui.axis_action_controller import AxisActionController
-from tasks.task_ui.led import LedStatus
-from tasks.task_ui.led import LedShape
-from tasks.task_ui.led import LED
+from tasks.task_ui_tk.actions import Actions
+from tasks.task_ui_tk.axis_action_controller import AxisActionController
+from tasks.task_ui_tk.led import LedStatus
+from tasks.task_ui_tk.led import LedShape
+from tasks.task_ui_tk.led import LED
 
 from utils.logger import get_logger
 from utils.thread_timer import ThreadTimer
@@ -70,7 +70,7 @@ __maintainer__ = "Orlin Dimitrov"
 __email__ = "robko01@8bitclub.com"
 """E-mail of the author."""
 
-__class_name__ = "TaskGUI"
+__class_name__ = "GUI"
 """Task name."""
 
 #endregion

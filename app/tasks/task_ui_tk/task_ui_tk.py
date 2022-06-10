@@ -26,7 +26,7 @@ import time
 import threading
 
 from tasks.base_task import BaseTask
-from tasks.task_ui.ui import GUI
+from tasks.task_ui_tk.ui import GUI
 
 from utils.logger import get_logger
 
