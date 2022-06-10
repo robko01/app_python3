@@ -154,7 +154,7 @@ class TaskManager:
 
         module = importlib.import_module(module_path)
         if module is None:
-            raise ImportError("{}.{}".format(module_path))        
+            raise ImportError("{}".format(module_path))        
 
         if not hasattr(module, "__class_name__"):
             raise AttributeError("Module: {}, has no attribute __class_name__.".format(module_path))
@@ -165,7 +165,7 @@ class TaskManager:
         class_module = getattr(module, module.__class_name__)
         if class_module is None:
             raise ModuleNotFoundError("{}.{}".format(module_path, module.__class_name__))
-        
+
         class_isinstance = class_module(controller=self.__controller, em=self.__execution_mode)
 
         return class_isinstance
