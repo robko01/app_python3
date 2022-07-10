@@ -28,8 +28,6 @@ from tkinter import BOTTOM, RAISED, SUNKEN, W, X, BooleanVar, Button, Checkbutto
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
-from tasks.task_ui_tk.actions import Actions
-from tasks.task_ui_tk.axis_action_controller import AxisActionController
 from tasks.task_ui_tk.led import LedStatus
 from tasks.task_ui_tk.led import LedShape
 from tasks.task_ui_tk.led import LED
@@ -38,6 +36,8 @@ from utils.logger import get_logger
 from utils.thread_timer import ThreadTimer
 from utils.timer import Timer
 from utils.utils import scale
+from utils.axis_action_controller import AxisActionController
+from utils.actions import Actions
 
 from kinematics.data.steppers_coefficients import SteppersCoefficients
 from kinematics.kinematics import Kinematics
@@ -101,7 +101,7 @@ class GUI():
 
     __frm_port_a_output_chk = []
     """Port A outputs Checks.
-    """    
+    """
 
     __frm_axis_labels = []
     """Axis labels.
