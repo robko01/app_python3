@@ -154,7 +154,7 @@ class TaskManager:
 
         module = importlib.import_module(module_path)
         if module is None:
-            raise ImportError("{}".format(module_path))        
+            raise ImportError("{}".format(module_path))
 
         if not hasattr(module, "__class_name__"):
             raise AttributeError("Module: {}, has no attribute __class_name__.".format(module_path))
@@ -206,7 +206,7 @@ class TaskManager:
 
         Args:
             start (str): Task folder name.
-        """        
+        """
 
         self.stop()
 
