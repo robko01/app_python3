@@ -46,12 +46,11 @@ __maintainer__ = "Orlin Dimitrov"
 __email__ = "robko01@8bitclub.com"
 """E-mail of the author."""
 
-__class_name__ = "TaskGUI"
-"""Task name."""
-
 #endregion
 
 class AxisActionController():
+    """Axis controller.
+    """
 
 #region Attributes
 
@@ -77,24 +76,44 @@ class AxisActionController():
 
     @property
     def speed(self):
+        """Speed of the controller.
+
+        Returns:
+            int: Speed
+        """
 
         return self.__speed
 
     @speed.setter
     def speed(self, value):
+        """Set speed of the controller.
+
+        Args:
+            value (int): Speed
+        """
 
         self.__speed = value
 
-        if self.__callback != None:
+        if self.__callback is not  None:
             self.__callback(self.__direction * self.__speed)
 
     @property
     def is_stopped(self):
+        """Is stoped.
+
+        Returns:
+            bool: State
+        """
 
         return self.__direction == 0
 
     @property
     def direction(self):
+        """Current diretion.
+
+        Returns:
+            _type_: _description_
+        """
 
         return self.__direction
 
@@ -103,6 +122,8 @@ class AxisActionController():
 #region Public Methods
 
     def stop(self):
+        """Stop
+        """
 
         if self.__direction == 0:
             return
@@ -113,6 +134,8 @@ class AxisActionController():
             self.__callback(self.__direction * self.__speed)
 
     def set_cw(self):
+        """Set CW direction.
+        """
 
         if self.__direction == -1:
             self.__direction = 0
@@ -127,6 +150,8 @@ class AxisActionController():
             self.__callback(self.__direction * self.__speed)
 
     def set_ccw(self):
+        """Set CCW direction.
+        """
 
         if self.__direction == 1:
             self.__direction = 0

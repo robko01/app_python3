@@ -54,6 +54,8 @@ __class_name__ = "TaskGUI"
 #endregion
 
 class Actions(Enum):
+    """Actions
+    """
 
     NONE = 0
 
