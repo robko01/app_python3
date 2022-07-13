@@ -77,7 +77,7 @@ class JoystickController(object):
 
     __update_cb = None
     """Update callback.
-    """    
+    """
 
 #endregion
 
@@ -114,7 +114,7 @@ class JoystickController(object):
 
     def update_cb(self, cb):
 
-        if cb != None:
+        if cb is not None:
             self.__update_cb = cb
 
     def update(self):
@@ -137,7 +137,7 @@ class JoystickController(object):
             elif event.type == pygame.JOYHATMOTION:
                 self.__hat_data[event.hat] = event.value
 
-        if self.__update_cb != None:
+        if self.__update_cb is not None:
             self.__update_cb(self.__button_data, self.__axis_data, self.__hat_data)
 
 #endregion
