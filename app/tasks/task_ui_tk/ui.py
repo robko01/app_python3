@@ -162,6 +162,12 @@ class GUI():
     """
 
     __kb_key_state = ""
+    """Keyboard key state.
+    """
+
+    __block_grasping = False
+    """Block grasping action flag.
+    """    
 
 #endregion
 
