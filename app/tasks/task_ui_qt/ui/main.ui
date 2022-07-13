@@ -377,6 +377,9 @@
                                      background-color: blue; 
                                      color: white;}</string>
                  </property>
+                 <property name="intValue" stdset="0">
+                  <number>100</number>
+                 </property>
                 </widget>
                </item>
               </layout>
