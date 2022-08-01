@@ -27,15 +27,15 @@ For the normal operation of the script there are libraries that need to be prein
 After installation, the script is ready for operation. This happens in the following way.
 For Windows machines:
 ```sh
-        python main.py --port COM<NUMBER> --task task_ui
+        python main.py --port COM<NUMBER> --task task_ui_qt
 ```
 For Linux machines:
 ```sh
-        python3 main.py --port /dev/ttyUSB<NUMBER> --task task_ui
+        python3 main.py --port /dev/ttyUSB<NUMBER> --task task_ui_qt
 ```
 For macOS machines:
 ```sh
-        python3 main.py --port /dev/cu.usbserial-1110 --task task_ui
+        python3 main.py --port /dev/cu.usbserial-1110 --task task_ui_qt
 ```
 
  - To approach the robot, it will be presented to the computer as a serial port.
