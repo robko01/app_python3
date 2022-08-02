@@ -39,10 +39,7 @@ from joystick.joystick import JoystickController
 
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QMessageBox
-
-from PySide6 import QtGui, QtCore
 from PySide6.QtCore import QEvent, QObject, Qt
-from PySide6.QtGui import QKeyEvent
 
 import serial
 
@@ -134,8 +131,8 @@ class GUI(QApplication):
     """Joystick controller map to robot axis.
     """
 
-    __jsbtn_to_rbtoc = {0:6}
-    """Joystick controller map to robot axis.
+    __jsbtn_temp = None
+    """Temporay joysticc buttons data.
     """
 
     __jsc = None
@@ -143,6 +140,7 @@ class GUI(QApplication):
     """
 
     __block_grasping = False
+    """Software graasping lock"""
 
 #endregion
 
@@ -348,38 +346,22 @@ class GUI(QApplication):
 
     def __jsc_update_cb(self, button_data, axis_data, hat_data):
 
-        # for index in button_data:
-        #     value = button_data[index]
-        #     if value == True:
-        #         print(index, value)
+        if not self.__jsbtn_temp == button_data:
 
-        # print(axis_data)
+            # # Print the new state.
+            # for index in button_data:
+            #     value = button_data[index]
+            #     if value:
+            #         print(index, value)
+            # print(button_data)
 
-        # return
+            if button_data[0]:
+                self.__window.cbOut6.setChecked(True)
+            else:
+                self.__window.cbOut6.setChecked(False)
 
-        # Key map to OC/DO.
-        # Go trought button map.
-        # for button, bit in self.__jsbtn_to_rbtoc.items():
-
-        #     # Read button state.
-        #     act_bit_state = button_data[button]
-
-        #     # Check bit state.
-        #     prev_bit_state = self.__frm_port_a_output_chk[bit].get() > 0
-
-        #     # Comapare the bit states.
-        #     update_flag = prev_bit_state != act_bit_state
-
-        #     # If it is time to update.
-        #     if update_flag:
-
-        #         # Apply actual bit state.
-        #         if act_bit_state:
-        #             self.__frm_port_a_output_chk[bit].set(self.__bit_weight[bit])
-        #         else:
-        #             self.__frm_port_a_output_chk[bit].set(0)
-
-        # self.__block_grasping = False
+            # Save last state.
+            self.__jsbtn_temp = button_data.copy()
 
         # Stop all axices!
         if button_data[15]:
@@ -440,7 +422,7 @@ class GUI(QApplication):
     def __jsc_enable(self, value):
 
         try:
-            if value and self.__jsc is not None:
+            if value and self.__jsc is None:
                 self.__jsc = JoystickController()
                 self.__jsc.update_cb(self.__jsc_update_cb)
 
@@ -460,8 +442,6 @@ class GUI(QApplication):
             msg_box.setStandardButtons(QMessageBox.Ok)
             msg_box.setDefaultButton(QMessageBox.Ok)
             msg_box.exec() # Returns keys answer.
-
-            # self.__led_js_state.turnoff()
 
 #endregion
 
