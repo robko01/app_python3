@@ -6,20 +6,19 @@ This script is written in Python 3.8.5. To [download](https://www.python.org/dow
 
 ## Download the application
 Download the repository and navigate to the application folder
-
+```sh
         $ git clone https://github.com/robko01/app_python3
         $ cd app_python3/
-        $ python -m pip install --upgrade pip 
-        $ python -m pip install -r requirements.txt
+```
 
 ## Dependencies
 This script is written in Python 3.8.5.
 For the normal operation of the script there are libraries that need to be preinstalled, otherwise the script will not work.
 
-| Name | Version |
-|-|:-:|
-|pyserial | 3.5 |
-|pygame | 2.1.2 |
+```bash
+        $ python -m pip install --upgrade pip 
+        $ python -m pip install -r requirements.txt
+```
 
 ## Automatic installation
 
@@ -27,15 +26,15 @@ For the normal operation of the script there are libraries that need to be prein
 After installation, the script is ready for operation. This happens in the following way.
 For Windows machines:
 ```sh
-        python main.py --port COM<NUMBER> --task task_ui_qt
+        $ python main.py --port COM<NUMBER> --task task_ui_qt
 ```
 For Linux machines:
 ```sh
-        python3 main.py --port /dev/ttyUSB<NUMBER> --task task_ui_qt
+        $ python3 main.py --port /dev/ttyUSB<NUMBER> --task task_ui_qt
 ```
 For macOS machines:
 ```sh
-        python3 main.py --port /dev/cu.usbserial-1110 --task task_ui_qt
+        $ python3 main.py --port /dev/cu.usbserial-1110 --task task_ui_qt
 ```
 
  - To approach the robot, it will be presented to the computer as a serial port.
