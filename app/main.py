@@ -3,7 +3,7 @@
 
 """
 
-Robko 01 - Python Controll Software
+Robko 01 - Python Control Software
 
 Copyright (C) [2020] [Orlin Dimitrov]
 
@@ -64,8 +64,8 @@ __status__ = "Debug"
 __tm = None
 __logger = None
 
-def interupt_handler(signum, frame):
-    """Interupt handler."""
+def interrupt_handler(signum, frame):
+    """Interrupt handler."""
 
     global __tm, __logger
 
@@ -88,8 +88,8 @@ def main():
     global __tm, __logger
 
     # Add signal handler.
-    signal.signal(signal.SIGINT, interupt_handler)
-    signal.signal(signal.SIGTERM, interupt_handler)
+    signal.signal(signal.SIGINT, interrupt_handler)
+    signal.signal(signal.SIGTERM, interrupt_handler)
 
     # Create log.
     crate_log_file()
@@ -101,10 +101,10 @@ def main():
     # parser.add_argument("--task", type=str, default="task_grasp_2", help="Builtin program")
     parser.add_argument("--task", type=str, default="task_ui_qt", help="Builtin program")
     # parser.add_argument("--task", type=str, default="task_ui_tk", help="Builtin program")
-    # parser.add_argument("--task", type=str, default="task_cmd", help="Builtin program")
+    # parser.add_argument("--task", type=str, default="task_cmd", help="Builtin program")4
     # parser.add_argument("--port", type=str, default="10182", help="Serial port or TCP port.")
     # parser.add_argument("--host", type=str, default="172.33.1.200", help="Host/IP of the robot.")
-    parser.add_argument("--port", type=str, default="COM3", help="Serial port or TCP port.") # 10182
+    parser.add_argument("--port", type=str, default="COM9", help="Serial port or TCP port.") # 10182
     parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.") # "172.33.1.200"
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")
