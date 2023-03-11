@@ -70,7 +70,7 @@ def interrupt_handler(signum, frame):
     global __tm, __logger
 
     if signum == 2:
-        __logger.warning("Stopped by interupt.")
+        __logger.warning("Stopped by interrupt.")
 
     elif signum == 15:
         __logger.warning("Stopped by termination.")
@@ -104,7 +104,7 @@ def main():
     # parser.add_argument("--task", type=str, default="task_cmd", help="Builtin program")4
     # parser.add_argument("--port", type=str, default="10182", help="Serial port or TCP port.")
     # parser.add_argument("--host", type=str, default="172.33.1.200", help="Host/IP of the robot.")
-    parser.add_argument("--port", type=str, default="COM9", help="Serial port or TCP port.") # 10182
+    parser.add_argument("--port", type=str, default="COM4", help="Serial port or TCP port.") # 10182
     parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.") # "172.33.1.200"
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")

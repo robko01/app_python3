@@ -4,7 +4,7 @@
 
 """
 
-Robko 01 - Python Controll Software
+Robko 01 - Python Control Software
 
 Copyright (C) [2020] [Orlin Dimitrov]
 
@@ -342,7 +342,7 @@ class GUI(QApplication):
 
 #endregion
 
-#region Private Methods (Joiystick Events)
+#region Private Methods (Joystick Events)
 
     def __jsc_update_cb(self, button_data, axis_data, hat_data):
 
@@ -539,7 +539,7 @@ class GUI(QApplication):
 
 #endregion
 
-#region Private Methods (Autmaton)
+#region Private Methods (Automaton)
 
     def __init_automation(self):
 
@@ -618,7 +618,7 @@ class GUI(QApplication):
 
 #endregion
 
-#region Private Methods (Axices CB)
+#region Private Methods (Axises CB)
 
     def __axis_0(self, speed):
 
@@ -681,6 +681,7 @@ class GUI(QApplication):
 #region Private Methods (Menu)
 
     def __actionExit_triggered(self):
+        print("HOI")
         pass
 
     def __actionClear_triggered(self):
@@ -825,6 +826,22 @@ class GUI(QApplication):
 
         # Speed slider
         self.__window.sldSpeed.valueChanged.connect(self.__sldSpeed_valueChanged)
+
+        # Automatic
+        def cb_run():
+            import parser
+
+            try:
+                st = parser.expr(self.__window.teCode.toPlainText())
+                code = st.compile()
+                a = 5
+                result = eval(code)
+                result = str(result)
+                self.__window.teResult.setText(result)
+            except Exception as exception:
+                self.__window.teResult.setText(str(exception))
+
+        self.__window.pbRun.pressed.connect(cb_run)
 
         # Show the UI.
         self.__window.show()
