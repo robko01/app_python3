@@ -442,7 +442,6 @@ class GUI(QApplication):
             update_axis(3)
 
 
-
         index = 4
         # Does the axis exists?
         if (index in axis_data) and (not self.__block_grasping):
