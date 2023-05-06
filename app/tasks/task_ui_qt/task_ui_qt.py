@@ -36,7 +36,7 @@ __author__ = "Orlin Dimitrov"
 """Author of the file."""
 
 __copyright__ = "Copyright 2020, Orlin Dimitrov"
-"""Copyrighter"""
+"""Copyrighted"""
 
 __credits__ = []
 """Credits"""
