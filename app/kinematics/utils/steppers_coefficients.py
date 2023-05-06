@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import math
+from data.j_position import JPosition
 
 #region File Attributes
 
@@ -53,34 +53,34 @@ __status__ = "Debug"
 
 #endregion
 
-def xy2lr(x, y):
-    """Converts XY point to Left and Right.
+class SteppersCoefficients():
 
-    Args:
-        x (float): X coordinate.
-        y (float): Y coordinate.
+#region Properties
 
-    Returns:
-        tup: _description_
-    """
+#endregion
 
-    # convert to polar
-    r = math.hypot(x, y)
-    t = math.atan2(y, x)
+#region Public Methods
 
-    # rotate by 45 degrees
-    t += math.pi / 4
+    def to_steps(self, j_pos: JPosition):
+        """_summary_
 
-    # back to cartesian
-    left = r * math.cos(t)
-    right = r * math.sin(t)
+        Args:
+            S1 (float): Angle [rad]
+            S2 (float): Angle [rad]
+            S3 (float): Angle [rad]
+            S4 (float): Angle [rad]
+            S5 (float): Angle [rad]
 
-    # rescale the new coords
-    left = left * math.sqrt(2)
-    right = right * math.sqrt(2)
+        Returns:
+            tuple: _description_
+        """
+        sc = SteppersCoefficients()
 
-    # clamp to -1/+1
-    left = max(-1, min(left, 1))
-    right = max(-1, min(right, 1))
+        return tuple([j_pos.T1 * sc.S1, j_pos.T2 * sc.S2, j_pos.T3 * sc.S3, j_pos.T4 * sc.S4, j_pos.T5 * sc.S5])
 
-    return left, right
+
+    def from_steps(self, j_pos: JPosition):
+
+        return tuple([j_pos.T1 / sc.S1, j_pos.T2 / sc.S2, j_pos.T3 / sc.S3, j_pos.T4 / sc.S4, j_pos.T5 / sc.S5])
+
+#endregion
