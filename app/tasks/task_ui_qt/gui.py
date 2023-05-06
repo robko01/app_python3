@@ -28,12 +28,13 @@ import queue
 
 from kinematics.data.steppers_coefficients import SteppersCoefficients
 from kinematics.kinematics import Kinematics
-
+from kinematics.utils.utils import xy2lr
 from utils.thread_timer import ThreadTimer
 from utils.logger import get_logger
 from utils.axis_action_controller import AxisActionController
 from utils.actions import Actions
 from utils.utils import scale
+
 
 from joystick.joystick import JoystickController
 
@@ -96,7 +97,7 @@ class GUI(QApplication):
     """
 
     __current_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    """Current end-efector position.
+    """Current end-effector position.
     """
 
     __axis_states = 0
@@ -127,20 +128,20 @@ class GUI(QApplication):
     """Joystick analogs dead zone.
     """
 
-    __jsax_to_rbtax = {0:0, 1:1, 2:4, 3:2, 4:5}
+    __jsax_to_rbtax = {0:0, 1:1, 3:2, 4:5}
     """Joystick controller map to robot axis.
     """
 
     __jsbtn_temp = None
-    """Temporay joysticc buttons data.
+    """Temporary joystick buttons data.
     """
 
     __jsc = None
-    """Joiystick controller.
+    """Joystick controller.
     """
 
     __block_grasping = False
-    """Software graasping lock"""
+    """Software grasping lock"""
 
 #endregion
 
@@ -348,6 +349,9 @@ class GUI(QApplication):
 
         if not self.__jsbtn_temp == button_data:
 
+            # Save last state.
+            self.__jsbtn_temp = button_data.copy()
+
             # # Print the new state.
             # for index in button_data:
             #     value = button_data[index]
@@ -355,29 +359,19 @@ class GUI(QApplication):
             #         print(index, value)
             # print(button_data)
 
+            # Activate output 6 to enable external equipment.
             if button_data[0]:
                 self.__window.cbOut6.setChecked(True)
             else:
                 self.__window.cbOut6.setChecked(False)
 
-            # Save last state.
-            self.__jsbtn_temp = button_data.copy()
+            # Stop all axises!
+            if button_data[15]:
+                for key_controller in self.__axis_controllers:
+                    if key_controller.is_stopped:
+                        key_controller.stop()
 
-        # Stop all axices!
-        if button_data[15]:
-            for key_controller in self.__axis_controllers:
-                if key_controller.is_stopped:
-                    key_controller.stop()
-
-        # Switch right analog function.
-        if button_data[10]:
-            self.__jsax_to_rbtax[3] = 3
-        else:
-            self.__jsax_to_rbtax[3] = 2
-
-        # Go trought analogs functions and axices.
-        for index in range(4):
-
+        def update_axis(index):
             # Does the axis exists?
             # Does the axis is out of the dead zone?
             if (index in axis_data) and (abs(axis_data[index]) >= self.__dead_zone):
@@ -387,7 +381,7 @@ class GUI(QApplication):
                 self.__axis_controllers[self.__jsax_to_rbtax[index]].speed\
                      = int(abs(scale(pos, -1.0, 1.0, -self.__max_speed, self.__max_speed)))
 
-                # Determin the direction.
+                # Determine the direction.
                 if pos < 0:
                     self.__axis_controllers[self.__jsax_to_rbtax[index]].set_ccw()
                 elif pos > 0:
@@ -402,6 +396,52 @@ class GUI(QApplication):
             else:
                 if not self.__axis_controllers[self.__jsax_to_rbtax[index]].is_stopped:
                     self.__axis_controllers[self.__jsax_to_rbtax[index]].stop()
+
+        update_axis(0)
+        update_axis(1)
+
+        # If this flag is true, then use right analog to run differential joint.
+        if button_data[10]:
+
+            # Convert XY to LR differential.
+            left, right = xy2lr(axis_data[3], axis_data[2])
+            # print(f"Left: {left:.2f}; Right: {right:.2f}")
+
+            # Scale the speed.
+            left_speed = int(abs(scale(left, -1.0, 1.0, -self.__max_speed, self.__max_speed)))
+
+            # # Set the speed
+            self.__axis_controllers[3].speed = left_speed
+
+            # # Determine the direction.
+            if left < -self.__dead_zone:
+                self.__axis_controllers[3].set_cw()
+            elif left > self.__dead_zone:
+                self.__axis_controllers[3].set_ccw()
+            else:
+                self.__axis_controllers[3].stop()
+
+            # Scale the speed.
+            right_speed = int(abs(scale(right, -1.0, 1.0, -self.__max_speed, self.__max_speed)))
+
+            # # Set the speed
+            self.__axis_controllers[4].speed = right_speed
+
+            # Determine the direction.
+            if right < -self.__dead_zone:
+                self.__axis_controllers[4].set_ccw()
+            elif right > self.__dead_zone:
+                self.__axis_controllers[4].set_cw()
+            else:
+                self.__axis_controllers[4].stop()
+
+        # Stop if the button is released.
+        else:
+            self.__axis_controllers[3].stop()
+            self.__axis_controllers[4].stop()
+            update_axis(3)
+
+
 
         index = 4
         # Does the axis exists?
@@ -641,14 +681,12 @@ class GUI(QApplication):
 
     def __axis_3(self, speed):
 
-        self.__current_speed[7] = speed * -1
-        self.__current_speed[9] = speed
+        self.__current_speed[7] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
 
     def __axis_4(self, speed):
 
-        self.__current_speed[7] = speed
         self.__current_speed[9] = speed
 
         self.__put_action(Actions.UpdateSpeeds)
@@ -741,6 +779,30 @@ class GUI(QApplication):
 
 #endregion
 
+#region Private Methods (Buttons)
+
+    def __diff_stop(self):
+        self.__axis_controllers[3].stop()
+        self.__axis_controllers[4].stop()
+
+    def __btnPUp_pressed(self):
+        self.__axis_controllers[3].set_cw()
+        self.__axis_controllers[4].set_ccw()
+
+    def __btnPDown_pressed(self):
+        self.__axis_controllers[3].set_ccw()
+        self.__axis_controllers[4].set_cw()
+
+    def __btnRCW_pressed(self):
+        self.__axis_controllers[3].set_cw()
+        self.__axis_controllers[4].set_cw()
+
+    def __btnRCCW_pressed(self):
+        self.__axis_controllers[3].set_ccw()
+        self.__axis_controllers[4].set_ccw()
+
+#endregion
+
 #region Private Methods (Form)
 
     def __init_form(self):
@@ -781,15 +843,15 @@ class GUI(QApplication):
         self.__window.btnElbowDown.pressed.connect(self.__axis_controllers[2].set_ccw)
         self.__window.btnElbowDown.released.connect(self.__axis_controllers[2].stop)
 
-        self.__window.btnPUp.pressed.connect(self.__axis_controllers[3].set_cw)
-        self.__window.btnPUp.released.connect(self.__axis_controllers[3].stop)
-        self.__window.btnPDown.pressed.connect(self.__axis_controllers[3].set_ccw)
-        self.__window.btnPDown.released.connect(self.__axis_controllers[3].stop)
+        self.__window.btnPUp.pressed.connect(self.__btnPUp_pressed)
+        self.__window.btnPUp.released.connect(self.__diff_stop)
+        self.__window.btnPDown.pressed.connect(self.__btnPDown_pressed)
+        self.__window.btnPDown.released.connect(self.__diff_stop)
 
-        self.__window.btnRCW.pressed.connect(self.__axis_controllers[4].set_cw)
-        self.__window.btnRCW.released.connect(self.__axis_controllers[4].stop)
-        self.__window.btnRCCW.pressed.connect(self.__axis_controllers[4].set_ccw)
-        self.__window.btnRCCW.released.connect(self.__axis_controllers[4].stop)
+        self.__window.btnRCW.pressed.connect(self.__btnRCW_pressed)
+        self.__window.btnRCW.released.connect(self.__diff_stop)
+        self.__window.btnRCCW.pressed.connect(self.__btnRCCW_pressed)
+        self.__window.btnRCCW.released.connect(self.__diff_stop)
 
         self.__window.btnGripperOpen.pressed.connect(self.__axis_controllers[5].set_cw)
         self.__window.btnGripperOpen.released.connect(self.__axis_controllers[5].stop)
