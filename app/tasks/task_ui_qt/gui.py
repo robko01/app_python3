@@ -361,9 +361,9 @@ class GUI(QApplication):
 
             # Activate output 6 to enable external equipment.
             if button_data[0]:
-                self.__window.cbOut6.setChecked(True)
+                self.__window.cbOut0.setChecked(True)
             else:
-                self.__window.cbOut6.setChecked(False)
+                self.__window.cbOut0.setChecked(False)
 
             # Stop all axises!
             if button_data[15]:
@@ -511,17 +511,21 @@ class GUI(QApplication):
 
             if btn == Qt.Key_4:
                 self.__axis_controllers[3].set_cw()
+                self.__axis_controllers[4].set_ccw()
 
             elif btn == Qt.Key_R:
                 self.__axis_controllers[3].set_ccw()
+                self.__axis_controllers[4].set_cw()
 
             if btn == Qt.Key_5:
+                self.__axis_controllers[3].set_cw()
                 self.__axis_controllers[4].set_cw()
 
             elif btn == Qt.Key_T:
+                self.__axis_controllers[3].set_ccw()
                 self.__axis_controllers[4].set_ccw()
 
-            if btn == Qt.Key_6:
+            elif btn == Qt.Key_6:
                 self.__axis_controllers[5].set_cw()
 
             elif btn == Qt.Key_Y:
@@ -785,12 +789,12 @@ class GUI(QApplication):
         self.__axis_controllers[4].stop()
 
     def __btnPUp_pressed(self):
-        self.__axis_controllers[3].set_cw()
-        self.__axis_controllers[4].set_ccw()
-
-    def __btnPDown_pressed(self):
         self.__axis_controllers[3].set_ccw()
         self.__axis_controllers[4].set_cw()
+
+    def __btnPDown_pressed(self):
+        self.__axis_controllers[3].set_cw()
+        self.__axis_controllers[4].set_ccw()
 
     def __btnRCW_pressed(self):
         self.__axis_controllers[3].set_cw()
