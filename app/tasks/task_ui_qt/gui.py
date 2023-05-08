@@ -560,15 +560,19 @@ class GUI(QApplication):
 
             if btn == Qt.Key_4:
                 self.__axis_controllers[3].stop()
+                self.__axis_controllers[4].stop()
 
             elif btn == Qt.Key_R:
                 self.__axis_controllers[3].stop()
+                self.__axis_controllers[4].stop()
 
             if btn == Qt.Key_5:
                 self.__axis_controllers[4].stop()
+                self.__axis_controllers[3].stop()
 
             elif btn == Qt.Key_T:
                 self.__axis_controllers[4].stop()
+                self.__axis_controllers[3].stop()
 
             if btn == Qt.Key_6:
                 self.__axis_controllers[5].stop()
