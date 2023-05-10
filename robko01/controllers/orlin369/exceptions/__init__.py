@@ -22,8 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from data.j_position import JPosition
-
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -50,37 +48,5 @@ __email__ = "robko01@8bitclub.com"
 
 __status__ = "Debug"
 """File status."""
-
-#endregion
-
-class SteppersCoefficients():
-
-#region Properties
-
-#endregion
-
-#region Public Methods
-
-    def to_steps(self, j_pos: JPosition):
-        """_summary_
-
-        Args:
-            S1 (float): Angle [rad]
-            S2 (float): Angle [rad]
-            S3 (float): Angle [rad]
-            S4 (float): Angle [rad]
-            S5 (float): Angle [rad]
-
-        Returns:
-            tuple: _description_
-        """
-        sc = SteppersCoefficients()
-
-        return tuple([j_pos.T1 * sc.S1, j_pos.T2 * sc.S2, j_pos.T3 * sc.S3, j_pos.T4 * sc.S4, j_pos.T5 * sc.S5])
-
-
-    def from_steps(self, j_pos: JPosition):
-
-        return tuple([j_pos.T1 / sc.S1, j_pos.T2 / sc.S2, j_pos.T3 / sc.S3, j_pos.T4 / sc.S4, j_pos.T5 / sc.S5])
 
 #endregion

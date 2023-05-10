@@ -53,17 +53,7 @@ __status__ = "Debug"
 
 #endregion
 
-class InvalidOperationCode(Exception):
-    """Invalid operation code."""
-
-    pass
-
-class InvalidStatusCode(Exception):
-    """Invalid status code."""
-
-    pass
-
 class InvalidPackage(Exception):
-    """Invalid package exception."""
-
+    """Invalid package exception.
+    """
     pass

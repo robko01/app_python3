@@ -52,6 +52,6 @@ __status__ = "Debug"
 #endregion
 
 class Commands(list):
-    """List of commands for the robot."""
-
+    """List of commands for the robot.
+    """
     pass

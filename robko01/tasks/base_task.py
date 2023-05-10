@@ -52,30 +52,43 @@ __status__ = "Debug"
 #endregion
 
 class BaseTask:
-    """Base task class."""
+    """Base task class.
+    """
 
 #region Attributes
 
     _kwargs = None
-    """Key words arguments."""
+    """Key words arguments.
+    """
 
     _controller = None
-    """Controller"""
+    """Controller
+    """
 
     _stop_flag = False
-    """Stop flag."""
+    """Stop flag.
+    """
 
     _execution_mode = 0
-    """Execution mode."""
+    """Execution mode.
+    """
 
     _name = ""
 
 #endregion
 
+#region Properties
+
     @property
     def name(self):
+        """Name of the task.
 
+        Returns:
+            str: Name of the task.
+        """
         return self._name
+
+#endregion
 
 #region Constructor
 
@@ -94,7 +107,8 @@ class BaseTask:
 #region Protected Methods
 
     def _start_cont(self):
-        """Start the app."""
+        """Start the app.
+        """
 
         if self._stop_flag:
             return
@@ -115,7 +129,8 @@ class BaseTask:
             self._controller.enable()
 
     def _stop_cont(self):
-        """Stop the app."""
+        """Stop the app.
+        """
 
         if not self._stop_flag:
             return
@@ -137,9 +152,11 @@ class BaseTask:
 #region Public Methods
 
     def start(self):
-        """Start the task."""
+        """Start the task.
+        """
 
     def stop(self):
-        """Stop the task."""
+        """Stop the task.
+        """
 
 #endregion

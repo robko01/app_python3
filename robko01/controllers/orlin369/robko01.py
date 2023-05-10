@@ -30,9 +30,9 @@ from controllers.base_robko01 import BaseRobko01
 from controllers.orlin369.protocol.package_manager import PackageManager
 from controllers.orlin369.op_code import OpCode
 from controllers.orlin369.status_code import StatusCode
-from controllers.orlin369.exceptions import InvalidPackage
-from controllers.orlin369.exceptions import InvalidOperationCode
-from controllers.orlin369.exceptions import InvalidStatusCode
+from controllers.orlin369.exceptions.invalid_package import InvalidPackage
+from controllers.orlin369.exceptions.invalid_operation_code import InvalidOperationCode
+from controllers.orlin369.exceptions.invalid_status_code import InvalidStatusCode
 
 #region File Attributes
 
@@ -64,18 +64,22 @@ __status__ = "Debug"
 #endregion
 
 class Robko01(BaseRobko01):
-    """This class is dedicated to control robot controller made by Orlin Dimitrov."""
+    """This class is dedicated to control robot controller made by Orlin Dimitrov.
+    """
 
 #region Attributes
 
     __communicator = None
-    """Communicator"""
+    """Communicator
+    """
 
     __pm = None
-    """Package manager."""
+    """Package manager.
+    """
 
     __is_moving_cb = None
-    """Callback"""
+    """Is moving callback.
+    """
 
 #endregion
 
@@ -97,19 +101,16 @@ class Robko01(BaseRobko01):
     def connect(self):
         """Connect to the robot controller.
         """
-
         self.__communicator.connect()
 
     def disconnect(self):
         """Disconnect from robot controller.
         """
-
         self.__communicator.disconnect()
 
     def wait_for_controller(self):
-        """WAit for robot controller to become active.
+        """Wait for robot controller to become active.
         """
-
         response = None
 
         self.__communicator.reset()
@@ -133,7 +134,6 @@ class Robko01(BaseRobko01):
     def wait_to_stop(self):
         """Wait robot to stop moving.
         """
-
         response = self.is_moving()
 
         while response != 0:
@@ -141,21 +141,21 @@ class Robko01(BaseRobko01):
 
             time.sleep(self._sync_interval)
 
-
     def ping(self, payload):
         """Ping the robot controller.
 
-        Parameters
-        ----------
-        payload : array
-            Ping payload.
+        Args:
+            payload (bytes): Ping payload.
 
-        Returns
-        -------
-        array
-            Answer payload.
+        Raises:
+            ValueError: Payload can not be None.
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
+
+        Returns:
+            bytes: Answer payload.
         """
-
         if payload is None:
             raise ValueError("Payload can not be None")
 
@@ -183,12 +183,14 @@ class Robko01(BaseRobko01):
     def stop(self):
         """Stop robot motion execution.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
-        """
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
 
+        Returns:
+            any: Communicator response.
+        """
         response = None
 
         while True:
@@ -213,12 +215,14 @@ class Robko01(BaseRobko01):
     def disable(self):
         """Stop robot motion execution.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
-        """
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
 
+        Returns:
+            any: Communicator response.
+        """
         response = None
 
         while True:
@@ -243,12 +247,14 @@ class Robko01(BaseRobko01):
     def enable(self):
         """Enable robot motion execution.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
-        """
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
 
+        Returns:
+            any: _description_
+        """
         response = None
 
         while True:
@@ -273,12 +279,14 @@ class Robko01(BaseRobko01):
     def clear(self):
         """Clear robot position.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
-        """
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
 
+        Returns:
+            any: Communicator response.
+        """
         response = None
 
         while True:
@@ -303,17 +311,17 @@ class Robko01(BaseRobko01):
     def move_relative(self, current_point):
         """Move relative to next robot position.
 
-        Parameters
-        ----------
-        current_point : array
-            New robot position.
+        Args:
+            current_point (list): New robot position.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
+
+        Returns:
+            any: Communicator response.
         """
-
         response = None
 
         while True:
@@ -353,17 +361,17 @@ class Robko01(BaseRobko01):
     def move_absolute(self, current_point):
         """Move absolute to next robot position.
 
-        Parameters
-        ----------
-        current_point : array
-            New robot position.
+        Args:
+            current_point (_type_): _description_
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
+
+        Returns:
+            any: Communicator response.
         """
-
         response = None
 
         while True:
@@ -404,14 +412,17 @@ class Robko01(BaseRobko01):
         return response
 
     def is_moving(self):
-        """Is robot si moving.
+        """Is moving. Every bit represents an axis.
 
-        Returns
-        -------
-        int
-            Bit masking of robot motion.
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
+
+
+        Returns:
+            int: Bit masking of robot motion.
         """
-
         response = None
         result = 0
 
@@ -444,12 +455,14 @@ class Robko01(BaseRobko01):
     def current_position(self):
         """Current robot position.
 
-        Returns
-        -------
-        array
-            Robot positions.
-        """
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
 
+        Returns:
+            list: Robot positions.
+        """
         response = None
         position = None
 
@@ -477,12 +490,14 @@ class Robko01(BaseRobko01):
     def get_inputs(self):
         """Current robot inputs.
 
-        Returns
-        -------
-        array
-            Inputs of the robot.
-        """
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
 
+        Returns:
+            list: Inputs of the robot.
+        """
         response = None
         value = None
 
@@ -511,17 +526,17 @@ class Robko01(BaseRobko01):
     def set_outputs(self, value):
         """Set robot outputs.
 
-        Parameters
-        ----------
-        value : int
-            New robot position.
+        Args:
+            value (int): New robot position.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
+
+        Returns:
+            any: Communicator response.
         """
-
         response = None
 
         while True:
@@ -549,17 +564,17 @@ class Robko01(BaseRobko01):
     def move_speed(self, current_point):
         """Move the robot in speed mode.
 
-        Parameters
-        ----------
-        current_point : array
-            New robot direction.
+        Args:
+            current_point (list): New robot direction.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Raises:
+            InvalidOperationCode: Invalid operation code.
+            InvalidStatusCode: Invalid status code.
+            InvalidPackage: Invalid package code.
+
+        Returns:
+            any: Communicator response.
         """
-
         response = None
 
         while True:
@@ -597,237 +612,168 @@ class Robko01(BaseRobko01):
 
         return response
 
-
     def move_relative_base(self, steps, speed):
         """Move axis in relative mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [steps, speed, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         return self.move_relative(point)
 
     def move_relative_shoulder(self, steps, speed):
         """Move axis in relative mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, steps, speed, 0, 0, 0, 0, 0, 0, 0, 0]
         return self.move_relative(point)
 
     def move_relative_elbow(self, steps, speed):
         """Move axis in relative mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, steps, speed, 0, 0, 0, 0, -steps, speed]
         return self.move_relative(point)
 
     def move_relative_r(self, steps, speed):
         """Move axis in relative mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, 0, 0, steps, speed, steps, speed, 0, 0]
         return self.move_relative(point)
 
     def move_relative_p(self, steps, speed):
         """Move axis in relative mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, 0, 0, steps, speed, -steps, speed, 0, 0]
         return self.move_relative(point)
 
     def move_relative_gripper(self, steps, speed):
         """Move axis in relative mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, steps, speed]
         return self.move_relative(point)
-
 
     def move_absolute_base(self, steps, speed):
         """Move axis in absolute mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [steps, speed, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         return self.move_absolute(point)
 
     def move_absolute_shoulder(self, steps, speed):
         """Move axis in absolute mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, steps, speed, 0, 0, 0, 0, 0, 0, 0, 0]
         return self.move_absolute(point)
 
     def move_absolute_elbow(self, steps, speed):
         """Move axis in absolute mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, steps, speed, 0, 0, 0, 0, -steps, speed]
         return self.move_absolute(point)
 
     def move_absolute_r(self, steps, speed):
         """Move axis in absolute mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, 0, 0, steps, speed, steps, speed, 0, 0]
         return self.move_absolute(point)
 
     def move_absolute_p(self, steps, speed):
         """Move axis in absolute mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, 0, 0, steps, speed, -steps, speed, 0, 0]
         return self.move_absolute(point)
 
     def move_absolute_gripper(self, steps, speed):
         """Move axis in absolute mode.
 
-        Parameters
-        ----------
-        steps : int
-            Axis steps.
-        speed : int
-            Axis speed.
+        Args:
+            steps (int): Axis steps.
+            speed (int): Axis speed.
 
-        Returns
-        -------
-        mixed
-            Communicator response.
+        Returns:
+            any: Communicator response.
         """
-
         point = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, steps, speed]
         return self.move_absolute(point)
 
-    def is_moving_cb(self, cb):
-        self.__is_moving_cb = cb
+    def is_moving_cb(self, callback):
+        """Is moving callback.
+
+        Args:
+            callback (function): Callable callback function.
+        """
+        self.__is_moving_cb = callback
 
 #endregion

@@ -112,15 +112,18 @@ class JoystickController(object):
 
 #region Public Methods
 
-    def update_cb(self, cb):
+    def update_cb(self, callback):
+        """Update callback.
 
-        if cb is not None:
-            self.__update_cb = cb
+        Args:
+            callback (function): Callback function pointer.
+        """
+        if callback is not None:
+            self.__update_cb = callback
 
     def update(self):
         """Listen for events to happen.
         """
-
         events = pygame.event.get()
 
         for event in events:

@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+from steppers_coefficients import SteppersCoefficients
+
 #region File Attributes
 
 __author__ = "Orlin Dimitrov"
@@ -73,55 +75,115 @@ class JPosition():
 
     @property
     def T1(self):
+        """Get T1 coordinate.
+
+        Returns:
+            float: T1 value.
+        """
         return self.__t1
 
     @T1.setter
     def T1(self, value):
+        """Set T1 coordinate.
+
+        Args:
+            value (float): T1 value.
+        """
         self.__t1 = value
         self.__update()
 
     @property
     def T2(self):
+        """Get T2 coordinate.
+
+        Returns:
+            float: T2 value.
+        """
         return self.__t2
 
     @T2.setter
     def T2(self, value):
+        """Set T2 coordinate.
+
+        Args:
+            value (float): T2 value.
+        """
         self.__t2 = value
         self.__update()
 
     @property
     def T3(self):
+        """Get T3 coordinate.
+
+        Returns:
+            float: T3 value.
+        """
         return self.__t3
 
     @T3.setter
     def T3(self, value):
+        """Set T3 coordinate.
+
+        Args:
+            value (float): T3 value.
+        """
         self.__t3 = value
         self.__update()
 
     @property
     def T4(self):
+        """Get T4 coordinate.
+
+        Returns:
+            float: T4 value.
+        """
         return self.__t4
 
     @T4.setter
     def T4(self, value):
+        """Set T4 coordinate.
+
+        Args:
+            value (float): T4 value.
+        """
         self.__t4 = value
         self.__update()
 
     @property
     def T5(self):
+        """Get T5 coordinate.
+
+        Returns:
+            float: T5 value.
+        """
         return self.__t5
 
     @T5.setter
     def T5(self, value):
+        """Set T5 coordinate.
+
+        Args:
+            value (float): T5 value.
+        """
         self.__t5 = value
         self.__update()
 
     @property
     def T6(self):
+        """Get T6 coordinate.
+
+        Returns:
+            float: T6 value.
+        """
         return self.__t6
 
     @T6.setter
     def T6(self, value):
+        """Set T6 coordinate.
+
+        Args:
+            value (float): T6 value.
+        """
         self.__t6 = value
         self.__update()
 
@@ -151,7 +213,8 @@ class JPosition():
 
     def __str__(self):
 
-        message = "T1 = {:3.2f}\r\nT2 = {:3.2f}\r\nT3 = {:3.2f}\r\nT4 = {:3.2f}\r\nT5 = {:3.2f}".format(self.T1, self.T2, self.T3, self.T4, self.T5)
+        message = "T1 = {:3.2f}\r\nT2 = {:3.2f}\r\nT3 = {:3.2f}\r\nT4 = {:3.2f}\r\nT5 = {:3.2f}"\
+            .format(self.T1, self.T2, self.T3, self.T4, self.T5)
 
         return message
 
@@ -169,8 +232,8 @@ class JPosition():
 
 #region Public Methods
 
-    def scale(self, S1: float, S2: float, S3: float, S4: float, S5: float):
-        """_summary_
+    def scale(self, S1: float, S2: float, S3: float, S4: float, S5: float, S6: float):
+        """Scale the joint vector.
 
         Args:
             S1 (float): Scaling coefficient
@@ -178,11 +241,48 @@ class JPosition():
             S3 (float): Scaling coefficient
             S4 (float): Scaling coefficient
             S5 (float): Scaling coefficient
+            S6 (float): Scaling coefficient
 
         Returns:
             tuple: _description_
         """
 
-        return JPosition(T1=self.T1 * S1, T2=self.T2 * S2, T3=self.T3 * S3, T4=self.T4 * S4, T5=self.T5 * S5)
+        return JPosition(\
+            T1=self.T1 * S1, T2=self.T2 * S2,\
+            T3=self.T3 * S3, T4=self.T4 * S4,\
+            T5=self.T5 * S5, T6=self.T6 * S6)
+
+    def to_steps(self, j_pos):
+        """To steps.
+
+        Args:
+            j_pos (JPosition): Joint position in steps.
+
+        Returns:
+            tuple: Tuple of recalculated values.
+        """
+        return tuple([j_pos.T1 * SteppersCoefficients.t1_const,\
+                      j_pos.T2 * SteppersCoefficients.t2_const,\
+                      j_pos.T3 * SteppersCoefficients.t3_const,\
+                      j_pos.T4 * SteppersCoefficients.t4_const,\
+                      j_pos.T5 * SteppersCoefficients.t5_const,\
+                      j_pos.T6 * SteppersCoefficients.t6_const])
+
+
+    def from_steps(self, j_pos):
+        """From steps.
+
+        Args:
+            j_pos (JPosition): Joint position in radians.
+
+        Returns:
+            tuple: Tuple of recalculated values.
+        """
+        return tuple([j_pos.T1 / SteppersCoefficients.t1_const,\
+                      j_pos.T2 / SteppersCoefficients.t2_const,\
+                      j_pos.T3 / SteppersCoefficients.t3_const,\
+                      j_pos.T4 / SteppersCoefficients.t4_const,\
+                      j_pos.T5 / SteppersCoefficients.t5_const,\
+                      j_pos.T6 / SteppersCoefficients.t6_const])
 
 #endregion

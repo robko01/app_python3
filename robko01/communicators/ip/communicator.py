@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import time
 import socket
 
 from utils.logger import get_logger

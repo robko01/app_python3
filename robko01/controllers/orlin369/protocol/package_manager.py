@@ -70,15 +70,11 @@ class PackageManager:
     def __crc(self, payload):
         """Calculate CRC.
 
-        Parameters
-        ----------
-        payload : bytes array
-            Axis steps.
+        Args:
+            payload (bytes): Massage payload.
 
-        Returns
-        -------
-        array
-            Odd and Even.
+        Returns:
+            tuple: Odd and Even.
         """
 
         is_odd = True

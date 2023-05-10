@@ -73,46 +73,96 @@ class CPosition():
 
     @property
     def X(self):
+        """Get X coordinate.
+
+        Returns:
+            float: X value.
+        """
         return self.__x
 
     @X.setter
     def X(self, value):
+        """Set X coordinate.
+
+        Args:
+            value (float): X value.
+        """
         self.__x = value
         self.__update()
 
     @property
     def Y(self):
+        """Get Y coordinate.
+
+        Returns:
+            float: Y value.
+        """
         return self.__y
 
     @Y.setter
     def Y(self, value):
+        """Set Y coordinate.
+
+        Args:
+            value (float): Y value.
+        """
         self.__y = value
         self.__update()
 
     @property
     def Z(self):
+        """Get Z coordinate.
+
+        Returns:
+            float: Z value.
+        """
         return self.__z
 
     @Z.setter
     def Z(self, value):
+        """Set Z coordinate.
+
+        Args:
+            value (float): Z value.
+        """
         self.__z = value
         self.__update()
 
     @property
     def P(self):
+        """Get P coordinate.
+
+        Returns:
+            float: P value.
+        """
         return self.__p
 
     @P.setter
     def P(self, value):
+        """Set P coordinate.
+
+        Args:
+            value (float): P value.
+        """
         self.__p = value
         self.__update()
 
     @property
     def R(self):
+        """Get R coordinate.
+
+        Returns:
+            float: R value.
+        """
         return self.__r
 
     @R.setter
     def R(self, value):
+        """Set R coordinate.
+
+        Args:
+            value (float): R value.
+        """
         self.__r = value
         self.__update()
 
@@ -139,7 +189,8 @@ class CPosition():
 
     def __str__(self):
 
-        message = "X = {:3.2f}\r\nY = {:3.2f}\r\nZ = {:3.2f}\r\nP = {:3.2f}\r\nR = {:3.2f}".format(self.X, self.Y, self.Z, self.P, self.R)
+        message = "X = {:3.2f}\r\nY = {:3.2f}\r\nZ = {:3.2f}\r\nP = {:3.2f}\r\nR = {:3.2f}"\
+            .format(self.X, self.Y, self.Z, self.P, self.R)
 
         return message
 

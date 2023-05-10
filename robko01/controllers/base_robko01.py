@@ -58,16 +58,20 @@ class BaseRobko01:
 #region Attributes
 
     _sync_interval = 0.05
-    """Sync time."""
+    """Sync time.
+    """
 
     _synchronous = True
-    """Sync mode."""
+    """Sync mode.
+    """
 
     _time_to_stop = False
-    """Time to stop flag."""
+    """Time to stop flag.
+    """
 
     _communicator = None
-    """Communicator instance."""
+    """Communicator instance.
+    """
 
     _timeout = 50
 

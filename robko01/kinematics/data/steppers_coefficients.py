@@ -52,32 +52,69 @@ __status__ = "Debug"
 #endregion
 
 class SteppersCoefficients():
+    """Stepper motor coefficients.
+    """
 
 #region Properties
 
     @property
     @staticmethod
-    def T1const(self):
+    def t1_const():
+        """T1 scaling coefficient.
+
+        Returns:
+            float: Scaling value.
+        """
         return 1222.7
 
     @property
-    def T1const(self):
+    @staticmethod
+    def t2_const():
+        """T2 scaling coefficient.
+
+        Returns:
+            float: Scaling value.
+        """
         return 1161.4
 
     @property
-    def T2const(self):
+    @staticmethod
+    def t3_const():
+        """T3 scaling coefficient.
+
+        Returns:
+            float: Scaling value.
+        """
         return 680.1
 
     @property
-    def T3const(self):
+    @staticmethod
+    def t4_const():
+        """T4 scaling coefficient.
+
+        Returns:
+            float: Scaling value.
+        """
         return 244.7
 
     @property
-    def T4const(self):
+    @staticmethod
+    def t5_const():
+        """T5 scaling coefficient.
+
+        Returns:
+            float: Scaling value.
+        """
         return 244.7
 
     @property
-    def T5const(self):
+    @staticmethod
+    def t6_const():
+        """T6 scaling coefficient.
+
+        Returns:
+            float: Scaling value.
+        """
         return 27.0
 
 #endregion

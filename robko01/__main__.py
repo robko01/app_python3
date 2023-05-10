@@ -121,7 +121,7 @@ def main():
 
     names = __tm.list_tasks()
     for name in names:
-        __logger.info("Found task: {}".format(name))
+        __logger.info(f"Found task: {name}")
 
     __tm.start(args.task)
 

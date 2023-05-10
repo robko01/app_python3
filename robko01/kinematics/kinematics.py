@@ -57,7 +57,18 @@ __status__ = "Debug"
 #endregion
 
 class Kinematics():
+    """Kinematics model of the robot Robko 01.
 
+    Raises:
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+        UnreachablePosition: _description_
+    """
 #region Attributes
 
     __rad = 180.0 / pi
@@ -68,29 +79,53 @@ class Kinematics():
 
     @property
     def H(self):
+        """H of the robot structure.
+
+        Returns:
+            float: Value of H.
+        """
         return 190.0
 
     @property
     def L1(self):
+        """L1 of the robot structure.
+
+        Returns:
+            float: Value of L1.
+        """
         return 178.0
 
     @property
     def L2(self):
+        """L2 of the robot structure.
+
+        Returns:
+            float: Value of L2.
+        """
         return 178.0
 
     @property
     def LL(self):
+        """LL of the robot structure.
+
+        Returns:
+            float: Value of LL.
+        """
         return 92.0
 
     @property
     def C(self):
+        """C of the robot structure.
+
+        Returns:
+            float: Value of C.
+        """
         return self.__rad
 
     @property
     def R1(self):
         """Input R1: 1 or 0
         """
-
         return 0
 
 #endregion
@@ -168,8 +203,8 @@ class Kinematics():
 
         return (X, Y, Z, P, R)
 
-    def invers_from_point(self, c: CPosition):
-        """Invers kinematics model.
+    def inverse_from_point(self, c: CPosition):
+        """Inverse kinematics model.
 
         Args:
             c (CPosition): Cartesian target point.
@@ -178,11 +213,11 @@ class Kinematics():
             JPosition: Joint result point.
         """
 
-        p = self.invers_from_scale(c.X, c.Y, c.Z, c.P, c.R)
+        p = self.inverse_from_scale(c.X, c.Y, c.Z, c.P, c.R)
 
         return JPosition(T1=p[0], T2=p[1], T3=p[2], T4=p[3], T5=p[4])
 
-    def invers_from_scale(self, X : float, Y : float, Z : float, P : float, R : float):
+    def inverse_from_scale(self, X : float, Y : float, Z : float, P : float, R : float):
         """Invers kinematics model.
 
         Args:

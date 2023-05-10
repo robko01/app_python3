@@ -62,17 +62,11 @@ class Response:
     __frame = None
     """Frame container."""
 
-    __op_code = 0
-    """Operation code."""
-
     __payload = None
     """Payload container."""
 
     __size = 0
     """Package size."""
-
-    __status = 0
-    """Status flag."""
 
     __FRAME_STATIC_FIELD_OFFSET = 5
     __FRAME_MIN_PAYLOAD_SIZE = 0

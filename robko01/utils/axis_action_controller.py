@@ -72,7 +72,7 @@ class AxisActionController():
 
 #endregion
 
-#region Propertyes
+#region Properties
 
     @property
     def speed(self):
@@ -99,7 +99,7 @@ class AxisActionController():
 
     @property
     def is_stopped(self):
-        """Is stoped.
+        """Is stopped.
 
         Returns:
             bool: State
@@ -109,7 +109,7 @@ class AxisActionController():
 
     @property
     def direction(self):
-        """Current diretion.
+        """Current direction.
 
         Returns:
             _type_: _description_
@@ -146,7 +146,7 @@ class AxisActionController():
         else:
             return
 
-        if self.__callback != None:
+        if self.__callback is not None:
             self.__callback(self.__direction * self.__speed)
 
     def set_ccw(self):
@@ -162,7 +162,7 @@ class AxisActionController():
         else:
             return
 
-        if self.__callback != None:
+        if self.__callback is not None:
             self.__callback(self.__direction * self.__speed)
 
 #endregion

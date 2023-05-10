@@ -52,5 +52,6 @@ __status__ = "Debug"
 #endregion
 
 class UnreachablePosition(Exception):
-
+    """Unreachable position.
+    """
     pass

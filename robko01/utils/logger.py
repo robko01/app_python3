@@ -66,12 +66,12 @@ __modules_names = []
 #region Public Functions
 
 def crate_log_file(logs_dir_name='logs/'):
-    """This method create a new instance of the LOG direcotry.
+    """This method create a new instance of the LOG directory.
 
     Parameters
     ----------
     logs_dir_name : str
-        Path to the log direcotory.
+        Path to the log directory.
     """
 
     debug_level = 20 # ApplicationSettings.get_instance().debug_level
@@ -105,7 +105,7 @@ def get_logger(module_name):
     Returns
     -------
     logger
-        Loggr instance.
+        Logger instance.
     """
 
     logger = logging.getLogger(module_name)

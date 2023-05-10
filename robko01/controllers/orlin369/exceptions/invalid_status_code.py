@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import time
+# SUPER - Small Unified Protocol for Extendable Robots
 
 #region File Attributes
 
@@ -48,84 +48,12 @@ __maintainer__ = "Orlin Dimitrov"
 __email__ = "robko01@8bitclub.com"
 """E-mail of the author."""
 
-#endregion
-
-class Timer():
-
-#region Attributes
-
-    __t0 = 0
-
-    __t1 = 0
-
-    __delta = 0
-
-    __update_rate = 1
-
-    __enable = False
-
-    __cb = None
+__status__ = "Debug"
+"""File status."""
 
 #endregion
 
-#region Propertyes
-
-    @property
-    def update_rate(self):
-        
-        return self.__update_rate
-
-    @update_rate.setter
-    def update_rate(self, value):
-        
-        self.__update_rate = value
-
-
-#endregion
-
-#region Constructor
-
-    def __init__(self):
-
-        pass
-
-#endregion
-
-#region Public Methods
-
-    def start(self):
-        """Start the timer.
-        """
-        self.__enable = True
-
-    def stop(self):
-        """Stop the timer.
-        """
-        self.__enable = False
-
-    def set_cb(self, callback):
-        """Set callback.
-
-        Args:
-            callback (function): _description_
-        """
-        self.__cb = callback
-
-    def update(self):
-        """Update the timer.
-        """
-        if not self.__enable:
-            return
-
-        self.__t1 = time.time()
-
-        self.__delta = self.__t1 - self.__t0
-
-        if self.__delta >= self.update_rate:
-
-            self.__t0 = self.__t1
-
-            if self.__cb is not None:
-                self.__cb()
-
-#endregion
+class InvalidStatusCode(Exception):
+    """Invalid status code.
+    """
+    pass

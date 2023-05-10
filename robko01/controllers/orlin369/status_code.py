@@ -59,16 +59,20 @@ class StatusCode(Enum):
 #region Enum
 
     Ok = 1
-    """When everything is OK."""
+    """When everything is OK.
+    """
 
     Error = 2
-    """When error occurred."""
+    """When error occurred.
+    """
 
     Busy = 3
-    """When busy in other operation."""
+    """When busy in other operation.
+    """
 
     TimeOut = 4
-    """Then time for the operation has timed out."""
+    """Then time for the operation has timed out.
+    """
 
 #endregion
 
@@ -76,19 +80,14 @@ class StatusCode(Enum):
 
     @staticmethod
     def to_text(status):
-        """Status code.
+        """Convert status code to readable text.
 
-        Parameters
-        ----------
-        code : StatusCode
-            Status Code.
-        Returns
+        Args:
+            status (StatusCode): Status code.
 
-        -------
-        str
-            Status code text.
+        Returns:
+            str: Status code text description.
         """
-
         text = ""
 
         if status == StatusCode.Ok.value:

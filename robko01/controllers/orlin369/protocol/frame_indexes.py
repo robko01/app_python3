@@ -54,7 +54,8 @@ __status__ = "Debug"
 #endregion
 
 class FrameIndexes(Enum):
-    """Frame index description."""
+    """Frame index description.
+    """
 
     Sentinel = 0
     PackageType = 1

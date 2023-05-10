@@ -59,7 +59,8 @@ __status__ = "Debug"
 #endregion
 
 class Communicator():
-    """This class is dedicated to drive Robko01 TU-GAB driver."""
+    """This class is dedicated to drive Robko01 TU-GAB driver.
+    """
 
 #region Attributes
 
@@ -70,23 +71,18 @@ class Communicator():
 #region Attributes
 
     __port = None
-    """Serial port."""
+    """Serial port.
+    """
 
     __timeout = 0.2
-    """Timeout in second."""
+    """Timeout in second.
+    """
 
 #endregion
 
 #region Constructor
 
     def __init__(self, name):
-        """Move axis in absolute mode.
-
-        Parameters
-        ----------
-        name : str
-            Serial port name.
-        """
 
         self.__logger = get_logger(__name__)
 

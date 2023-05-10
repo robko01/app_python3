@@ -161,7 +161,7 @@ class OpCode(Enum):
             text = "Move Speed"
 
         else:
-            text = "Not implemented"
+            text = f"Not implemented: {code}"
 
         return text
 
