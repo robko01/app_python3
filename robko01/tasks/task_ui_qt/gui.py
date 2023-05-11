@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import queue
+import traceback
 
 from kinematics.data.steppers_coefficients import SteppersCoefficients
 from kinematics.kinematics import Kinematics
@@ -327,11 +328,11 @@ class GUI(QApplication):
 
     def __update_cartesian_pos(self):
 
-        j1 = self.__current_position[0] / self.__sc.T1const
-        j2 = self.__current_position[2] / self.__sc.T2const
-        j3 = self.__current_position[4] / self.__sc.T3const
-        j4 = self.__current_position[6] / self.__sc.T4const
-        j5 = self.__current_position[8] / self.__sc.T5const
+        j1 = self.__current_position[0] / self.__sc.t1_const
+        j2 = self.__current_position[2] / self.__sc.t2_const
+        j3 = self.__current_position[4] / self.__sc.t3_const
+        j4 = self.__current_position[6] / self.__sc.t4_const
+        j5 = self.__current_position[8] / self.__sc.t5_const
 
         d_pos = self.__kin.forward_from_scale(j1, j2, j3, j4, j5)
 
@@ -658,10 +659,10 @@ class GUI(QApplication):
                 self.__do_action(action)
 
         except serial.serialutil.SerialException as exc:
-            self.__logger.info(exc)
+            self.__logger.error(exc)
 
         except Exception as exc:
-            self.__logger.info(exc)
+            self.__logger.error(traceback.format_exc())
 
 #endregion
 

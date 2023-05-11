@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import argparse
 import signal
+import traceback
 
 from utils.logger import crate_log_file, get_logger
 
@@ -131,4 +132,4 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        __logger.error(e)
+        __logger.error(traceback.format_exc())

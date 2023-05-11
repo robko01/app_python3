@@ -667,11 +667,11 @@ class GUI():
 
     def __update_cartesian_pos_lbl(self):
 
-        j1 = self.__current_position[0] / self.__sc.T1const
-        j2 = self.__current_position[2] / self.__sc.T2const
-        j3 = self.__current_position[4] / self.__sc.T3const
-        j4 = self.__current_position[6] / self.__sc.T4const
-        j5 = self.__current_position[8] / self.__sc.T5const
+        j1 = self.__current_position[0] / self.__sc.t1_const
+        j2 = self.__current_position[2] / self.__sc.t2_const
+        j3 = self.__current_position[4] / self.__sc.t3_const
+        j4 = self.__current_position[6] / self.__sc.t4_const
+        j5 = self.__current_position[8] / self.__sc.t5_const
         d_pos = self.__kin.forward_from_scale(j1, j2, j3, j4, j5)
         x = d_pos[0]
         y = d_pos[1]

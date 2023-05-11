@@ -58,8 +58,7 @@ class SteppersCoefficients():
 #region Properties
 
     @property
-    @staticmethod
-    def t1_const():
+    def t1_const(self):
         """T1 scaling coefficient.
 
         Returns:
@@ -68,8 +67,7 @@ class SteppersCoefficients():
         return 1222.7
 
     @property
-    @staticmethod
-    def t2_const():
+    def t2_const(self):
         """T2 scaling coefficient.
 
         Returns:
@@ -78,8 +76,7 @@ class SteppersCoefficients():
         return 1161.4
 
     @property
-    @staticmethod
-    def t3_const():
+    def t3_const(self):
         """T3 scaling coefficient.
 
         Returns:
@@ -88,8 +85,7 @@ class SteppersCoefficients():
         return 680.1
 
     @property
-    @staticmethod
-    def t4_const():
+    def t4_const(self):
         """T4 scaling coefficient.
 
         Returns:
@@ -98,8 +94,7 @@ class SteppersCoefficients():
         return 244.7
 
     @property
-    @staticmethod
-    def t5_const():
+    def t5_const(self):
         """T5 scaling coefficient.
 
         Returns:
@@ -108,8 +103,7 @@ class SteppersCoefficients():
         return 244.7
 
     @property
-    @staticmethod
-    def t6_const():
+    def t6_const(self):
         """T6 scaling coefficient.
 
         Returns:

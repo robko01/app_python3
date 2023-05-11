@@ -22,8 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-import time
-import threading
 from tasks.task_ui_qt.gui import GUI
 
 from tasks.base_task import BaseTask

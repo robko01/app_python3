@@ -90,7 +90,7 @@ def main():
     print(j4)
     print("")
     print("Steps")
-    j3 = j2.scale(sc.T1const, sc.T2const, sc.T3const, sc.T4const, sc.T5const)
+    j3 = j2.scale(sc.t1_const, sc.t2_const, sc.t3_const, sc.t4_const, sc.t5_const)
     print(j3)
     print("")
 
