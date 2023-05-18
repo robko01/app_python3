@@ -482,7 +482,7 @@ class GUI():
                     self.__led_js_state.turnon()
 
             else:
-                if self.__jsc != None:
+                if self.__jsc is not None:
                     del self.__jsc
                     self.__jsc = None
 
@@ -824,7 +824,7 @@ class GUI():
         self.__max_speed = self.__sldr_speed.get()
 
         # If the Joystick is active, do not update speed controllers by hand from he slider.
-        if self.__jsc != None:
+        if self.__jsc is not None:
             return
 
         for index in range(0, 6):
@@ -1003,7 +1003,7 @@ class GUI():
 
         self.__update_axis_controls()
 
-        if self.__jsc != None:
+        if self.__jsc is not None:
             self.__jsc.update()
 
         self.__update_automation()

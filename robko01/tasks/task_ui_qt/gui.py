@@ -640,7 +640,7 @@ class GUI(QApplication):
     def __action_timer_cb(self):
 
         try:
-            if self.__jsc != None:
+            if self.__jsc is not None:
                 self.__jsc.update()
 
             self.__axis_states = self.__controller.is_moving()

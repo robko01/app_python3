@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from controllers.orlin369.protocol.package_type import PackageType
-from controllers.orlin369.protocol.response import Response
+from robko01.controllers.orlin369.protocol.package_type import PackageType
+from robko01.controllers.orlin369.protocol.response import Response
 
 #region File Attributes
 

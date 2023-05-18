@@ -25,14 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import time
 from struct import pack, unpack
 
-from controllers.base_robko01 import BaseRobko01
+from robko01.controllers.base_robko01 import BaseRobko01
 
-from controllers.orlin369.protocol.package_manager import PackageManager
-from controllers.orlin369.op_code import OpCode
-from controllers.orlin369.status_code import StatusCode
-from controllers.orlin369.exceptions.invalid_package import InvalidPackage
-from controllers.orlin369.exceptions.invalid_operation_code import InvalidOperationCode
-from controllers.orlin369.exceptions.invalid_status_code import InvalidStatusCode
+from robko01.controllers.orlin369.protocol.package_manager import PackageManager
+from robko01.controllers.orlin369.op_code import OpCode
+from robko01.controllers.orlin369.status_code import StatusCode
+from robko01.controllers.orlin369.exceptions.invalid_package import InvalidPackage
+from robko01.controllers.orlin369.exceptions.invalid_operation_code import InvalidOperationCode
+from robko01.controllers.orlin369.exceptions.invalid_status_code import InvalidStatusCode
 
 #region File Attributes
 

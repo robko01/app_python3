@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from controllers.orlin369.protocol.frame_indexes import FrameIndexes
-from controllers.orlin369.protocol.package_type import PackageType
+from robko01.controllers.orlin369.protocol.frame_indexes import FrameIndexes
+from robko01.controllers.orlin369.protocol.package_type import PackageType
 
 #region File Attributes
 
@@ -55,18 +55,22 @@ __status__ = "Debug"
 #endregion
 
 class Response:
-    """Response parser."""
+    """Response parser.
+    """
 
 #region Attributes
 
     __frame = None
-    """Frame container."""
+    """Frame container.
+    """
 
     __payload = None
-    """Payload container."""
+    """Payload container.
+    """
 
     __size = 0
-    """Package size."""
+    """Package size.
+    """
 
     __FRAME_STATIC_FIELD_OFFSET = 5
     __FRAME_MIN_PAYLOAD_SIZE = 0
@@ -77,7 +81,8 @@ class Response:
 #region Constructor
 
     def __init__(self, frame):
-        """Constructor"""
+        """Constructor
+        """
 
         self.__frame = frame
         self.__parse()

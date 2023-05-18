@@ -72,12 +72,20 @@ class Timer():
 
     @property
     def update_rate(self):
-        
+        """Update rate.
+
+        Returns:
+            int: Update rate value.
+        """
         return self.__update_rate
 
     @update_rate.setter
-    def update_rate(self, value):
-        
+    def update_rate(self, value: int):
+        """Update rate.
+
+        Args:
+            value (int): Update rate value.
+        """        
         self.__update_rate = value
 
 

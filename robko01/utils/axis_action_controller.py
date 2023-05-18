@@ -130,7 +130,7 @@ class AxisActionController():
 
         self.__direction = 0
 
-        if self.__callback != None:
+        if self.__callback is not None:
             self.__callback(self.__direction * self.__speed)
 
     def set_cw(self):

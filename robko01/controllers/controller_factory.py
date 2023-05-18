@@ -22,12 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from communicators.serial.communicator import Communicator as SerCom
-from communicators.ip.communicator import Communicator as IPCom
-from controllers.orlin369.robko01 import Robko01 as Orko01
+from robko01.communicators.serial.communicator import Communicator as SerCom
+from robko01.communicators.ip.communicator import Communicator as IPCom
+from robko01.controllers.orlin369.robko01 import Robko01 as Orko01
 
-from controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
-from controllers.tu_gabrovo.robko01 import Robko01 as Gabko01
+from robko01.controllers.tu_gabrovo.protocol.package_manager import PackageManager as GabkoPM
+from robko01.controllers.tu_gabrovo.robko01 import Robko01 as Gabko01
 
 #region File Attributes
 
@@ -81,7 +81,7 @@ class ControllerFactory:
             if "port" in kwargs and "host" in kwargs:
 
                 # IP based.
-                if kwargs["port"].isnumeric() and kwargs["host"] != None:
+                if kwargs["port"].isnumeric() and kwargs["host"] is not None:
                     host = kwargs["host"]
                     port = int(kwargs["port"])
                     robot = Orko01(IPCom(host, port))
