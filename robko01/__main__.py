@@ -27,11 +27,11 @@ import argparse
 import signal
 import traceback
 
-from robko01.utils.logger import crate_log_file, get_logger
+from utils.logger import crate_log_file, get_logger
 
-from robko01.tasks.task_manager import TaskManager
+from tasks.task_manager import TaskManager
 
-from robko01.controllers.controller_factory import ControllerFactory
+from controllers.controller_factory import ControllerFactory
 
 #region File Attributes
 
@@ -62,31 +62,31 @@ __status__ = "Debug"
 
 #endregion
 
-__tm = None
-__logger = None
+task_manager = None
+logger = None
 
 def interrupt_handler(signum, frame):
     """Interrupt handler."""
 
-    global __tm, __logger
+    global task_manager, logger
 
     if signum == 2:
-        __logger.warning("Stopped by interrupt.")
+        logger.warning("Stopped by interrupt.")
 
     elif signum == 15:
-        __logger.warning("Stopped by termination.")
+        logger.warning("Stopped by termination.")
 
     else:
-        __logger.warning("Signal handler called. Signal: {}; Frame: {}".format(signum, frame))
+        logger.warning("Signal handler called. Signal: {}; Frame: {}".format(signum, frame))
 
-    if __tm is not None:
-        __tm.stop()
+    if task_manager is not None:
+        task_manager.stop()
 
 def main():
+    """Main function.
+    """
 
-    """Main function."""
-
-    global __tm, __logger
+    global task_manager, logger
 
     # Add signal handler.
     signal.signal(signal.SIGINT, interrupt_handler)
@@ -94,19 +94,14 @@ def main():
 
     # Create log.
     crate_log_file()
-    __logger = get_logger(__name__)
+    logger = get_logger(__name__)
 
     # Create parser.
     parser = argparse.ArgumentParser()
 
-    # parser.add_argument("--task", type=str, default="task_grasp_2", help="Builtin program")
     parser.add_argument("--task", type=str, default="task_ui_qt", help="Builtin program")
-    # parser.add_argument("--task", type=str, default="task_ui_tk", help="Builtin program")
-    # parser.add_argument("--task", type=str, default="task_cmd", help="Builtin program")4
-    # parser.add_argument("--port", type=str, default="10182", help="Serial port or TCP port.")
-    # parser.add_argument("--host", type=str, default="172.33.1.200", help="Host/IP of the robot.")
-    parser.add_argument("--port", type=str, default="COM9", help="Serial port or TCP port.") # 10182
-    parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.") # "172.33.1.200"
+    parser.add_argument("--port", type=str, default="COM9", help="Serial port or TCP port.")
+    parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.")
     parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")
 
@@ -118,18 +113,18 @@ def main():
     if controller is None:
         sys.exit("No controller type specified")
 
-    __tm = TaskManager(controller=controller)
+    task_manager = TaskManager(controller=controller)
 
-    names = __tm.list_tasks()
+    names = task_manager.list_tasks()
     for name in names:
-        __logger.info(f"Found task: {name}")
+        logger.info("Found task: %s", name)
 
-    __tm.start(args.task)
+    task_manager.start(args.task)
 
-    __tm.stop()
+    task_manager.stop()
 
 if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        __logger.error(traceback.format_exc())
+        logger.error(traceback.format_exc())

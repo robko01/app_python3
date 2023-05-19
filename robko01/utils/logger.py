@@ -68,12 +68,9 @@ __modules_names = []
 def crate_log_file(logs_dir_name='logs/'):
     """This method create a new instance of the LOG directory.
 
-    Parameters
-    ----------
-    logs_dir_name : str
-        Path to the log directory.
+    Args:
+        logs_dir_name (str, optional): Path to the log directory. Defaults to 'logs/'.
     """
-
     debug_level = 20 # ApplicationSettings.get_instance().debug_level
 
     # Crete log directory.
@@ -97,17 +94,12 @@ def crate_log_file(logs_dir_name='logs/'):
 def get_logger(module_name):
     """Get logger instance.
 
-    Parameters
-    ----------
-    module_name : str
-        Logger module name.
+    Args:
+        module_name (str): Logger module name.
 
-    Returns
-    -------
-    logger
-        Logger instance.
+    Returns:
+        logger: Logger instance.
     """
-
     logger = logging.getLogger(module_name)
 
     if module_name in __modules_names:

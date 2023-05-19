@@ -23,11 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import time
-from enum import Enum
 
 import serial
 
-from robko01.utils.logger import get_logger
+from utils.logger import get_logger
 
 #region File Attributes
 

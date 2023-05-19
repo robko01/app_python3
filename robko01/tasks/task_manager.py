@@ -95,24 +95,18 @@ class TaskManager:
     def execution_mode(self):
         """Execution mode.
 
-        Returns
-        -------
-        ExecutionMode
-            Execution mode.
+        Returns:
+            ExecutionMode: Execution mode.
         """
-
         return self.__execution_mode
 
     @execution_mode.setter
     def execution_mode(self, mode):
-        """Set execution mode.
+        """Execution mode.
 
-        Parameters
-        ----------
-        mode : ExecutionMode
-            Execution mode.
+        Args:
+            mode (ExecutionMode): Execution mode.
         """
-
         self.__execution_mode = mode
 
 #endregion
@@ -121,13 +115,7 @@ class TaskManager:
 
     def __init__(self, **kwargs):
         """Constructor
-
-        Parameters
-        ----------
-        kwargs : mixed
-            Key wards arguments.
         """
-
         self.__logger = get_logger(__name__)
 
         if "controller" in kwargs:

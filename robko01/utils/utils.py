@@ -56,43 +56,28 @@ __status__ = "Debug"
 def scale(value, in_min, in_max, out_min, out_max):
     """Scale value.
 
-    Parameters
-    ----------
-    value : float
-        Value for scaling.
-    in_min : float
-        Input value minimum.
-    in_max : float
-        Input value maximum.
-    out_min : float
-        Output value minimum.
-    out_max : float
-        Output value maximum.
+    Args:
+        value (float): Value for scaling.
+        in_min (float): Input value minimum.
+        in_max (float): Input value maximum.
+        out_min (float): Output value minimum.
+        out_max (float): Output value maximum.
 
-    Returns
-    -------
-    float
-        Scaled value.
+    Returns:
+        float: Scaled value.
     """
-
     return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
 def scale_speeds(position, speed):
     """Proportional speed scales.
 
-    Parameters
-    ----------
-    position : array
-        Positions.
-    speed : float
-        Maximum speed.
+    Args:
+        position (list): Point in joint space.
+        speed (float): scalar.
 
-    Returns
-    -------
-    array
-        Scaled speed values.
+    Returns:
+        list: Result.
     """
-
     positions = []
 
     for key, value in enumerate(position):
@@ -130,17 +115,12 @@ def scale_speeds(position, speed):
 def int_to_bin(in_value):
     """Convert Integer to Binary.
 
-    Parameters
-    ----------
-    in_value : int
-        Input value.
+    Args:
+        in_value (int): Integer value
 
-    Returns
-    -------
-    str
-        String binary format.
+    Returns:
+        str: String binary format.
     """
-
     value = unpack("B", in_value)
     value = int(value[0])
     value = "{0:08b}".format(value)

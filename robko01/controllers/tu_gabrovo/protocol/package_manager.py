@@ -61,19 +61,12 @@ class PackageManager(Communicator):
     def request(self, payload=None):
         """Request to device.
 
-        Parameters
-        ----------
-        opcode : int
-            Operation code.
-        payload : byte array
-            Payload to device.
+        Args:
+            payload (bytes, optional): Payload bytes of the request. Defaults to None.
 
-        Returns
-        -------
-        Response
-            Response from device.
+        Returns:
+            bytes: Response of the device.
         """
-
         res_frame = self._send_frame(payload.encode())
         list_res_frame = list(res_frame)
 
@@ -82,21 +75,14 @@ class PackageManager(Communicator):
     def response(self, opcode, status, payload=None):
         """Response from device.
 
-        Parameters
-        ----------
-        opcode : int
-            Operation code.
-        status : int
-            Status code.
-        payload : byte array
-            Payload to device.
+        Args:
+            opcode (int): _description_
+            status (int): _description_
+            payload (int, optional): _description_. Defaults to None.
 
-        Returns
-        -------
-        array bytes
-            request to device.
+        Returns:
+            bytes: _description_
         """
-
         # clear the buffer
         res_frame = ""
 

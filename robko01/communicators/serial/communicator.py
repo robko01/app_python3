@@ -76,16 +76,13 @@ class Communicator(BaseCommunicator):
 
 #region Constructor
 
-    def __init__(self, name):
-        """Move axis in absolute mode.
+    def __init__(self, port):
+        """Constructor
 
-        Parameters
-        ----------
-        name : str
-            Serial port name.
+        Args:
+            port (str): Name of the port.
         """
-
-        self.__client = serial.Serial(name, self.__baudrate)
+        self.__client = serial.Serial(port, self.__baudrate)
 
         self.__logger = get_logger(__name__)
 
