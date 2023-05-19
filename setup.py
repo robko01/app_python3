@@ -60,10 +60,25 @@ setup(
     description="Robko 01 control library.",
     author=__author__,
     license=__license__,
+    author_email=__email__,
+    python_requires='>=3.7',
     install_requires=[],
     setup_requires=[],
     tests_require=["pygame==2.4.0", "pyserial==3.5",\
                    "PySide6==6.5.0", "PySide6-Addons==6.5.0",\
                    "PySide6-Essentials==6.5.0", "shiboken6==6.5.0"],
     test_suite="",
+    project_urls={
+        'GitHub': 'https://github.com/robko01/app_python3',
+    },
+    classifiers=[
+        'Development Status :: 1 - Debug',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'License :: GPLv3 License',
+        'Topic :: Software Development',
+        'Topic :: Robot Processing'
+    ]
 )
