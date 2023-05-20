@@ -138,21 +138,21 @@ class TaskManager:
             [mixed]: Instance of the class module.
         """
 
-        module_path = "tasks.{}.{}".format(task_name, task_name)
+        module_path = f"robko01.tasks.{task_name}.{task_name}"
 
         module = importlib.import_module(module_path)
         if module is None:
             raise ImportError("{}".format(module_path))
 
         if not hasattr(module, "__class_name__"):
-            raise AttributeError("Module: {}, has no attribute __class_name__.".format(module_path))
+            raise AttributeError(f"Module: {module_path}, has no attribute __class_name__.")
 
         if module.__class_name__ == "":
-            raise ValueError("Module: {}.__class_name__ is empty.".format(module_path))
+            raise ValueError(f"Module: {module_path}.__class_name__ is empty.")
 
         class_module = getattr(module, module.__class_name__)
         if class_module is None:
-            raise ModuleNotFoundError("{}.{}".format(module_path, module.__class_name__))
+            raise ModuleNotFoundError(f"{module_path}.{module.__class_name__}")
 
         class_isinstance = class_module(controller=self.__controller, em=self.__execution_mode)
 
