@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import socket
 
-from utils.logger import get_logger
+from robko01.utils.logger import get_logger
 
-from communicators.base_communicator import BaseCommunicator
+from robko01.communicators.base_communicator import BaseCommunicator
 
 #region File Attributes
 

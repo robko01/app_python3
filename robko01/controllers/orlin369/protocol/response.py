@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from controllers.orlin369.protocol.frame_indexes import FrameIndexes
-from controllers.orlin369.protocol.package_type import PackageType
+from robko01.controllers.orlin369.protocol.frame_indexes import FrameIndexes
+from robko01.controllers.orlin369.protocol.package_type import PackageType
 
 #region File Attributes
 

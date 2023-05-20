@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from tasks.base_task import BaseTask
+from robko01.tasks.base_task import BaseTask
 
 #region File Attributes
 

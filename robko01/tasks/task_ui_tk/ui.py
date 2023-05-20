@@ -28,21 +28,21 @@ from tkinter import BOTTOM, RAISED, SUNKEN, W, X, BooleanVar, Button, Checkbutto
 from tkinter.messagebox import askyesno
 from tkinter.ttk import Notebook
 
-from tasks.task_ui_tk.led import LedStatus
-from tasks.task_ui_tk.led import LedShape
-from tasks.task_ui_tk.led import LED
+from robko01.tasks.task_ui_tk.led import LedStatus
+from robko01.tasks.task_ui_tk.led import LedShape
+from robko01.tasks.task_ui_tk.led import LED
 
-from utils.logger import get_logger
-from utils.thread_timer import ThreadTimer
-from utils.timer import Timer
-from utils.utils import scale
-from utils.axis_action_controller import AxisActionController
-from utils.actions import Actions
+from robko01.utils.logger import get_logger
+from robko01.utils.thread_timer import ThreadTimer
+from robko01.utils.timer import Timer
+from robko01.utils.utils import scale
+from robko01.utils.axis_action_controller import AxisActionController
+from robko01.utils.actions import Actions
 
-from kinematics.data.steppers_coefficients import SteppersCoefficients
-from kinematics.kinematics import Kinematics
+from robko01.kinematics.data.steppers_coefficients import SteppersCoefficients
+from robko01.kinematics.kinematics import Kinematics
 
-from joystick.joystick import JoystickController
+from robko01.joystick.joystick import JoystickController
 
 import serial
 

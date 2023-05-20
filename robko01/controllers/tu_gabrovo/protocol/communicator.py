@@ -26,7 +26,7 @@ import time
 
 import serial
 
-from utils.logger import get_logger
+from robko01.utils.logger import get_logger
 
 #region File Attributes
 

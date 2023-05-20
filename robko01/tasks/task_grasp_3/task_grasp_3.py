@@ -23,9 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-from tasks.base_task import BaseTask
+from robko01.tasks.base_task import BaseTask
 
-from utils.utils import scale_speeds
+from robko01.utils.utils import scale_speeds
 
 #region File Attributes
 

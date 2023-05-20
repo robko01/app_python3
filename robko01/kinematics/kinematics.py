@@ -23,9 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from math import atan, cos, pi, sin, sqrt
-from kinematics.data.c_position import CPosition
-from kinematics.data.j_position import JPosition
-from kinematics.exceptions.unreachable_position import UnreachablePosition
+from robko01.kinematics.data.c_position import CPosition
+from robko01.kinematics.data.j_position import JPosition
+from robko01.kinematics.exceptions.unreachable_position import UnreachablePosition
 
 #region File Attributes
 

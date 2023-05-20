@@ -27,8 +27,8 @@ import time
 from enum import Enum
 import serial
 
-from utils.logger import get_logger
-from controllers.base_robko01 import BaseRobko01
+from robko01.utils.logger import get_logger
+from robko01.controllers.base_robko01 import BaseRobko01
 
 #region File Attributes
 

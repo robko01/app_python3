@@ -27,17 +27,17 @@ import os
 import queue
 import traceback
 
-from kinematics.data.steppers_coefficients import SteppersCoefficients
-from kinematics.kinematics import Kinematics
-from kinematics.utils.utils import xy2lr
-from utils.thread_timer import ThreadTimer
-from utils.logger import get_logger
-from utils.axis_action_controller import AxisActionController
-from utils.actions import Actions
-from utils.utils import scale
+from robko01.kinematics.data.steppers_coefficients import SteppersCoefficients
+from robko01.kinematics.kinematics import Kinematics
+from robko01.kinematics.utils.utils import xy2lr
+from robko01.utils.thread_timer import ThreadTimer
+from robko01.utils.logger import get_logger
+from robko01.utils.axis_action_controller import AxisActionController
+from robko01.utils.actions import Actions
+from robko01.utils.utils import scale
 
 
-from joystick.joystick import JoystickController
+from robko01.joystick.joystick import JoystickController
 
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QMessageBox
