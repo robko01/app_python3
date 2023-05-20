@@ -22,7 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+import sys
+
 from setuptools import find_packages, setup
+
+import robko01
 
 #region File Attributes
 
