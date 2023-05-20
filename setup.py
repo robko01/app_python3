@@ -53,6 +53,14 @@ __status__ = "Debug"
 
 #endregion
 
+def long_description():
+    with open('README.md', encoding='utf-8') as f:
+        return f.read()
+
+install_requires = ["pygame==2.4.0", "pyserial==3.5",\
+               "PySide6==6.5.0", "PySide6-Addons==6.5.0",\
+               "PySide6-Essentials==6.5.0", "shiboken6==6.5.0"],
+
 setup(
     name="robko01",
     packages=find_packages(include=["robko01", 'robko01.*']),
@@ -63,15 +71,15 @@ setup(
     },
     version=__version__,
     description="Robko 01 control library.",
+    long_description=long_description(),
+    long_description_content_type='text/markdown',
     author=__author__,
     license=__license__,
     author_email=__email__,
     python_requires='>=3.7',
-    install_requires=[],
+    install_requires=install_requires,
     setup_requires=[],
-    tests_require=["pygame==2.4.0", "pyserial==3.5",\
-                   "PySide6==6.5.0", "PySide6-Addons==6.5.0",\
-                   "PySide6-Essentials==6.5.0", "shiboken6==6.5.0"],
+    tests_require=[],
     test_suite="",
     project_urls={
         'GitHub': 'https://github.com/robko01/app_python3',
