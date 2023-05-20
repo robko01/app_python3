@@ -55,7 +55,12 @@ __status__ = "Debug"
 
 setup(
     name="robko01",
-    packages=find_packages(include=["robko01"]),
+    packages=find_packages(include=["robko01", 'robko01.*']),
+    entry_points={
+        'console_scripts': [
+            'robko01 = robko01.__main__:main'
+        ]
+    },
     version=__version__,
     description="Robko 01 control library.",
     author=__author__,
