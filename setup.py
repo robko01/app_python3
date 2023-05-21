@@ -96,8 +96,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: GPLv3 License',
         'Topic :: Software Development',
-        'Topic :: Robot Processing'
+        'Topic :: Robot Programming'
     ],
-    package_data={'': ['*.ui']},
+    package_data={'': ['robko01/tasks/task_ui_qt/*.ui']},
     include_package_data=True
 )
