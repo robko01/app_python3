@@ -97,5 +97,6 @@ setup(
         'License :: GPLv3 License',
         'Topic :: Software Development',
         'Topic :: Robot Processing'
-    ]
+    ],
+    package_data={'': ['*.ui']}
 )

@@ -35,8 +35,6 @@ from robko01.utils.logger import get_logger
 from robko01.utils.axis_action_controller import AxisActionController
 from robko01.utils.actions import Actions
 from robko01.utils.utils import scale
-
-
 from robko01.joystick.joystick import JoystickController
 
 from PySide6.QtUiTools import QUiLoader
