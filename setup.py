@@ -98,6 +98,6 @@ setup(
         'Topic :: Software Development',
         'Topic :: Robot Processing'
     ],
-    package_data={'robko01': ['*.ui']},
+    package_data={'': ['*.ui']},
     include_package_data=True
 )
