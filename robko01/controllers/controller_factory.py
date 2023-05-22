@@ -59,7 +59,8 @@ __status__ = "Debug"
 #endregion
 
 class ControllerFactory:
-    """Robot factory."""
+    """Controller factory.
+    """
 
     @staticmethod
     def create(**kwargs):
@@ -68,33 +69,32 @@ class ControllerFactory:
         Returns:
             Any: Instance of controller.
         """
-        robot = None
-
         controller = None
-        if "cont" in kwargs:
-            controller = kwargs["cont"]
 
-        if controller is None:
-            raise ValueError("Robot type can not be None.")
+        controller_name = None
+        if "cname" in kwargs:
+            controller_name = kwargs["cname"]
 
-        elif controller == "orlin369":
-            if "port" in kwargs and "host" in kwargs:
+        if controller_name is None:
+            raise ValueError("Controller type can not be None.")
 
-                # IP based.
-                if kwargs["port"].isnumeric() and kwargs["host"] is not None:
-                    host = kwargs["host"]
-                    port = int(kwargs["port"])
-                    robot = Orko01(IPCom(host, port))
+        elif controller_name == "orlin369":
+            # IP based.
+            if kwargs["port"].isnumeric() and kwargs["host"] is not None:
+                host = kwargs["host"]
+                port = int(kwargs["port"])
+                controller = Orko01(IPCom(host, port))
+            # Serial based.
+            elif not kwargs["port"].isnumeric() and kwargs["host"] is None:
+                controller_name = kwargs["port"]
+                controller = Orko01(SerCom(controller_name))
+            else:
+                raise NotImplemented(f"The specified controller controller name does not have implementation: {controller_name}")
 
-                # Serial based.
-                elif not kwargs["port"].isnumeric() and kwargs["host"] == None:
-                    name = kwargs["port"]
-                    robot = Orko01(SerCom(name))
-
-        elif controller == "tugab":
-            robot = Gabko01(GabkoPM(kwargs))
+        elif controller_name == "tugab":
+            controller = Gabko01(GabkoPM(kwargs))
 
         else:
-            raise ValueError("No controller type specified.")
+            raise NotImplemented(f"The specified controller controller name does not have implementation: {controller_name}")
 
-        return robot
+        return controller
