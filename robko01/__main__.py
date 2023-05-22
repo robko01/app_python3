@@ -88,13 +88,13 @@ def main():
 
     global task_manager, logger
 
-    # Add signal handler.
-    signal.signal(signal.SIGINT, interrupt_handler)
-    signal.signal(signal.SIGTERM, interrupt_handler)
-
     # Create log.
     crate_log_file()
     logger = get_logger(__name__)
+
+    # Add signal handler.
+    signal.signal(signal.SIGINT, interrupt_handler)
+    signal.signal(signal.SIGTERM, interrupt_handler)
 
     # Create parser.
     parser = argparse.ArgumentParser()
@@ -102,7 +102,7 @@ def main():
     parser.add_argument("--task", type=str, default="task_ui_qt", help="Builtin program")
     parser.add_argument("--port", type=str, default="COM9", help="Serial port or TCP port.")
     parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.")
-    parser.add_argument("--cont", type=str, default="orlin369", help="Controller type")
+    parser.add_argument("--cname", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")
 
     # Take arguments.
@@ -111,7 +111,7 @@ def main():
     controller = ControllerFactory.create(**vars(args))
 
     if controller is None:
-        sys.exit("No controller type specified")
+        raise ValueError("Controller has been specified not properly.")
 
     task_manager = TaskManager(controller=controller)
 
@@ -125,6 +125,6 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        sys.exit(main())
     except Exception as e:
         logger.error(traceback.format_exc())
