@@ -122,12 +122,8 @@ dmypy.json
 ### Python Patch ###
 .venv/
 
-
 # Visual Studio Code
 .vscode
-
-# Custume
-IOTSBG2019.py
 
 ### Logs
 ### Ignore logs.
