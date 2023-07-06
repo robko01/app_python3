@@ -1,26 +1,38 @@
-# Robko01 control application
+# Intro
+Robko01 API library
 This document is devoted to the way client software is installed, which communicates with the robot controller.
+
+# Installation
 
 ## Environment
 This script is written in Python 3.8.5. To [download](https://www.python.org/downloads/) it please visit official site of the Python and download [3.8.5](https://www.python.org/ftp/python/3.8.5/python-3.8.5.exe)
 
-## Download the application
-Download the repository and navigate to the application folder
+## Create a virtual environment (Optional)
+ - Make virtual environment
 ```sh
-        $ git clone https://github.com/robko01/app_python3
-        $ cd app_python3/
+        $ python -m venv venv
 ```
 
-## Dependencies
-This script is written in Python 3.8.5.
-For the normal operation of the script there are libraries that need to be preinstalled, otherwise the script will not work.
+ - For Windows machines
+```sh
+        $ venv/bin/activate.ps1
+```
+ - For Linux or macOS machines:
+```sh
+        $ source venv/bin/activate
+```
 
+## Update the environment
+Update the pip system
 ```bash
         $ python -m pip install --upgrade pip 
-        $ python -m pip install -r requirements.txt
 ```
 
-## Automatic installation
+## Install the library
+Install the repository from link
+```sh
+        $ python -m pip install git+https://github.com/robko01/app_python3.git#egg=robko01
+```
 
 ## First run
 After installation, the script is ready for operation. This happens in the following way.
@@ -41,3 +53,72 @@ For macOS machines:
  - The example is marked `COM5`, `/dev/ttyUSB0` or `/dev/cu.usbserial-1110`.
  - You need to find out which is the correct port for you by using the device manager.
  - The argument `--task` serves to indicate which program to execute the robot.
+
+# Examples
+
+## Example 1
+
+In this example we will:
+
+ - Create a controller.
+ - Connect to the robot.
+ - Do a simple motion.
+
+```py
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
+
+from robko01.controllers.controller_factory import ControllerFactory
+
+port = "COM1" # You should change it according to your setup.
+cname = "orlin369"
+
+# Controller
+controller = ControllerFactory.create(port=port, cname=cname)
+
+# Set the speed.
+speed = 150
+
+# Trajectory path.
+trajectory = [ \
+    [450, 0, 600, 0, -400, 0, 200, 0, -200, 0, 400, 0], \
+    [0, 0, 0, 0, 0, 0, 110, 0, 110, 0, 0, 0], \
+    [0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -100, 0], \
+    [0, 0, -100, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+    [-900, 0, 0, 0, 0, 0, -200, 0, -200, 0, 0, 0], \
+    [0, 0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 0], \
+    [0, 0, -100, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
+    [0, 0, 0, 0, 0, 0, 110, 0, 110, 0, 0, 0], \
+    [450, 0, -600, 0, 400, 0, -220, 0, 180, 0, -400, 0] \
+    ]
+
+# Run trough trajectory points.
+for position in trajectory:
+    current_point = scale_speeds(position, speed)            
+    controller.move_relative(current_point)
+    current_point = controller.current_position()
+
+# Wait the controller to end its last movement.
+controller.wait_to_stop()
+
+```
+
+# Contributing
+
+If you'd like to contribute to this project, please follow these steps:
+
+1. Fork the repository on GitHub.
+2. Clone your forked repository to your local machine.
+3. Create a new branch for your changes: `git checkout -b my-new-feature`.
+4. Make your modifications and write tests if applicable.
+5. Commit your changes: `git commit -am 'Add some feature'`.
+6. Push the branch to your forked repository: `git push origin my-new-feature`.
+7. Create a pull request on the main repository.
+
+We appreciate your contributions!
+
+# License
+
+This project is licensed under the GNU License. See the [GNU](http://www.gnu.org/licenses/) file for more details.
