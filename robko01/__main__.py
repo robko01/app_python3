@@ -63,7 +63,10 @@ __status__ = "Debug"
 #endregion
 
 task_manager = None
-logger = None
+
+# Create log.
+crate_log_file()
+logger = get_logger(__name__)
 
 def interrupt_handler(signum, frame):
     """Interrupt handler."""
@@ -88,10 +91,6 @@ def main():
 
     global task_manager, logger
 
-    # Create log.
-    crate_log_file()
-    logger = get_logger(__name__)
-
     # Add signal handler.
     signal.signal(signal.SIGINT, interrupt_handler)
     signal.signal(signal.SIGTERM, interrupt_handler)
@@ -100,7 +99,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--task", type=str, default="task_ui_qt", help="Builtin program")
-    parser.add_argument("--port", type=str, default="COM9", help="Serial port or TCP port.")
+    parser.add_argument("--port", type=str, default="COM13", help="Serial port or TCP port.")
     parser.add_argument("--host", type=str, default=None, help="Host/IP of the robot.")
     parser.add_argument("--cname", type=str, default="orlin369", help="Controller type")
     parser.add_argument("--em", type=str, default="f", help="Step mode")
