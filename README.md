@@ -10,43 +10,43 @@ This script is written in Python 3.8.5. To [download](https://www.python.org/dow
 ## Create a virtual environment (Optional)
  - Make virtual environment
 ```sh
-        $ python -m venv venv
+python -m venv venv
 ```
 
  - For Windows machines
 ```sh
-        $ venv/bin/activate.ps1
+venv/bin/activate.ps1
 ```
  - For Linux or macOS machines:
 ```sh
-        $ source venv/bin/activate
+source venv/bin/activate
 ```
 
 ## Update the environment
 Update the pip system
 ```bash
-        $ python -m pip install --upgrade pip 
+python -m pip install --upgrade pip 
 ```
 
 ## Install the library
 Install the repository from link
 ```sh
-        $ python -m pip install git+https://github.com/robko01/app_python3.git#egg=robko01
+python -m pip install git+https://github.com/robko01/app_python3.git#egg=robko01
 ```
 
 ## First run
 After installation, the script is ready for operation. This happens in the following way.
 For Windows machines:
 ```sh
-        $ python main.py --port COM<NUMBER> --task task_ui_qt
+python -m robko01 --port COM<NUMBER> --task task_ui_qt
 ```
 For Linux machines:
 ```sh
-        $ python3 main.py --port /dev/ttyUSB<NUMBER> --task task_ui_qt
+python3 -m robko01 --port /dev/ttyUSB<NUMBER> --task task_ui_qt
 ```
 For macOS machines:
 ```sh
-        $ python3 main.py --port /dev/cu.usbserial-1110 --task task_ui_qt
+python3 -m robko01 --port /dev/cu.usbserial-1110 --task task_ui_qt
 ```
 
  - To approach the robot, it will be presented to the computer as a serial port.
