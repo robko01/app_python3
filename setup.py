@@ -61,7 +61,7 @@ def long_description():
     with open('README.md', encoding='utf-8') as f:
         return f.read()
 
-install_requires = ["pygame==2.4.0", "pyserial==3.5",\
+install_requires = ["pygame==2.5.2", "pyserial==3.5",\
                "PySide6==6.5.0", "PySide6-Addons==6.5.0",\
                "PySide6-Essentials==6.5.0", "shiboken6==6.5.0"],
 
