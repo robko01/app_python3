@@ -5,7 +5,11 @@ This document is devoted to the way client software is installed, which communic
 # Installation
 
 ## Environment
-This script is written in Python 3.8.5. To [download](https://www.python.org/downloads/) it please visit official site of the Python and download [3.8.5](https://www.python.org/ftp/python/3.8.5/python-3.8.5.exe)
+
+ - For better experience is good to have git client. This will will alow you to install easy from github this library. The link to the [git client](https://git-scm.com/download/win).
+
+ - This script is written in Python 3.8.5. To [download](https://www.python.org/downloads/) it please visit official site of the Python and download [3.8.5](https://www.python.org/ftp/python/3.8.5/python-3.8.5.exe)
+
 
 ## Create a virtual environment (Optional)
  - Make virtual environment
