@@ -27,28 +27,46 @@ source venv/bin/activate
 ```
 
 ## Update the environment
-Update the pip system
+ - Update the pip system
 ```bash
 python -m pip install --upgrade pip 
 ```
 
 ## Install the library
-Install the repository from link
+ - Install the repository from link
 ```sh
 python -m pip install git+https://github.com/robko01/app_python3.git#egg=robko01
 ```
+ - You are ready for the first run.
+
+## Install the library manually (optional)
+ - Download the repository from [link](git+https://github.com/robko01/app_python3)
+
+ - Install setuptools
+```sh
+python -m pip install setuptools
+```
+
+ - Unzip the downloaded repo.
+ - Navigate to the unziped folder in terminal.
+ - Install the package
+```sh
+python setup.py install
+```
+ - You are ready for the first run.
 
 ## First run
 After installation, the script is ready for operation. This happens in the following way.
-For Windows machines:
+
+ - For Windows machines:
 ```sh
 python -m robko01 --port COM<NUMBER> --task task_ui_qt
 ```
-For Linux machines:
+ - For Linux machines:
 ```sh
 python3 -m robko01 --port /dev/ttyUSB<NUMBER> --task task_ui_qt
 ```
-For macOS machines:
+ - For macOS machines:
 ```sh
 python3 -m robko01 --port /dev/cu.usbserial-1110 --task task_ui_qt
 ```
