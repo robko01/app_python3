@@ -62,6 +62,11 @@ After installation, the script is ready for operation. This happens in the follo
 ```sh
 python -m robko01 --port COM<NUMBER> --task task_ui_qt
 ```
+or
+```sh
+python -m robko01 --port COM<NUMBER> --task task_ui_tk
+```
+
  - For Linux machines:
 ```sh
 python3 -m robko01 --port /dev/ttyUSB<NUMBER> --task task_ui_qt
