@@ -62,7 +62,6 @@ def long_description():
         return f.read()
 
 install_requires = ["pygame", "pyserial",\
-                    "serial", 
                "PySide6", "PySide6-Addons",\
                "PySide6-Essentials", "shiboken6"],
 
