@@ -71,8 +71,6 @@ class Kinematics():
     """
 #region Attributes
 
-    __rad = 180.0 / pi
-
 #endregion
 
 #region Properties
@@ -127,6 +125,13 @@ class Kinematics():
         """Input R1: 1 or 0
         """
         return 0
+
+#endregion
+
+#region Constructor
+
+    def __init__(self):
+        self.__rad = 180.0 / pi
 
 #endregion
 

@@ -57,24 +57,6 @@ class BaseTask:
 
 #region Attributes
 
-    _kwargs = None
-    """Key words arguments.
-    """
-
-    _controller = None
-    """Controller
-    """
-
-    _stop_flag = False
-    """Stop flag.
-    """
-
-    _execution_mode = 0
-    """Execution mode.
-    """
-
-    _name = ""
-
 #endregion
 
 #region Properties
@@ -95,6 +77,22 @@ class BaseTask:
     def __init__(self, kwargs):
 
         self._kwargs = kwargs
+        """Key words arguments.
+        """
+
+        self._controller = None
+        """Controller
+        """
+
+        self._stop_flag = False
+        """Stop flag.
+        """
+
+        self._execution_mode = 0
+        """Execution mode.
+        """
+
+        self._name = ""
 
         if "controller" in self._kwargs:
             self._controller = self._kwargs["controller"]

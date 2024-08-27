@@ -63,9 +63,6 @@ class TaskInputs(BaseTask):
 
 #region Attributes
 
-    __logger = None
-    """Logger"""
-
 #endregion
 
 #region Public Methods
@@ -74,6 +71,8 @@ class TaskInputs(BaseTask):
         """Start the task."""
 
         self.__logger = get_logger(__name__)
+        """Logger
+        """
 
         self._start_cont()
 

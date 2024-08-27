@@ -57,18 +57,6 @@ class JPosition():
 
 #region Attributes
 
-    __t1 = 0.0
-
-    __t2 = 0.0
-
-    __t3 = 0.0
-
-    __t4 = 0.0
-
-    __t5 = 0.0
-
-    __t6 = 0.0
-
 #endregion
 
 #region Properties
@@ -192,6 +180,18 @@ class JPosition():
 #region Constructor
 
     def __init__(self, **kwargs):
+
+        self.__t1 = 0.0
+
+        self.__t2 = 0.0
+
+        self.__t3 = 0.0
+
+        self.__t4 = 0.0
+
+        self.__t5 = 0.0
+
+        self.__t6 = 0.0
 
         if "T1" in kwargs:
             self.T1 = kwargs["T1"]

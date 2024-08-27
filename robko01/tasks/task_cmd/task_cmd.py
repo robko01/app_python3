@@ -60,9 +60,6 @@ class TaskCmd(BaseTask):
 
 #region Attributes
 
-    __logger = None
-    """Logger"""
-
 #endregion
 
     def __init__(self, **kwargs):
@@ -71,13 +68,14 @@ class TaskCmd(BaseTask):
 
         self._name = __class_name__
 
+        self.__logger = get_logger(__name__)
+        """Logger
+        """
+
 #region Public Methods
 
     def start(self):
         """Start the task."""
-
-        if self.__logger is None:
-            self.__logger = get_logger(__name__)
 
         self._start_cont()
 

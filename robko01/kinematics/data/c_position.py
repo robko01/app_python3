@@ -57,16 +57,6 @@ class CPosition():
 
 #region Attributes
 
-    __x = 0.0
-
-    __y = 0.0
-
-    __z = 0.0
-
-    __p = 0.0
-
-    __r = 0.0
-
 #endregion
 
 #region Properties
@@ -171,6 +161,16 @@ class CPosition():
 #region Constructor
 
     def __init__(self, **kwargs):
+
+        self.__x = 0.0
+
+        self.__y = 0.0
+
+        self.__z = 0.0
+
+        self.__p = 0.0
+
+        self.__r = 0.0
 
         if "X" in kwargs:
             self.X = kwargs["X"]

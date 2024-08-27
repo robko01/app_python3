@@ -59,26 +59,6 @@ class JoystickController(object):
 
 #region Attributes
 
-    __joystick = None
-    """Joystick instance.
-    """
-
-    __axis_data = None
-    """Axis data.
-    """
-
-    __button_data = None
-    """Buttons data.
-    """
-
-    __hat_data = None
-    """Hat data.
-    """
-
-    __update_cb = None
-    """Update callback.
-    """
-
 #endregion
 
 #region Constructor
@@ -90,23 +70,34 @@ class JoystickController(object):
             index (int, optional): Joystick index. Defaults to 0.
         """
 
+        self.__axis_data = {}
+        """Axis data.
+        """
+
+        self.__button_data = {}
+        """Buttons data.
+        """
+
+        self.__hat_data = {}
+        """Hat data.
+        """
+
+        self.__update_cb = None
+        """Update callback.
+        """
+
         pygame.init()
         pygame.joystick.init()
         self.__joystick = pygame.joystick.Joystick(index)
+        """Joystick instance.
+        """
         self.__joystick.init()
 
-        if not self.__axis_data:
-            self.__axis_data = {}
+        for i in range(self.__joystick.get_numbuttons()):
+            self.__button_data[i] = False
 
-        if not self.__button_data:
-            self.__button_data = {}
-            for i in range(self.__joystick.get_numbuttons()):
-                self.__button_data[i] = False
-
-        if not self.__hat_data:
-            self.__hat_data = {}
-            for i in range(self.__joystick.get_numhats()):
-                self.__hat_data[i] = (0, 0)
+        for i in range(self.__joystick.get_numhats()):
+            self.__hat_data[i] = (0, 0)
 
 #endregion
 

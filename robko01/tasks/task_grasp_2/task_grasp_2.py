@@ -63,13 +63,17 @@ __class_name__ = "TaskGrasp2"
 class TaskGrasp2(BaseTask):
     """Grasp 2"""
 
-    __logger = None
+    
 
     def __init__(self, **kwargs):
 
         super().__init__(kwargs)
 
         self._name = __class_name__
+    
+        self.__logger = get_logger(__name__)
+        """Logger
+        """
 
 #region Private Methods
 
@@ -84,9 +88,6 @@ class TaskGrasp2(BaseTask):
 
     def start(self):
         """Start the task."""
-
-        if self.__logger is None:
-            self.__logger = get_logger(__name__)
 
         self.__logger.debug("Starting")
 
