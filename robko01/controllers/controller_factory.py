@@ -79,15 +79,25 @@ class ControllerFactory:
             raise ValueError("Controller type can not be None.")
 
         elif controller_name == "orlin369":
-            # IP based.
-            if kwargs["port"].isnumeric() and kwargs["host"] is not None:
+            port = ""
+            if "port" in kwargs:
+                port = kwargs["port"]
+
+            host = None
+            if "host" in kwargs:
+                host = kwargs["host"]
+
+            # IP Based
+            if port.isnumeric() and host is not None:
                 host = kwargs["host"]
                 port = int(kwargs["port"])
                 controller = Orko01(IPCom(host, port))
+
             # Serial based.
-            elif not kwargs["port"].isnumeric() and kwargs["host"] is None:
+            elif not port.isnumeric() and host is None:
                 controller_name = kwargs["port"]
                 controller = Orko01(SerCom(controller_name))
+
             else:
                 raise NotImplemented(f"The specified controller controller name does not have implementation: {controller_name}")
 
