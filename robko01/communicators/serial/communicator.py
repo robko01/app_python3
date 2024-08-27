@@ -74,6 +74,8 @@ class Communicator(BaseCommunicator):
             port (str): Name of the port.
         """
 
+        super().__init__()
+
         self.__logger = get_logger(__name__)
         """Logger
         """

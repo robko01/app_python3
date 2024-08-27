@@ -63,20 +63,6 @@ class Communicator():
 
 #region Attributes
 
-    __port = None
-
-#endregion
-
-#region Attributes
-
-    __port = None
-    """Serial port.
-    """
-
-    __timeout = 0.2
-    """Timeout in second.
-    """
-
 #endregion
 
 #region Constructor
@@ -95,6 +81,8 @@ class Communicator():
 
         # Set the name.
         self.__port = serial.Serial(name)
+        """Serial port.
+        """
         # Baud rate to 9600.
         self.__port.baudrate = 9600
         # Number of bits per bytes.
@@ -115,6 +103,10 @@ class Communicator():
         self.__port.rtscts = False
         # Disable hardware (DSR/DTR) flow control
         self.__port.dsrdtr = False
+
+        self.__timeout = 0.2
+        """Timeout in second.
+        """
 
 #endregion
 
@@ -165,7 +157,7 @@ class Communicator():
 
         if self.__port.isOpen() is False:
 
-            self.__port.timeout = self.__timeout
+            self.__port.timeout = self.timeout
             self.__port.setDTR(False)
             self.__port.setRTS(False)
             self.__port.open()

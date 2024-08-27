@@ -171,7 +171,7 @@ class Communicator(BaseCommunicator):
         if self.__client is not None:
 
             self.__client.connect((self.__host, self.__port))
-            # self.__client.settimeout = self.__timeout
+            # self.__client.settimeout = self.timeout
 
     def disconnect(self):
         """Disconnect from device.

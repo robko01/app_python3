@@ -75,6 +75,8 @@ class Robko01(BaseRobko01):
 
     def __init__(self, communicator):
 
+        super().__init__()
+
         if communicator is None:
             raise ValueError("Communicator can not be None.")
 
@@ -119,7 +121,7 @@ class Robko01(BaseRobko01):
                     break
 
             times += 1
-            if times > self._timeout:
+            if times > self.timeout:
                 raise TimeoutError("Controller does not respond.")
 
             time.sleep(self._sync_interval)

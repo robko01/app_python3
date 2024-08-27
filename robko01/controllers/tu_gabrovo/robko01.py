@@ -77,21 +77,7 @@ class Robko01(BaseRobko01):
 
 #region Attributes
 
-    __serial_port = None
-    __PKG_LEN = 250
-    __EnableMotor = "Enable motor"
-    __DisableMotor = "Disable motor"
-    __Drive = "Drive"
-    __Direction = "Direction"
-    __MotorFlag = "Motor Flag"
-    __StepTime = "StepTime"
-    __StepsNumber = "Steps Number"
-    __CurrentStep = "Current Step"
-    __CurrentTimeout = "Current Timeout"
-    __CurrentEnable = "Current Enable"
-    __CurrentDisable = "Current Disable"
-    __CW = "+"
-    __CCW = "-"
+
 
 #endregion
 
@@ -99,12 +85,30 @@ class Robko01(BaseRobko01):
 
     def __init__(self, communicator):
 
+        super().__init__()
+
         if communicator is None:
             raise ValueError("Communicator can not be None.")
 
         self.__logger = get_logger(__name__)
 
         self.__communicator = communicator
+
+        self.__serial_port = None
+        self.__PKG_LEN = 250
+        self.__EnableMotor = "Enable motor"
+        self.__DisableMotor = "Disable motor"
+        self.__Drive = "Drive"
+        self.__Direction = "Direction"
+        self.__MotorFlag = "Motor Flag"
+        self.__StepTime = "StepTime"
+        self.__StepsNumber = "Steps Number"
+        self.__CurrentStep = "Current Step"
+        self.__CurrentTimeout = "Current Timeout"
+        self.__CurrentEnable = "Current Enable"
+        self.__CurrentDisable = "Current Disable"
+        self.__CW = "+"
+        self.__CCW = "-"
 
 #endregion
 
@@ -132,7 +136,7 @@ class Robko01(BaseRobko01):
                 break
 
             times += 1
-            if times > self._timeout:
+            if times > self.timeout:
                 raise TimeoutError("Controller does not respond.")
 
             time.sleep(self._sync_interval)
