@@ -132,6 +132,24 @@ controller.wait_to_stop()
 
 ```
 
+## Uninstall the library
+In case you would like to remove the library use the fllowing command.
+
+ - For Windows machines:
+```sh
+python -m pip uninstall robko01
+```
+
+ - For Linux machines:
+```sh
+python3 -m pip uninstall robko01
+```
+
+ - For NacOS machines:
+```sh
+python3 -m pip uninstall robko01
+```
+
 # Contributing
 
 If you'd like to contribute to this project, please follow these steps:
