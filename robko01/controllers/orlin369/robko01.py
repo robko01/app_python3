@@ -69,18 +69,6 @@ class Robko01(BaseRobko01):
 
 #region Attributes
 
-    __communicator = None
-    """Communicator
-    """
-
-    __pm = None
-    """Package manager.
-    """
-
-    __is_moving_cb = None
-    """Is moving callback.
-    """
-
 #endregion
 
 #region Constructor
@@ -91,9 +79,16 @@ class Robko01(BaseRobko01):
             raise ValueError("Communicator can not be None.")
 
         self.__communicator = communicator
+        """Communicator
+        """
 
         self.__pm = PackageManager(self.__communicator)
+        """Package manager.
+        """
 
+        self.__is_moving_cb = None
+        """Is moving callback.
+        """
 #endregion
 
 #region Public Methods
