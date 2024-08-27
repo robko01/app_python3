@@ -61,9 +61,14 @@ class BaseCommunicator:
 
 #region Attributes
 
-    __timeout = 5
-    """Timeout in second.
-    """
+#endregion
+
+#region Constructor
+
+    def __init__(self):
+        self.__timeout = 5
+        """Timeout in second.
+        """
 
 #endregion
 

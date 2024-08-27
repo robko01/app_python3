@@ -63,15 +63,6 @@ class Communicator(BaseCommunicator):
 
 #region Attributes
 
-    __client = None
-    """Serial port."""
-
-    __baudrate = 115200 #921600
-    """Baud rate."""
-
-    __logger = None
-    """Logger"""
-
 #endregion
 
 #region Constructor
@@ -82,9 +73,18 @@ class Communicator(BaseCommunicator):
         Args:
             port (str): Name of the port.
         """
-        self.__client = serial.Serial(port, self.__baudrate)
 
         self.__logger = get_logger(__name__)
+        """Logger
+        """
+
+        self.__baudrate = 115200 #921600
+        """Baud rate.
+        """
+
+        self.__client = serial.Serial(port, self.__baudrate)
+        """Serial port.
+        """
 
 #endregion
 
