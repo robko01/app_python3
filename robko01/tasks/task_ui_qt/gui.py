@@ -75,95 +75,45 @@ class GUI(QApplication):
 
 #region Attributes
 
-    __logger = None
-    """Logger module.
-    """
-
-    __controller = None
-    """Robot controller.
-    """
-
-    __window = None
-    """Main window.
-    """
-
-    __actions_queue = None
-    """Actions queue.
-    """
-
-    __current_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    """Axis speeds.
-    """
-
-    __current_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    """Current end-effector position.
-    """
-
-    __axis_states = 0
-    """Axis action states.
-    """
-
-    __axis_states_prev = 0
-    """Axis action previous states.
-    """
-
-    __port_a_inputs = 0
-    """Port A inputs.
-    """
-
-    __port_a_outputs = 0
-    """Port A outputs.
-    """
-
-    __axis_controllers = []
-    """Axis controllers.
-    """
-
-    __max_speed = 100
-    """Maximum speed.
-    """
-
-    __dead_zone = 0.2
-    """Joystick analogs dead zone.
-    """
-
-    __jsax_to_rbtax = {0:0, 1:1, 3:2, 4:5}
-    """Joystick controller map to robot axis.
-    """
-
-    __jsbtn_temp = None
-    """Temporary joystick buttons data.
-    """
-
-    __jsc = None
-    """Joystick controller.
-    """
-
-    __block_grasping = False
-    """Software grasping lock"""
-
 #endregion
 
 #region Constructor
 
     def __init__(self, **kwargs):
+        """Constructor
+
+        Raises:
+            ReferenceError: Invalid controller instance.
+        """
+
         super().__init__([])
 
+        self.__logger = get_logger(__name__)
+        """Logger module.
+        """
+
+        self.__controller = None
+        """Robot controller.
+        """
         if "controller" in kwargs:
             self.__controller = kwargs["controller"]
 
         if self.__controller is None:
-            raise Exception("Invalid controller.")
-
-        if self.__logger is None:
-            self.__logger = get_logger(__name__)
+            raise ReferenceError("Invalid controller instance.")
 
         self.__actions_queue = queue.Queue()
+        """Actions queue.
+        """
 
         self.__action_update_timer = ThreadTimer()
+        """Action update timer.
+        """        
         self.__action_update_timer.update_rate = 0.005
         self.__action_update_timer.set_cb(self.__action_timer_cb)
 
+        self.__axis_controllers = []
+        """Axis controllers.
+        """
         # Key controllers.
         self.__axis_controllers.append(AxisActionController(callback=self.__axis_0))
         self.__axis_controllers.append(AxisActionController(callback=self.__axis_1))
@@ -174,7 +124,64 @@ class GUI(QApplication):
 
         # Kinematics
         self.__kin = Kinematics()
+        """Kinematics model.
+        """        
+
         self.__sc = SteppersCoefficients()
+        """Steppers cofitients.
+        """        
+
+        self.__window = None
+        """Main window.
+        """
+
+        self.__current_speed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        """Axis speeds.
+        """
+
+        self.__current_position = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        """Current end-effector position.
+        """
+
+        self.__axis_states = 0
+        """Axis action states.
+        """
+
+        self.__axis_states_prev = 0
+        """Axis action previous states.
+        """
+
+        self.__port_a_inputs = 0
+        """Port A inputs.
+        """
+
+        self.__port_a_outputs = 0
+        """Port A outputs.
+        """
+
+        self.__max_speed = 100
+        """Maximum speed.
+        """
+
+        self.__jsc = None
+        """Joystick controller.
+        """
+
+        self.__dead_zone = 0.2
+        """Joystick analogs dead zone.
+        """
+
+        self.__jsax_to_rbtax = {0:0, 1:1, 3:2, 4:5}
+        """Joystick controller map to robot axis.
+        """
+
+        self.__jsbtn_temp = None
+        """Temporary joystick buttons data.
+        """
+
+        self.__block_grasping = False
+        """Software grasping lock.
+        """
 
 #endregion
 

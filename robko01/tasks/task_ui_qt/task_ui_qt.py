@@ -62,9 +62,6 @@ class TaskUI(BaseTask):
 
 #region Attributes
 
-    __logger = None
-    """Logger"""
-
 #endregion
 
 #region Constructor
@@ -74,6 +71,10 @@ class TaskUI(BaseTask):
 
         self._name = __class_name__
 
+        self.__logger = get_logger(__name__)
+        """Logger
+        """
+
 #endregion
 
 #region Interface Methods
@@ -81,12 +82,10 @@ class TaskUI(BaseTask):
     def start(self):
         """Start the task."""
 
-        if self.__logger is None:
-            self.__logger = get_logger(__name__)
-
         self._start_cont()
 
         self.__ui = GUI(controller=self._controller)
+        # self.__ui.setStyle('Fusion')
         self.__ui.start()
         self.__ui.exec()
 
