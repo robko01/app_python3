@@ -57,23 +57,30 @@ class BaseRobko01:
 
 #region Attributes
 
-    _sync_interval = 0.05
-    """Sync time.
-    """
+#endregion
 
-    _synchronous = True
-    """Sync mode.
-    """
+#region Constructor
 
-    _time_to_stop = False
-    """Time to stop flag.
-    """
+    def __init__(self):
+        self._sync_interval = 0.05
+        """Sync time.
+        """
 
-    _communicator = None
-    """Communicator instance.
-    """
+        self._synchronous = True
+        """Sync mode.
+        """
 
-    _timeout = 50
+        self._time_to_stop = False
+        """Time to stop flag.
+        """
+
+        self._communicator = None
+        """Communicator instance.
+        """
+
+        self._timeout = 50
+        """Timeout value.
+        """
 
 #endregion
 
